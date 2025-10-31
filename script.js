@@ -195,12 +195,78 @@ const checkoutState = {
   productCode: null,
   passCode: null,
   passValid: false,
+  passExpiresAt: null,
 };
 
 function randomCode(prefix, digits = 4) {
   const max = 10 ** digits;
   const number = Math.floor(Math.random() * max);
   return `${prefix}-${String(number).padStart(digits, '0')}`;
+}
+
+const PASS_DURATION_MS = 2 * 60 * 1000;
+let passTimerId = null;
+
+function clearPassTimer() {
+  if (passTimerId) {
+    window.clearInterval(passTimerId);
+    passTimerId = null;
+  }
+  checkoutState.passExpiresAt = null;
+}
+
+function formatCountdown(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  return `${minutes}:${seconds}`;
+}
+
+function renderStatus(title, detail = '', tone = 'info') {
+  const tones = ['is-success', 'is-warning', 'is-danger'];
+  tones.forEach((className) => selfCheckoutStatus.classList.remove(className));
+  if (tone === 'success') {
+    selfCheckoutStatus.classList.add('is-success');
+  } else if (tone === 'warning') {
+    selfCheckoutStatus.classList.add('is-warning');
+  } else if (tone === 'danger') {
+    selfCheckoutStatus.classList.add('is-danger');
+  }
+
+  if (detail) {
+    selfCheckoutStatus.innerHTML = `<span>${title}</span><span class="status-detail">${detail}</span>`;
+  } else {
+    selfCheckoutStatus.innerHTML = `<span>${title}</span>`;
+  }
+}
+
+function getRemainingMs() {
+  if (!checkoutState.passExpiresAt) return PASS_DURATION_MS;
+  return Math.max(0, checkoutState.passExpiresAt - Date.now());
+}
+
+function startPassTimer() {
+  clearPassTimer();
+  passTimerId = window.setInterval(() => {
+    if (checkoutState.stage !== 'paid') {
+      clearPassTimer();
+      return;
+    }
+
+    const remainingMs = getRemainingMs();
+    if (remainingMs <= 0) {
+      checkoutState.stage = 'expired';
+      checkoutState.passValid = false;
+      clearPassTimer();
+      updateCheckoutUI();
+      return;
+    }
+
+    const countdownEl = document.getElementById('pass-countdown');
+    if (countdownEl) {
+      countdownEl.textContent = `Expira em ${formatCountdown(remainingMs)}`;
+    }
+  }, 500);
 }
 
 function updateCheckoutUI() {
@@ -216,41 +282,68 @@ function updateCheckoutUI() {
 
   switch (checkoutState.stage) {
     case 'ready':
-      selfCheckoutStatus.textContent = 'Fluxo habilitado. Cliente pode escanear a peça.';
+      renderStatus('Fluxo habilitado.', 'Cliente pode escanear a peça para iniciar.', 'info');
       checkoutScanButton.disabled = false;
       checkoutPayButton.disabled = true;
       checkoutValidateButton.disabled = true;
       checkoutPassBox.hidden = true;
       break;
-    case 'scanned':
-      selfCheckoutStatus.textContent = `Peça ${checkoutState.productCode} adicionada ao carrinho. Gerando cobrança.`;
+    case 'awaitingPayment':
+      renderStatus(
+        `Peça ${checkoutState.productCode} reservada.`,
+        'PIX emitido e aguardando confirmação automática do PSP.',
+        'warning'
+      );
       checkoutScanButton.disabled = true;
       checkoutPayButton.disabled = false;
       checkoutValidateButton.disabled = true;
       checkoutPassBox.hidden = true;
       break;
-    case 'paid':
-      selfCheckoutStatus.textContent = 'Pagamento confirmado! Passe de saída emitido.';
+    case 'paid': {
+      renderStatus('Pagamento confirmado!', 'Passe de saída liberado por 2 minutos.', 'success');
       checkoutScanButton.disabled = true;
       checkoutPayButton.disabled = true;
       checkoutValidateButton.disabled = false;
       checkoutPassBox.hidden = false;
+      const remainingMs = getRemainingMs();
       checkoutPassBox.innerHTML = `
         <strong>Passe de saída</strong>
-        <span>QR fake (1 uso): ${checkoutState.passCode}</span>
-        <span>Válido até o lojista validar na tela Exits.</span>
+        <span class="self-checkout-pass__code">${checkoutState.passCode}</span>
+        <span class="pass-countdown" id="pass-countdown">Expira em ${formatCountdown(remainingMs)}</span>
+        <span class="self-checkout-pass__hint">Apresente no modo Lojista (Exits) para liberar a saída.</span>
       `;
       break;
+    }
     case 'validated':
-      selfCheckoutStatus.textContent = 'Passe validado no caixa. Self-checkout concluído e passe invalidado.';
-      checkoutScanButton.disabled = true;
+      renderStatus(
+        'Passe validado no lojista.',
+        'Sale marcada como concluída (<code>exited_at</code>) e passe invalidado.',
+        'success'
+      );
+      checkoutScanButton.disabled = false;
       checkoutPayButton.disabled = true;
       checkoutValidateButton.disabled = true;
       checkoutPassBox.hidden = false;
       checkoutPassBox.innerHTML = `
         <strong>${checkoutState.passCode}</strong>
-        <span>Status: invalidado</span>
-        <span>Gerar novo passe requer iniciar outro fluxo.</span>
+        <span>Status: validado e arquivado.</span>
+        <span>Para nova compra, escaneie outra peça.</span>
+      `;
+      break;
+    case 'expired':
+      renderStatus(
+        'Passe expirado.',
+        'Reserva liberada automaticamente. Cliente precisa reiniciar o fluxo.',
+        'danger'
+      );
+      checkoutScanButton.disabled = false;
+      checkoutPayButton.disabled = true;
+      checkoutValidateButton.disabled = true;
+      checkoutPassBox.hidden = false;
+      checkoutPassBox.innerHTML = `
+        <strong>${checkoutState.passCode ?? 'Passe indisponível'}</strong>
+        <span>Status: expirado.</span>
+        <span>Regenerar exige novo pagamento confirmado.</span>
       `;
       break;
     default:
@@ -263,6 +356,7 @@ function resetCheckout() {
   checkoutState.productCode = null;
   checkoutState.passCode = null;
   checkoutState.passValid = false;
+  clearPassTimer();
   updateCheckoutUI();
 }
 
@@ -278,20 +372,27 @@ selfCheckoutFlag.addEventListener('change', () => {
 
 checkoutScanButton.addEventListener('click', () => {
   checkoutState.productCode = randomCode('BR', 5);
-  checkoutState.stage = 'scanned';
+  checkoutState.passCode = null;
+  checkoutState.passValid = false;
+  clearPassTimer();
+  checkoutState.stage = 'awaitingPayment';
   updateCheckoutUI();
 });
 
 checkoutPayButton.addEventListener('click', () => {
   checkoutState.passCode = randomCode('PASS', 6);
+  checkoutState.passExpiresAt = Date.now() + PASS_DURATION_MS;
   checkoutState.stage = 'paid';
   checkoutState.passValid = true;
   updateCheckoutUI();
+  startPassTimer();
 });
 
 checkoutValidateButton.addEventListener('click', () => {
   checkoutState.stage = 'validated';
   checkoutState.passValid = false;
+  checkoutState.productCode = null;
+  clearPassTimer();
   updateCheckoutUI();
 });
 
@@ -314,16 +415,73 @@ const demoSales = [
   { id: 'S-1005', createdAt: '2024-04-10', channel: 'in_store', status: 'paid', total: 150.0 },
   { id: 'S-1006', createdAt: '2024-04-15', channel: 'whatsapp', status: 'paid', total: 210.75 },
   { id: 'S-1007', createdAt: '2024-04-20', channel: 'link', status: 'canceled', total: 120.0 },
+  {
+    id: 'S-1008',
+    createdAt: '2024-04-21',
+    channel: 'self_checkout',
+    status: 'paid',
+    total: 235.9,
+    exitedAt: '2024-04-21T17:12:00Z',
+  },
 ];
 
 const demoPayments = [
-  { id: 'P-2001', saleId: 'S-1001', method: 'pix', status: 'paid', amount: 280.5, createdAt: '2024-04-01' },
-  { id: 'P-2002', saleId: 'S-1002', method: 'pix', status: 'paid', amount: 185.0, createdAt: '2024-04-02' },
+  {
+    id: 'P-2001',
+    saleId: 'S-1001',
+    method: 'pix',
+    status: 'paid',
+    amount: 280.5,
+    createdAt: '2024-04-01',
+    paidAt: '2024-04-01T14:12:00Z',
+  },
+  {
+    id: 'P-2002',
+    saleId: 'S-1002',
+    method: 'pix',
+    status: 'paid',
+    amount: 185.0,
+    createdAt: '2024-04-02',
+    paidAt: '2024-04-02T12:05:00Z',
+  },
   { id: 'P-2003', saleId: 'S-1003', method: 'pix', status: 'pending', amount: 90.0, createdAt: '2024-04-05' },
-  { id: 'P-2004', saleId: 'S-1004', method: 'card', status: 'paid', amount: 320.0, createdAt: '2024-04-08' },
-  { id: 'P-2005', saleId: 'S-1005', method: 'cash', status: 'paid', amount: 150.0, createdAt: '2024-04-10' },
-  { id: 'P-2006', saleId: 'S-1006', method: 'pix', status: 'paid', amount: 210.75, createdAt: '2024-04-15' },
+  {
+    id: 'P-2004',
+    saleId: 'S-1004',
+    method: 'card',
+    status: 'paid',
+    amount: 320.0,
+    createdAt: '2024-04-08',
+    paidAt: '2024-04-08T18:43:00Z',
+  },
+  {
+    id: 'P-2005',
+    saleId: 'S-1005',
+    method: 'cash',
+    status: 'paid',
+    amount: 150.0,
+    createdAt: '2024-04-10',
+    paidAt: '2024-04-10T11:31:00Z',
+  },
+  {
+    id: 'P-2006',
+    saleId: 'S-1006',
+    method: 'pix',
+    status: 'paid',
+    amount: 210.75,
+    createdAt: '2024-04-15',
+    paidAt: '2024-04-15T15:58:00Z',
+  },
   { id: 'P-2007', saleId: 'S-1007', method: 'pix', status: 'refunded', amount: 120.0, createdAt: '2024-04-20' },
+  {
+    id: 'P-2008',
+    saleId: 'S-1008',
+    method: 'pix',
+    status: 'paid',
+    amount: 235.9,
+    createdAt: '2024-04-21',
+    paidAt: '2024-04-21T17:10:30Z',
+  },
 ];
 
 const filterStartInput = document.getElementById('filter-start');

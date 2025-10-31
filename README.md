@@ -149,6 +149,35 @@ Camada fake que replica a futura API, simplificando a troca por um backend real:
 - Sem multiusuário real: troca de organização ocorre somente localmente.
 - Operações críticas (estoque, relatórios) executadas client-side, sem backend.
 
+## Self-Checkout (Cliente) — MVP DEMO
+- **Contexto compartilhado:** mesma PWA com dois modos (Lojista e Cliente). O QR da loja (`/loja/{storeSlug}?mode=cliente`) define organização, logotipo e termos de uso.
+- **Cadastro mínimo:** nome e WhatsApp (CPF opcional). No modo DEMO os campos já vêm preenchidos com dados fictícios.
+- **Sacola e reserva:** cada item escaneado gera reserva local de 10 minutos; ao cancelar/expirar volta para `available`.
+- **Pagamento:** PIX fake com botão "Simular pagamento". Webhook simulado marca `payments.status='paid'`, define `paid_at` e atualiza `sales.status='paid'`.
+- **Passe de saída:** QR fake 1-uso com HMAC/nonce. Expira em 2 minutos, muda para `used_at` ao validar em `/api/exits/validate`.
+- **Fallback:** se o pagamento não for confirmado, o passe não aparece e o lojista deve concluir manualmente.
+
+### Incrementos de dados
+- `organizations`: colunas `store_slug` (único), `public_urls_enabled` (toggle) e `timezone` (default `America/Manaus`).
+- `sales`: campo obrigatório `channel` (`in_store | whatsapp | link | self_checkout`) e `exited_at` para logar liberação da saída.
+- `payments`: coluna `paid_at` para auditoria de confirmações do PSP.
+- `checkout_sessions`: tabela efêmera para jornadas do cliente (`status = active | expired | converted`).
+- `exit_passes`: tokens com TTL curto, atrelados a vendas pagas e invalidados após 1 uso.
+
+### Endpoints públicos e internos
+- `GET /api/public/loja/{slug}` — dados públicos da loja e políticas do self-checkout.
+- `GET /api/public/p/{slug}/{code}` — ficha pública do produto se `status='available'`.
+- `POST /api/public/checkout/start` — cria `checkout_session` e reserva item(s).
+- `POST /api/public/checkout/pay` — abre `sale`, cria `payment` PIX e retorna QR EMV/copia-e-cola.
+- `POST /api/webhooks/psp` — confirma pagamento (`payments.status='paid'`, `sales.status='paid'`) e gera `exit_pass`.
+- `POST /api/exits/validate` — lojista valida passe (1 uso, marca `exit_pass.used_at` e `sales.exited_at`).
+
+### Regras de negócio chave
+- Passe somente aparece após confirmação do servidor (regra de ouro) e expira rápido para evitar reuso.
+- Reservas e passes expiram automaticamente e liberam estoque/fluxo.
+- RLS permanece restrito: clientes só veem seus checkouts e dados públicos.
+- Logs de auditoria registram criação de venda, confirmação de pagamento e validação de saída.
+
 ## Experiência Demo
 - Página `/demo` oferece ferramentas para carregar seeds, resetar estado e acionar simuladores de pagamento.
 - App prioriza funcionamento offline-first, com sincronização manual na DEMO.
