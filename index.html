@@ -14,14 +14,60 @@
   </head>
   <body>
     <div class="app" id="app">
+      <div class="demo-banner" role="status">MODO DEMO — dados fictícios</div>
       <header class="app__header">
         <h1 class="brand">BIPA</h1>
         <p class="subtitle">Bipou, vendeu.</p>
       </header>
 
       <main class="app__content">
-        <section class="panel panel--intro is-active" id="intro-panel">
-          <h2 class="panel__title">Mini-ERP + PDV móvel para brechós e lojas independentes.</h2>
+        <nav class="tabs" aria-label="Navegação principal" role="tablist">
+          <button
+            class="tabs__button is-active"
+            id="tab-overview"
+            data-tab="overview"
+            role="tab"
+            aria-controls="overview-panel"
+            aria-selected="true"
+          >
+            Visão geral
+          </button>
+          <button
+            class="tabs__button"
+            id="tab-flows"
+            data-tab="flows"
+            role="tab"
+            aria-controls="flows-panel"
+            aria-selected="false"
+          >
+            Fluxos DEMO
+          </button>
+          <button
+            class="tabs__button"
+            id="tab-reports"
+            data-tab="reports"
+            role="tab"
+            aria-controls="reports-panel"
+            aria-selected="false"
+          >
+            Relatórios
+          </button>
+          <button
+            class="tabs__button"
+            id="tab-github"
+            data-tab="github"
+            role="tab"
+            aria-controls="github-panel"
+            aria-selected="false"
+          >
+            GitHub
+          </button>
+        </nav>
+
+        <section class="panel is-active" id="overview-panel" role="tabpanel" aria-labelledby="tab-overview">
+          <h2 class="panel__title">
+            Mini-ERP + PDV móvel para brechós e lojas independentes.
+          </h2>
           <p class="panel__subtitle">
             Cadastre peças, gere QR Code, venda em 3 toques e receba via PIX.
           </p>
@@ -64,7 +110,7 @@
               <span>Acesso Demo</span>
             </div>
             <p class="demo-card__description">
-              Bipa do BIM - mais dados fictícios.
+              Bipa do BIM — mais dados fictícios.
             </p>
             <button class="demo-card__button" data-action="open-login">
               Entrar na conta demo
@@ -73,65 +119,195 @@
               Quer ver mais? Entre em contato com a nossa equipe.
             </p>
           </div>
+        </section>
 
-          <div class="panel__actions">
-            <button class="btn btn--primary" data-action="go-to-stores">
-              Começar agora
-            </button>
-            <button class="btn btn--ghost" data-action="open-login">
-              Já tenho conta
-            </button>
+        <section class="panel" id="flows-panel" role="tabpanel" aria-labelledby="tab-flows">
+          <div class="panel__header">
+            <h2 class="panel__title">Fluxos operacionais com simulação</h2>
+            <p class="panel__subtitle">
+              Explore como o PDV móvel funciona na prática: venda rápida, reservas
+              temporárias e self-checkout com passe de saída.
+            </p>
+          </div>
+
+          <div class="simulations-grid">
+            <article class="simulation-card" aria-live="polite">
+              <header class="simulation-card__header">
+                <h3>Venda em 3 toques</h3>
+                <p>Nova venda → Escanear → Receber PIX → Marcar pago → Recibo.</p>
+              </header>
+              <ol class="simulation-steps" id="sale-steps"></ol>
+              <div class="simulation-actions">
+                <button class="btn btn--primary" id="sale-next">Iniciar fluxo</button>
+                <button class="btn btn--ghost" id="sale-reset" disabled>Reiniciar</button>
+              </div>
+              <div class="simulation-log" id="sale-log" aria-live="polite"></div>
+            </article>
+
+            <article class="simulation-card" aria-live="polite">
+              <header class="simulation-card__header">
+                <h3>Reserva temporária</h3>
+                <p>Segure uma peça por 15/30/60 minutos. Timer acelerado (1s = 1min).</p>
+              </header>
+              <div class="reservation-status" id="reservation-status">
+                <span class="chip chip--available">Disponível</span>
+                <span class="reservation-timer" id="reservation-timer">—</span>
+              </div>
+              <div class="reservation-actions" role="group" aria-label="Duração da reserva">
+                <button class="btn btn--ghost" data-reservation="15">Reservar 15 min</button>
+                <button class="btn btn--ghost" data-reservation="30">Reservar 30 min</button>
+                <button class="btn btn--ghost" data-reservation="60">Reservar 60 min</button>
+              </div>
+              <p class="reservation-note">
+                Ao expirar, a peça volta automaticamente para <strong>available</strong>.
+              </p>
+            </article>
+
+            <article class="simulation-card" aria-live="polite">
+              <header class="simulation-card__header">
+                <h3>Self-Checkout</h3>
+                <p>Cliente lê QR da peça, paga fake e recebe Passe de Saída (1 uso).</p>
+              </header>
+              <label class="toggle">
+                <input type="checkbox" id="self-checkout-flag" />
+                <span class="toggle__decor" aria-hidden="true"></span>
+                <span class="toggle__label">Habilitar self-checkout</span>
+              </label>
+              <div class="self-checkout-flow" id="self-checkout-flow" hidden>
+                <div class="self-checkout-status" id="self-checkout-status">
+                  Fluxo aguardando escaneamento.
+                </div>
+                <div class="self-checkout-actions">
+                  <button class="btn btn--ghost" id="checkout-scan" disabled>Escanear peça</button>
+                  <button class="btn btn--ghost" id="checkout-pay" disabled>Simular pagamento PIX</button>
+                  <button class="btn btn--primary" id="checkout-validate" disabled>Validar saída</button>
+                </div>
+                <div class="self-checkout-pass" id="checkout-pass" hidden></div>
+              </div>
+            </article>
           </div>
         </section>
 
-        <section class="panel panel--stores" id="stores-panel">
-          <div class="card">
-            <div class="card__icon">🏪</div>
-            <h2 class="card__title">Selecione a loja</h2>
-            <p class="card__subtitle">Escolha com qual loja você deseja trabalhar.</p>
-            <div class="card__empty">Você ainda não tem acesso a nenhuma loja</div>
-            <button class="btn btn--primary" data-action="open-modal">
-              Criar primeira loja
-            </button>
+        <section class="panel" id="reports-panel" role="tabpanel" aria-labelledby="tab-reports">
+          <div class="panel__header">
+            <h2 class="panel__title">Relatórios em memória</h2>
+            <p class="panel__subtitle">
+              KPIs calculados a partir de vendas e pagamentos locais. Ajuste o
+              intervalo para simular cortes diários ou semanais.
+            </p>
+          </div>
+
+          <form class="filters" id="reports-filters">
+            <label>
+              <span>Início</span>
+              <input type="date" id="filter-start" />
+            </label>
+            <label>
+              <span>Fim</span>
+              <input type="date" id="filter-end" />
+            </label>
+            <button type="button" class="btn btn--ghost" id="filters-reset">Limpar filtros</button>
+          </form>
+
+          <div class="kpi-grid" id="kpi-grid">
+            <article class="kpi-card">
+              <h3>Total de vendas</h3>
+              <p class="kpi-value" id="kpi-sales-value">R$ 0,00</p>
+              <span class="kpi-detail" id="kpi-sales-count">0 vendas</span>
+            </article>
+            <article class="kpi-card">
+              <h3>Ticket médio</h3>
+              <p class="kpi-value" id="kpi-average-ticket">R$ 0,00</p>
+              <span class="kpi-detail">Inclui apenas vendas pagas</span>
+            </article>
+            <article class="kpi-card">
+              <h3>PIX confirmado</h3>
+              <p class="kpi-value" id="kpi-pix-share">0%</p>
+              <span class="kpi-detail" id="kpi-pix-total">R$ 0,00 recebidos</span>
+            </article>
+            <article class="kpi-card">
+              <h3>Pagamentos confirmados</h3>
+              <p class="kpi-value" id="kpi-payments-count">0</p>
+              <span class="kpi-detail" id="kpi-payments-total">R$ 0,00 em caixa</span>
+            </article>
+          </div>
+
+          <section class="table-section">
+            <header class="table-section__header">
+              <h3>Vendas filtradas</h3>
+              <span id="sales-period-label">—</span>
+            </header>
+            <div class="table-wrapper">
+              <table class="data-table" aria-live="polite">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                    <th>Canal</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="sales-table-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="panel" id="github-panel" role="tabpanel" aria-labelledby="tab-github">
+          <div class="panel__header">
+            <h2 class="panel__title">Roadmap DEMO (GitHub)</h2>
+            <p class="panel__subtitle">
+              Milestones e issues sugeridas para organizar a entrega sem backend.
+            </p>
+          </div>
+
+          <div class="milestones">
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M0 — Bootstrap DEMO</h3>
+                <span class="chip">Em andamento</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: PWA + Tailwind + Tipos base</strong>
+                  <p>Aceite: app instala; tipos compilam.</p>
+                </li>
+                <li>
+                  <strong>feat: IndexedDB adapter (Dexie) + persist</strong>
+                  <p>Aceite: CRUD simples em db.demo.</p>
+                </li>
+                <li>
+                  <strong>feat: Seeds DEMO e Reset</strong>
+                  <p>Aceite: botão “Reset DEMO” repovoa org “DEMO BIPA”.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M1 — Casca do App</h3>
+                <span class="chip chip--outline">Próximo</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Shell mobile + bottom-nav + FAB</strong>
+                  <p>Aceite: tabs (Vender, Estoque, Clientes, Relatórios, Mais).</p>
+                </li>
+                <li>
+                  <strong>feat: Badges DEMO + aviso global</strong>
+                  <p>Aceite: “MODO DEMO — dados fictícios” visível.</p>
+                </li>
+              </ul>
+            </article>
           </div>
         </section>
       </main>
 
       <footer class="app__footer">
-        <span>BIPA © 2023</span>
+        <span>BIPA © 2024</span>
         <span>Termos · Privacidade</span>
       </footer>
-    </div>
-
-    <div class="modal" id="store-modal" aria-hidden="true" role="dialog">
-      <div class="modal__overlay" data-action="close-modal"></div>
-      <div class="modal__dialog" role="document">
-        <header class="modal__header">
-          <div class="modal__icon">🏬</div>
-          <h2>Criar nova loja</h2>
-          <p>Configure sua primeira loja no BIPA</p>
-        </header>
-
-        <form class="modal__form">
-          <label class="form-field">
-            <span>Nome da loja</span>
-            <input type="text" placeholder="Meu Brechó" />
-          </label>
-
-          <label class="form-field">
-            <span>URL da loja</span>
-            <div class="input-group">
-              <span class="input-group__prefix">bipa.app/loja/</span>
-              <input type="text" placeholder="meu-brecho" />
-            </div>
-          </label>
-        </form>
-
-        <footer class="modal__footer">
-          <button class="btn btn--ghost" data-action="close-modal">Cancelar</button>
-          <button class="btn btn--primary">Criar loja</button>
-        </footer>
-      </div>
     </div>
 
     <script src="script.js"></script>
