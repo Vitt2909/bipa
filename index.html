@@ -102,6 +102,16 @@
                 <p>Clientes, gastos, relatórios e extrato público.</p>
               </div>
             </article>
+
+            <article class="feature-card">
+              <div class="feature-card__icon">
+                <span class="icon icon--shield">&#128274;</span>
+              </div>
+              <div class="feature-card__content">
+                <h3>Self-checkout seguro</h3>
+                <p>Cliente paga no celular; saída liberada só após confirmação PIX.</p>
+              </div>
+            </article>
           </div>
 
           <div class="demo-card">
@@ -174,7 +184,7 @@
                 <span class="toggle__label">Habilitar self-checkout</span>
               </label>
               <div class="self-checkout-flow" id="self-checkout-flow" hidden>
-                <div class="self-checkout-status" id="self-checkout-status">
+                <div class="self-checkout-status" id="self-checkout-status" aria-live="polite">
                   Fluxo aguardando escaneamento.
                 </div>
                 <div class="self-checkout-actions">
@@ -182,10 +192,70 @@
                   <button class="btn btn--ghost" id="checkout-pay" disabled>Simular pagamento PIX</button>
                   <button class="btn btn--primary" id="checkout-validate" disabled>Validar saída</button>
                 </div>
-                <div class="self-checkout-pass" id="checkout-pass" hidden></div>
+                <div class="self-checkout-pass" id="checkout-pass" hidden aria-live="polite"></div>
               </div>
             </article>
           </div>
+
+          <section class="spec-section" aria-label="Detalhes do self-checkout">
+            <header class="spec-section__header">
+              <h3>Self-Checkout (Cliente) — fluxo completo</h3>
+              <span class="chip">Regra de ouro: passe só após pagamento confirmado</span>
+            </header>
+
+            <div class="spec-grid">
+              <article class="spec-card">
+                <h4>Fluxo do cliente</h4>
+                <ol>
+                  <li>Escaneia QR da loja e entra no modo Cliente.</li>
+                  <li>Escaneia a peça, que fica reservada por 10 minutos.</li>
+                  <li>Gera PIX fake e toca em “Simular pagamento”.</li>
+                  <li>Após confirmação, recebe Passe de Saída com TTL de 2 minutos.</li>
+                </ol>
+              </article>
+
+              <article class="spec-card">
+                <h4>Fluxo do lojista</h4>
+                <ol>
+                  <li>Habilita self-checkout nas configurações da organização.</li>
+                  <li>Acompanha reservas, pagamentos e liberações pelo app.</li>
+                  <li>Escaneia o Passe de Saída (modo Exits) para validar 1 vez.</li>
+                  <li>Se PSP falhar, encerra manualmente no PDV tradicional.</li>
+                </ol>
+              </article>
+
+              <article class="spec-card">
+                <h4>Regras anti-fraude</h4>
+                <ul>
+                  <li>Contexto de loja fixado por <code>store_slug</code> + HMAC nos passes.</li>
+                  <li>Webhook do PSP obrigatório para liberar passe.</li>
+                  <li>Reserva e passe expiram automaticamente; registram auditoria.</li>
+                  <li>Cliente só enxerga seus checkouts; lojista vê histórico de 20 passes.</li>
+                </ul>
+              </article>
+
+              <article class="spec-card">
+                <h4>Dados &amp; status</h4>
+                <ul>
+                  <li><code>sales.channel = 'self_checkout'</code> + <code>sales.exited_at</code>.</li>
+                  <li><code>payments.paid_at</code> define a prova de compra.</li>
+                  <li><code>checkout_sessions</code> guarda jornadas ativas (TTL configurável).</li>
+                  <li><code>exit_passes</code> emite token 1-uso com <code>expires_at</code> ≤ 2 minutos.</li>
+                </ul>
+              </article>
+
+              <article class="spec-card">
+                <h4>Endpoints</h4>
+                <ul class="endpoint-list">
+                  <li><code>GET /api/public/loja/{slug}</code> — dados públicos da loja.</li>
+                  <li><code>POST /api/public/checkout/start</code> — cria sessão + reserva.</li>
+                  <li><code>POST /api/public/checkout/pay</code> — abre venda e PIX.</li>
+                  <li><code>POST /api/webhooks/psp</code> — confirma pagamento e gera passe.</li>
+                  <li><code>POST /api/exits/validate</code> — valida Passe e marca `exited_at`.</li>
+                </ul>
+              </article>
+            </div>
+          </section>
         </section>
 
         <section class="panel" id="reports-panel" role="tabpanel" aria-labelledby="tab-reports">
@@ -377,6 +447,17 @@
                 <li>
                   <strong>feat: Validação de Saída (Exits)</strong>
                   <p>Aceite: passe valida 1x; expira ≤2 min.</p>
+                </li>
+                <li>
+                  <strong>db: checkout_sessions + exit_passes</strong>
+                  <p>
+                    Aceite: <code>sales.channel=self_checkout</code>, <code>payments.paid_at</code>,
+                    <code>sales.exited_at</code> populados.
+                  </p>
+                </li>
+                <li>
+                  <strong>sec: Passe com HMAC + webhook PSP</strong>
+                  <p>Aceite: passe só aparece após confirmação server-side; logs de auditoria completos.</p>
                 </li>
               </ul>
             </article>
