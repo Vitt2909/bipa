@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA - PDV mobile para brechós</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="app__header">
+        <h1 class="brand">BIPA</h1>
+        <p class="subtitle">Bipou, vendeu.</p>
+      </header>
+
+      <main class="app__content">
+        <section class="panel panel--intro is-active" id="intro-panel">
+          <h2 class="panel__title">Mini-ERP + PDV móvel para brechós e lojas independentes.</h2>
+          <p class="panel__subtitle">
+            Cadastre peças, gere QR Code, venda em 3 toques e receba via PIX.
+          </p>
+
+          <div class="features">
+            <article class="feature-card">
+              <div class="feature-card__icon">
+                <span class="icon icon--qr">&#9635;</span>
+              </div>
+              <div class="feature-card__content">
+                <h3>QR Code por peça</h3>
+                <p>Catálogo digital e controle de estoque instantâneo.</p>
+              </div>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-card__icon">
+                <span class="icon icon--touch">&#128070;</span>
+              </div>
+              <div class="feature-card__content">
+                <h3>Venda em 3 toques</h3>
+                <p>Abrir → Escanear → Receber. Simples e rápido.</p>
+              </div>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-card__icon">
+                <span class="icon icon--chart">&#128200;</span>
+              </div>
+              <div class="feature-card__content">
+                <h3>Gestão completa</h3>
+                <p>Clientes, gastos, relatórios e extrato público.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="demo-card">
+            <div class="demo-card__header">
+              <span class="status-dot"></span>
+              <span>Acesso Demo</span>
+            </div>
+            <p class="demo-card__description">
+              Bipa do BIM - mais dados fictícios.
+            </p>
+            <button class="demo-card__button" data-action="open-login">
+              Entrar na conta demo
+            </button>
+            <p class="demo-card__footer">
+              Quer ver mais? Entre em contato com a nossa equipe.
+            </p>
+          </div>
+
+          <div class="panel__actions">
+            <button class="btn btn--primary" data-action="go-to-stores">
+              Começar agora
+            </button>
+            <button class="btn btn--ghost" data-action="open-login">
+              Já tenho conta
+            </button>
+          </div>
+        </section>
+
+        <section class="panel panel--stores" id="stores-panel">
+          <div class="card">
+            <div class="card__icon">🏪</div>
+            <h2 class="card__title">Selecione a loja</h2>
+            <p class="card__subtitle">Escolha com qual loja você deseja trabalhar.</p>
+            <div class="card__empty">Você ainda não tem acesso a nenhuma loja</div>
+            <button class="btn btn--primary" data-action="open-modal">
+              Criar primeira loja
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app__footer">
+        <span>BIPA © 2023</span>
+        <span>Termos · Privacidade</span>
+      </footer>
+    </div>
+
+    <div class="modal" id="store-modal" aria-hidden="true" role="dialog">
+      <div class="modal__overlay" data-action="close-modal"></div>
+      <div class="modal__dialog" role="document">
+        <header class="modal__header">
+          <div class="modal__icon">🏬</div>
+          <h2>Criar nova loja</h2>
+          <p>Configure sua primeira loja no BIPA</p>
+        </header>
+
+        <form class="modal__form">
+          <label class="form-field">
+            <span>Nome da loja</span>
+            <input type="text" placeholder="Meu Brechó" />
+          </label>
+
+          <label class="form-field">
+            <span>URL da loja</span>
+            <div class="input-group">
+              <span class="input-group__prefix">bipa.app/loja/</span>
+              <input type="text" placeholder="meu-brecho" />
+            </div>
+          </label>
+        </form>
+
+        <footer class="modal__footer">
+          <button class="btn btn--ghost" data-action="close-modal">Cancelar</button>
+          <button class="btn btn--primary">Criar loja</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
