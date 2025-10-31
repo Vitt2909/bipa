@@ -300,6 +300,107 @@
                 </li>
               </ul>
             </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M2 — PDV (venda em 3 toques)</h3>
+                <span class="chip chip--outline">Próximo</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Scanner (BarcodeDetector + fallback)</strong>
+                  <p>Aceite: escaneia e adiciona item ao carrinho.</p>
+                </li>
+                <li>
+                  <strong>feat: Carrinho + desconto R$/% + cliente rápido</strong>
+                  <p>Aceite: desconto aplica corretamente (ordem R$ → %).</p>
+                </li>
+                <li>
+                  <strong>feat: Pagamento PIX fake + recibo WhatsApp</strong>
+                  <p>Aceite: gera QR/copia-e-cola DEMO; “Marcar pago” muda sale.status=paid.</p>
+                </li>
+                <li>
+                  <strong>feat: Regras de estoque (available→sold)</strong>
+                  <p>Aceite: vender altera status e remove da vitrine.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M3 — Estoque &amp; Etiquetas</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Estoque (lista, filtros, CRUD + foto)</strong>
+                  <p>Aceite: salvar produto com foto e status=available.</p>
+                </li>
+                <li>
+                  <strong>feat: Etiquetas A7 com QR</strong>
+                  <p>Aceite: PDF A4 com 8–12 etiquetas; QR abre /p/{code} DEMO.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M4 — Clientes &amp; Relatórios</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Clientes (cadastro rápido + ficha)</strong>
+                  <p>Aceite: vínculo de vendas aparece na ficha.</p>
+                </li>
+                <li>
+                  <strong>feat: Relatórios (Hoje/Semana/Mês/Custom)</strong>
+                  <p>Aceite: KPIs (líquido, #vendas, ticket, descontos, mix) e TOPs calculam certo.</p>
+                </li>
+                <li>
+                  <strong>feat: Export CSV (client-side)</strong>
+                  <p>Aceite: CSV UTF-8 com filtros aplicados.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M5 — Self-Checkout (DEMO flag)</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Modo Cliente (flag)</strong>
+                  <p>Aceite: cliente escaneia, paga fake, recebe Passe (QR 1-uso/TTL).</p>
+                </li>
+                <li>
+                  <strong>feat: Validação de Saída (Exits)</strong>
+                  <p>Aceite: passe valida 1x; expira ≤2 min.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M6 — Hardening DEMO</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>perf: Lighthouse A11y ≥95 / PWA ok</strong>
+                </li>
+                <li>
+                  <strong>sec: Limites de desconto por papel (local) + PIN gerente</strong>
+                </li>
+                <li>
+                  <strong>chore: Página LGPD/Termos DEMO + Onboarding</strong>
+                </li>
+                <li>
+                  <strong>docs: README (DEMO), Roadmap e como migrar p/ backend</strong>
+                </li>
+              </ul>
+            </article>
           </div>
         </section>
       </main>
