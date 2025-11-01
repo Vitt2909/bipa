@@ -530,6 +530,112 @@ button {
   height: 100%;
 }
 
+.customer-picker {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.customer-picker__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.customer-picker__clear {
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.customer-picker__clear:hover,
+.customer-picker__clear:focus {
+  color: var(--color-primary);
+}
+
+.customer-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.08);
+  min-width: 0;
+}
+
+.customer-pill strong {
+  font-size: 1rem;
+}
+
+.customer-pill span {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.customer-pill[data-has-customer='false'] {
+  background: rgba(17, 24, 39, 0.04);
+  border-color: var(--color-border);
+}
+
+.customer-suggestions {
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.25rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.customer-suggestions[hidden] {
+  display: none;
+}
+
+.customer-suggestions__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.customer-suggestions__item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0.75rem 0.85rem;
+  border-radius: 14px;
+  font-size: 0.95rem;
+}
+
+.customer-suggestions__item:hover,
+.customer-suggestions__item:focus {
+  background: rgba(37, 99, 235, 0.1);
+  outline: none;
+}
+
+.customer-suggestions__item span {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.customer-suggestions__empty {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
 .pdv-cart {
   display: grid;
   gap: 0.75rem;
@@ -817,6 +923,13 @@ button {
   margin: 0;
   color: var(--color-muted);
   font-size: 0.9rem;
+}
+
+.panel__note {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-muted);
 }
 
 .table {

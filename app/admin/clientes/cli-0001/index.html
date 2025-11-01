@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body data-page="admin-customer-profile">
+  <body data-page="admin-customer-profile" data-customer="cli-0001">
     <header class="app-topbar">
       <div class="app-topbar__brand">
         <span class="brand-mark" aria-hidden="true">B</span>
@@ -39,14 +39,14 @@
         </nav>
       </aside>
 
-      <main class="app-admin__content" aria-labelledby="customer-title">
+      <main class="app-admin__content" aria-labelledby="customer-name">
         <header class="page-header">
           <div>
-            <h1 class="page-title" id="customer-title">Bianca Souza</h1>
-            <p class="page-subtitle">Cliente VIP desde 2022.</p>
+            <h1 class="page-title" id="customer-name">Bianca Souza</h1>
+            <p class="page-subtitle" id="customer-subtitle">Cliente VIP desde 2022.</p>
           </div>
           <div class="page-actions">
-            <button class="btn btn--surface" type="button">Enviar mensagem</button>
+            <a class="btn btn--surface" id="customer-message" href="#">Enviar mensagem</a>
             <button class="btn btn--ghost" type="button">Editar cadastro</button>
           </div>
         </header>
@@ -58,25 +58,35 @@
           <dl class="key-value">
             <div>
               <dt>Telefone</dt>
-              <dd>(11) 99888-1122</dd>
+              <dd id="customer-phone">—</dd>
             </div>
             <div>
               <dt>Email</dt>
-              <dd>bianca.souza@cliente.demo</dd>
+              <dd id="customer-email">—</dd>
             </div>
             <div>
               <dt>Tag</dt>
-              <dd><span class="chip chip--available">VIP</span></dd>
+              <dd><span class="chip" id="customer-tag">—</span></dd>
             </div>
             <div>
               <dt>Última compra</dt>
-              <dd>06/09/2024</dd>
+              <dd id="customer-last-purchase">—</dd>
             </div>
             <div>
               <dt>Total gasto</dt>
-              <dd>R$ 8.734,20</dd>
+              <dd id="customer-total">R$ 0,00</dd>
             </div>
           </dl>
+        </section>
+
+        <section class="panel" aria-labelledby="customer-notes-title">
+          <header class="panel__header">
+            <h2 class="panel__title" id="customer-notes-title">Observações</h2>
+            <p class="panel__subtitle">Informações para personalizar o atendimento.</p>
+          </header>
+          <p class="panel__note" id="customer-notes">
+            Cliente assídua, gosta de novidades premium e combos com acessórios.
+          </p>
         </section>
 
         <section class="panel" aria-labelledby="customer-history-title">
@@ -93,26 +103,7 @@
                 <th scope="col">Valor</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>06/09/2024</td>
-                <td><a class="link" href="/app/pdv/recibo/0001/">#0001</a></td>
-                <td>2</td>
-                <td>R$ 299,80</td>
-              </tr>
-              <tr>
-                <td>24/08/2024</td>
-                <td>#0987</td>
-                <td>3</td>
-                <td>R$ 512,40</td>
-              </tr>
-              <tr>
-                <td>15/08/2024</td>
-                <td>#0970</td>
-                <td>1</td>
-                <td>R$ 189,90</td>
-              </tr>
-            </tbody>
+            <tbody id="customer-history-body"></tbody>
           </table>
         </section>
       </main>

@@ -46,7 +46,7 @@
             <p class="page-subtitle">Base fictícia para explorar segmentação.</p>
           </div>
           <div class="page-actions">
-            <button class="btn btn--primary" type="button">Adicionar novo cliente</button>
+            <a class="btn btn--primary" href="/app/admin/clientes/novo/">Adicionar novo cliente</a>
           </div>
         </header>
 
@@ -59,32 +59,7 @@
               <th scope="col">Última compra</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>
-                <a class="link" href="/app/admin/clientes/cli-0001/">Bianca Souza</a>
-              </td>
-              <td>(11) 99888-1122</td>
-              <td><span class="chip chip--available">VIP</span></td>
-              <td>06/09/2024</td>
-            </tr>
-            <tr>
-              <td>
-                <a class="link" href="/app/admin/clientes/cli-0002/">Carlos Lima</a>
-              </td>
-              <td>(11) 99321-3344</td>
-              <td><span class="chip">Consignado</span></td>
-              <td>04/09/2024</td>
-            </tr>
-            <tr>
-              <td>
-                <a class="link" href="/app/admin/clientes/cli-0003/">Fernanda Prado</a>
-              </td>
-              <td>(11) 99777-5566</td>
-              <td><span class="chip chip--reserved">Fiado</span></td>
-              <td>29/08/2024</td>
-            </tr>
-          </tbody>
+          <tbody id="customer-table-body"></tbody>
         </table>
       </main>
     </div>

@@ -1,6 +1,70 @@
 const formatCurrency = (value) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value) || 0);
 
+const formatDate = (isoDate) =>
+  new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(
+    new Date(isoDate)
+  );
+
+const demoCustomers = [
+  {
+    id: 'cli-0001',
+    name: 'Bianca Souza',
+    whatsapp: '5511998881122',
+    phoneLabel: '(11) 99888-1122',
+    email: 'bianca.souza@cliente.demo',
+    tag: 'VIP',
+    tagClass: 'chip--available',
+    lastPurchase: '2024-09-06',
+    totalSpent: 8734.2,
+    subtitle: 'Cliente VIP desde 2022',
+    notes: 'Cliente assídua, gosta de novidades premium e combos com acessórios.',
+    history: [
+      { id: '0001', date: '2024-09-06', items: 2, total: 299.8, url: '/app/pdv/recibo/0001/' },
+      { id: '0987', date: '2024-08-24', items: 3, total: 512.4 },
+      { id: '0970', date: '2024-08-15', items: 1, total: 189.9 },
+    ],
+  },
+  {
+    id: 'cli-0002',
+    name: 'Carlos Lima',
+    whatsapp: '5511993213344',
+    phoneLabel: '(11) 99321-3344',
+    email: 'carlos.lima@cliente.demo',
+    tag: 'Consignado',
+    tagClass: '',
+    lastPurchase: '2024-09-04',
+    totalSpent: 4210.5,
+    subtitle: 'Fornecedor em consignação',
+    notes: 'Fornece peças consignadas mensalmente. Atualizar comissão a cada coleção.',
+    history: [
+      { id: '0004', date: '2024-09-04', items: 1, total: 189.9 },
+      { id: '0950', date: '2024-08-10', items: 2, total: 340.0 },
+      { id: '0922', date: '2024-07-28', items: 1, total: 159.9 },
+    ],
+  },
+  {
+    id: 'cli-0003',
+    name: 'Fernanda Prado',
+    whatsapp: '5511997775566',
+    phoneLabel: '(11) 99777-5566',
+    email: 'fernanda.prado@cliente.demo',
+    tag: 'Fiado',
+    tagClass: 'chip--reserved',
+    lastPurchase: '2024-08-29',
+    totalSpent: 2980.75,
+    subtitle: 'Cliente com limite de fiado',
+    notes: 'Prefere fechar via fiado. Lembrar de oferecer novidades em alfaiataria.',
+    history: [
+      { id: '0007', date: '2024-08-29', items: 1, total: 219.9, status: 'pending' },
+      { id: '0910', date: '2024-08-12', items: 2, total: 398.0 },
+      { id: '0881', date: '2024-07-30', items: 1, total: 189.9 },
+    ],
+  },
+];
+
+const demoCustomersMap = Object.fromEntries(demoCustomers.map((customer) => [customer.id, customer]));
+
 const demoProducts = [
   {
     code: 'BR-0001',
@@ -71,6 +135,101 @@ const demoStorefronts = {
 
 const body = document.body;
 const page = body.dataset.page;
+
+const formatCustomerOption = (customer) => `${customer.name} · ${customer.phoneLabel}`;
+
+// --------- Admin > Customers list ---------
+if (page === 'admin-customers') {
+  const tableBody = document.getElementById('customer-table-body');
+
+  if (tableBody) {
+    tableBody.innerHTML = '';
+
+    demoCustomers.forEach((customer) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>
+          <a class="link" href="/app/admin/clientes/${customer.id}/">${customer.name}</a>
+        </td>
+        <td>${customer.phoneLabel}</td>
+        <td>${
+          customer.tag
+            ? `<span class="chip ${customer.tagClass || ''}">${customer.tag}</span>`
+            : '<span class="chip">Sem tag</span>'
+        }</td>
+        <td>${formatDate(customer.lastPurchase)}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+}
+
+// --------- Admin > Customer profile ---------
+if (page === 'admin-customer-profile') {
+  const customerId = body.dataset.customer;
+  const customer = demoCustomersMap[customerId];
+
+  if (customer) {
+    const nameElement = document.getElementById('customer-name');
+    const subtitleElement = document.getElementById('customer-subtitle');
+    const phoneElement = document.getElementById('customer-phone');
+    const emailElement = document.getElementById('customer-email');
+    const tagElement = document.getElementById('customer-tag');
+    const lastPurchaseElement = document.getElementById('customer-last-purchase');
+    const totalElement = document.getElementById('customer-total');
+    const notesElement = document.getElementById('customer-notes');
+    const historyBody = document.getElementById('customer-history-body');
+    const messageButton = document.getElementById('customer-message');
+
+    if (nameElement) nameElement.textContent = customer.name;
+    if (subtitleElement) {
+      const subtitlePrefix = customer.subtitle || 'Cliente BIPA';
+      subtitleElement.textContent = `${subtitlePrefix} · Última compra em ${formatDate(
+        customer.lastPurchase
+      )}`;
+    }
+    if (phoneElement) phoneElement.textContent = customer.phoneLabel;
+    if (emailElement) emailElement.textContent = customer.email || '—';
+    if (tagElement) {
+      tagElement.textContent = customer.tag || 'Sem tag';
+      tagElement.className = `chip ${customer.tagClass || ''}`.trim();
+    }
+    if (lastPurchaseElement) lastPurchaseElement.textContent = formatDate(customer.lastPurchase);
+    if (totalElement) totalElement.textContent = formatCurrency(customer.totalSpent);
+    if (notesElement) notesElement.textContent = customer.notes || 'Sem observações cadastradas.';
+    if (messageButton) {
+      const url = `https://wa.me/${customer.whatsapp}?text=${encodeURIComponent(
+        `Olá ${customer.name}! Aqui é do BIPA, tudo bem?`
+      )}`;
+      messageButton.setAttribute('href', url);
+    }
+
+    if (historyBody) {
+      historyBody.innerHTML = '';
+      customer.history.forEach((entry) => {
+        const row = document.createElement('tr');
+        const saleLabel = `#${entry.id}`;
+        const saleCell = entry.url
+          ? `<a class="link" href="${entry.url}">${saleLabel}</a>`
+          : saleLabel;
+        const statusChip =
+          entry.status === 'pending'
+            ? '<span class="chip chip--reserved">Pendente</span>'
+            : '';
+        row.innerHTML = `
+          <td>${formatDate(entry.date)}</td>
+          <td>${saleCell}</td>
+          <td>${entry.items}</td>
+          <td>
+            ${formatCurrency(entry.total)}
+            ${statusChip}
+          </td>
+        `;
+        historyBody.appendChild(row);
+      });
+    }
+  }
+}
 
 // --------- Storefront ---------
 if (page === 'storefront') {
@@ -157,9 +316,137 @@ if (page === 'pdv') {
   const modalClose = document.getElementById('pdv-modal-close');
   const modalConfirm = document.getElementById('pdv-modal-confirm');
   const clientInput = document.getElementById('pdv-client');
+  const clientDatalist = document.getElementById('pdv-client-list');
+  const clientResultsElement = document.getElementById('pdv-client-results');
+  const clientSelectedElement = document.getElementById('pdv-client-selected');
+  const clientClearButton = document.getElementById('pdv-client-clear');
+  const customerPickerElement = document.querySelector('.customer-picker');
 
   const cart = new Map();
   let selectedPayment = 'PIX';
+  let selectedCustomer = null;
+
+  const populateClientOptions = () => {
+    if (!clientDatalist) return;
+    clientDatalist.innerHTML = '<option value="Cliente Avulso"></option>';
+    demoCustomers.forEach((customer) => {
+      const option = document.createElement('option');
+      option.value = formatCustomerOption(customer);
+      clientDatalist.appendChild(option);
+    });
+  };
+
+  const renderSelectedCustomer = () => {
+    if (!clientSelectedElement) return;
+    if (selectedCustomer) {
+      clientSelectedElement.innerHTML = `
+        <strong>${selectedCustomer.name}</strong>
+        <span>${selectedCustomer.phoneLabel}</span>
+      `;
+      clientSelectedElement.dataset.hasCustomer = 'true';
+    } else {
+      clientSelectedElement.innerHTML = `
+        <strong>Cliente avulso</strong>
+        <span>Venda não vinculada ao CRM.</span>
+      `;
+      clientSelectedElement.dataset.hasCustomer = 'false';
+    }
+  };
+
+  const clearClientSuggestions = () => {
+    if (!clientResultsElement) return;
+    clientResultsElement.innerHTML = '';
+    clientResultsElement.hidden = true;
+    if (clientInput) clientInput.setAttribute('aria-expanded', 'false');
+  };
+
+  const renderClientSuggestions = (query = '') => {
+    if (!clientResultsElement) return;
+    const normalized = query.trim().toLowerCase();
+
+    if (!normalized) {
+      clearClientSuggestions();
+      return;
+    }
+
+    const digits = normalized.replace(/\D/g, '');
+    const matches = demoCustomers.filter((customer) => {
+      const phoneDigits = customer.phoneLabel.replace(/\D/g, '');
+      return (
+        customer.name.toLowerCase().includes(normalized) ||
+        phoneDigits.includes(digits) ||
+        customer.whatsapp.includes(digits)
+      );
+    });
+
+    clientResultsElement.innerHTML = '';
+
+    if (matches.length === 0) {
+      const emptyState = document.createElement('p');
+      emptyState.className = 'customer-suggestions__empty';
+      emptyState.textContent = 'Nenhum cliente encontrado. Cadastre no módulo de gestão.';
+      clientResultsElement.appendChild(emptyState);
+      clientResultsElement.hidden = false;
+      return;
+    }
+
+    const list = document.createElement('ul');
+    list.className = 'customer-suggestions__list';
+
+    matches.forEach((customer) => {
+      const item = document.createElement('li');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'customer-suggestions__item';
+      button.setAttribute('role', 'option');
+      button.setAttribute('aria-label', `${customer.name} — ${customer.phoneLabel}`);
+      button.innerHTML = `
+        <strong>${customer.name}</strong>
+        <span>${customer.phoneLabel}</span>
+      `;
+      button.addEventListener('click', () => selectCustomer(customer));
+      item.appendChild(button);
+      list.appendChild(item);
+    });
+
+    clientResultsElement.appendChild(list);
+    clientResultsElement.hidden = false;
+    if (clientInput) clientInput.setAttribute('aria-expanded', 'true');
+  };
+
+  const selectCustomer = (customer) => {
+    selectedCustomer = customer;
+    if (clientInput) clientInput.value = formatCustomerOption(customer);
+    renderSelectedCustomer();
+    clearClientSuggestions();
+    setPayment(selectedPayment);
+  };
+
+  const clearCustomerSelection = (focusInput = false) => {
+    selectedCustomer = null;
+    if (clientInput) clientInput.value = '';
+    renderSelectedCustomer();
+    clearClientSuggestions();
+    setPayment(selectedPayment);
+    if (focusInput && clientInput) clientInput.focus();
+  };
+
+  const handleCustomerInput = (value) => {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.toLowerCase() === 'cliente avulso') {
+      clearCustomerSelection();
+      return;
+    }
+
+    const match = demoCustomers.find((customer) => formatCustomerOption(customer) === trimmed);
+
+    if (match) {
+      selectCustomer(match);
+      return;
+    }
+
+    renderClientSuggestions(trimmed);
+  };
 
   const renderProducts = (query = '') => {
     if (!productListElement) return;
@@ -263,7 +550,12 @@ if (page === 'pdv') {
         PIX: ['Chave da loja: pix@bipa.demo', 'Confirme a transferência antes de concluir.'],
         Dinheiro: ['Prepare o troco necessário.', 'Registre o valor recebido para fechar o caixa.'],
         Cartão: ['Use o POS integrado ao BIPA.', 'Confirme a aprovação da operadora.'],
-        Fiado: ['Associe ao cliente responsável pelo pagamento.', 'A venda entra no relatório de fiado.'],
+        Fiado: [
+          selectedCustomer
+            ? `Venda vinculada a ${selectedCustomer.name}. Acompanhe em Clientes > Fiado.`
+            : 'Selecione um cliente para controlar o fiado.',
+          'A venda entra no relatório de fiado.',
+        ],
       };
       const lines = messages[method] || [];
       paymentDetailsElement.innerHTML = `
@@ -288,6 +580,10 @@ if (page === 'pdv') {
     const totalDiscount = Math.min(subtotal, discountValue + percentValue);
     const total = Math.max(subtotal - totalDiscount, 0);
 
+    const customerSummary = selectedCustomer
+      ? `${selectedCustomer.name} (${selectedCustomer.phoneLabel})`
+      : 'Cliente Avulso';
+
     modalBody.innerHTML = `
       <div>
         <h3>Resumo da venda</h3>
@@ -302,7 +598,12 @@ if (page === 'pdv') {
       <div>
         <h3>Pagamentos</h3>
         <p>Forma: <strong>${selectedPayment}</strong></p>
-        <p>Cliente: <strong>${clientInput?.value || 'Cliente Avulso'}</strong></p>
+        <p>Cliente: <strong>${customerSummary}</strong></p>
+        ${
+          selectedCustomer
+            ? `<p>ID do cliente: <code>${selectedCustomer.id}</code></p>`
+            : '<p>Esta venda ficará registrada como avulsa.</p>'
+        }
         <p>Desconto aplicado: ${formatCurrency(totalDiscount)}</p>
         <p>Total final: <strong>${formatCurrency(total)}</strong></p>
       </div>
@@ -321,13 +622,62 @@ if (page === 'pdv') {
   const confirmSale = () => {
     closeModal();
     alert('Venda registrada com sucesso na conta demo!');
+    if (selectedCustomer) {
+      console.table({
+        'Customer ID': selectedCustomer.id,
+        Nome: selectedCustomer.name,
+        WhatsApp: selectedCustomer.phoneLabel,
+      });
+    }
     cart.clear();
     renderCart();
+    clearCustomerSelection();
   };
 
   if (searchInput) {
     searchInput.addEventListener('input', (event) => renderProducts(event.target.value));
   }
+
+  if (clientInput) {
+    clientInput.setAttribute('aria-controls', 'pdv-client-results');
+    clientInput.setAttribute('aria-haspopup', 'listbox');
+    clientInput.setAttribute('aria-expanded', 'false');
+    clientInput.addEventListener('input', (event) => handleCustomerInput(event.target.value));
+    clientInput.addEventListener('focus', (event) => {
+      if (event.target.value.trim()) {
+        renderClientSuggestions(event.target.value);
+      }
+    });
+    clientInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        const trimmed = clientInput.value.trim();
+        const match = demoCustomers.find((customer) => formatCustomerOption(customer) === trimmed);
+        if (match) {
+          event.preventDefault();
+          selectCustomer(match);
+        }
+      }
+      if (event.key === 'Escape') {
+        clearClientSuggestions();
+      }
+    });
+  }
+
+  if (clientClearButton) {
+    clientClearButton.addEventListener('click', () => clearCustomerSelection(true));
+  }
+
+  if (customerPickerElement) {
+    document.addEventListener('click', (event) => {
+      if (!customerPickerElement.contains(event.target)) {
+        clearClientSuggestions();
+      }
+    });
+  }
+
+  populateClientOptions();
+  renderSelectedCustomer();
+  setPayment(selectedPayment);
 
   if (discountValueInput) discountValueInput.addEventListener('input', updateTotals);
   if (discountPercentInput) discountPercentInput.addEventListener('input', updateTotals);

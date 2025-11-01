@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Novo Cliente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin-customer-create">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Gestão</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Mudar para PDV</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <div class="app-admin">
+      <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
+        <div class="sidebar__logo">BIPA</div>
+        <nav class="sidebar__nav">
+          <a class="sidebar__link" href="/app/admin/dashboard/">Dashboard</a>
+          <a class="sidebar__link" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link is-active" href="/app/admin/clientes/">Clientes</a>
+          <a class="sidebar__link" href="/app/admin/vendas/">Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="app-admin__content" aria-labelledby="customer-form-title">
+        <header class="page-header">
+          <div>
+            <h1 class="page-title" id="customer-form-title">Cadastrar cliente</h1>
+            <p class="page-subtitle">Centralize contatos e histórico para personalizar o atendimento.</p>
+          </div>
+        </header>
+
+        <form class="form-grid" aria-describedby="customer-form-help">
+          <fieldset class="form-section">
+            <legend>Informações básicas</legend>
+            <label class="form-field">
+              <span class="form-label">Nome completo</span>
+              <input type="text" placeholder="Maria Silva" required />
+            </label>
+            <label class="form-field">
+              <span class="form-label">WhatsApp</span>
+              <input type="tel" placeholder="(11) 99999-0000" inputmode="tel" required />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Email</span>
+              <input type="email" placeholder="contato@cliente.com" />
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Segmentação</legend>
+            <label class="form-field">
+              <span class="form-label">Tag principal</span>
+              <select>
+                <option value="">Selecione uma tag</option>
+                <option>VIP</option>
+                <option>Consignado</option>
+                <option>Fiado</option>
+                <option>Novidades</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span class="form-label">Preferências</span>
+              <input type="text" placeholder="Vestidos, alfaiataria, tamanho M" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Aniversário</span>
+              <input type="date" />
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Endereço (opcional)</legend>
+            <label class="form-field">
+              <span class="form-label">Cidade</span>
+              <input type="text" placeholder="São Paulo" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Estado</span>
+              <input type="text" placeholder="SP" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Referência</span>
+              <input type="text" placeholder="Entrega perto do metrô" />
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section form-section--full">
+            <legend>Observações internas</legend>
+            <label class="form-field">
+              <span class="sr-only">Observações</span>
+              <textarea rows="4" placeholder="Preferências de atendimento, combinações favoritas, histórico de fiado..."></textarea>
+            </label>
+          </fieldset>
+
+          <div class="form-actions">
+            <a class="btn btn--ghost" href="/app/admin/clientes/">Cancelar</a>
+            <button class="btn btn--primary" type="submit">Salvar cliente</button>
+          </div>
+        </form>
+        <p class="form-footer" id="customer-form-help">
+          Ambiente de demonstração: os dados preenchidos não são persistidos em um backend real.
+        </p>
+      </main>
+    </div>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>
