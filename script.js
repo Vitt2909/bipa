@@ -6,6 +6,19 @@ const panels = {
   github: document.getElementById('github-panel'),
 };
 
+const currencyFormatterGlobal = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+});
+
+function formatCurrencyGlobal(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return currencyFormatterGlobal.format(0);
+  return currencyFormatterGlobal.format(number);
+}
+
+let demoReportsData = null;
+
 function setActiveTab(tabName) {
   tabs.forEach((tab) => {
     const isActive = tab.dataset.tab === tabName;
@@ -457,7 +470,7 @@ if (reportsRoleSelect) {
     other: '#475569',
   };
 
-  const demoReportsData = generateDemoReportsData();
+  demoReportsData = generateDemoReportsData();
 
   const productMap = new Map(demoReportsData.products.map((product) => [product.id, product]));
   const userMap = new Map(demoReportsData.users.map((user) => [user.id, user]));
@@ -1951,10 +1964,1041 @@ if (reportsRoleSelect) {
   }
 }
 
-// --------- Login demo ---------
-window.addEventListener('click', (event) => {
-  const action = event.target.closest('[data-action]')?.dataset.action;
-  if (action === 'open-login') {
-    window.alert('Fluxo de login não implementado nesta demonstração.');
+// --------- Workspace demo ---------
+const workspaceElements = {
+  root: document.getElementById('demo-workspace'),
+  shell: document.querySelector('#demo-workspace .workspace__shell'),
+  navButtons: Array.from(document.querySelectorAll('.workspace__nav-btn')),
+  views: Array.from(document.querySelectorAll('.workspace-view')),
+  productList: document.getElementById('pdv-product-list'),
+  cart: document.getElementById('pdv-cart'),
+  ticketLabel: document.getElementById('pdv-ticket'),
+  itemCount: document.getElementById('pdv-item-count'),
+  total: document.getElementById('pdv-total'),
+  log: document.getElementById('pdv-log'),
+  inventoryCategory: document.getElementById('inventory-category'),
+  inventoryStatus: document.getElementById('inventory-status'),
+  inventoryList: document.getElementById('inventory-list'),
+  inventoryActions: document.getElementById('inventory-actions'),
+  customerSearch: document.getElementById('customers-search'),
+  customerList: document.getElementById('customers-list'),
+  customerDetails: document.getElementById('customer-details'),
+  selfSession: document.getElementById('self-session'),
+  selfLog: document.getElementById('self-log'),
+  selfScanButton: document.querySelector('[data-action="self-scan"]'),
+  selfValidateButton: document.querySelector('[data-action="self-validate"]'),
+  selfExpireButton: document.querySelector('[data-action="self-expire"]'),
+  kpis: document.getElementById('workspace-kpis'),
+  highlights: document.getElementById('workspace-highlights'),
+};
+
+const contactElements = {
+  root: document.getElementById('contact-modal'),
+  form: document.getElementById('contact-form'),
+  feedback: document.getElementById('contact-feedback'),
+};
+
+const scannerElements = {
+  root: document.getElementById('scanner-modal'),
+  video: document.getElementById('scanner-video'),
+  status: document.getElementById('scanner-status'),
+  fallback: document.getElementById('scanner-fallback'),
+  confirmButton: document.querySelector('[data-action="scanner-confirm"]'),
+};
+
+const workspaceState = {
+  initialized: false,
+  view: 'pdv',
+  products: [],
+  inventory: [],
+  customers: [],
+  cart: [],
+  discountRate: 0,
+  pdvLog: [],
+  inventorySelection: null,
+  customerSelection: null,
+  metrics: null,
+  self: {
+    stage: 'idle',
+    product: null,
+    passCode: null,
+    expiresAt: null,
+    timerId: null,
+    log: [],
+  },
+  scanner: {
+    mode: null,
+    stream: null,
+    timeoutId: null,
+    product: null,
+  },
+};
+
+if (workspaceElements.root) {
+  workspaceElements.shell?.setAttribute('tabindex', '-1');
+  workspaceElements.navButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!button.dataset.view) return;
+      setWorkspaceView(button.dataset.view);
+    });
+  });
+  workspaceElements.inventoryCategory?.addEventListener('change', () => renderInventoryList());
+  workspaceElements.inventoryStatus?.addEventListener('change', () => renderInventoryList());
+  workspaceElements.customerSearch?.addEventListener('input', (event) => {
+    renderCustomersList(event.target.value || '');
+  });
+
+  document.addEventListener('click', handleActionClick);
+  document.addEventListener('submit', handleSubmit);
+}
+
+if (contactElements.root) {
+  contactElements.root.querySelector('.modal__dialog')?.setAttribute('tabindex', '-1');
+}
+
+if (scannerElements.root) {
+  scannerElements.root.querySelector('.scanner__dialog')?.setAttribute('tabindex', '-1');
+}
+
+function handleActionClick(event) {
+  const actionTarget = event.target.closest('[data-action]');
+  if (!actionTarget) return;
+  const action = actionTarget.dataset.action;
+
+  switch (action) {
+    case 'open-login':
+      event.preventDefault();
+      openWorkspace();
+      break;
+    case 'close-workspace':
+      closeWorkspace();
+      break;
+    case 'contact-sales':
+      event.preventDefault();
+      openContactModal();
+      break;
+    case 'close-contact':
+      closeContactModal();
+      break;
+    case 'pdv-scan':
+      openScanner('pdv');
+      break;
+    case 'pdv-discount':
+      applyPdvDiscount();
+      break;
+    case 'pdv-checkout':
+      completePdvCheckout();
+      break;
+    case 'pdv-add':
+      if (actionTarget.dataset.productId) addProductToCart(actionTarget.dataset.productId);
+      break;
+    case 'pdv-remove':
+      if (actionTarget.dataset.productId) removeProductFromCart(actionTarget.dataset.productId);
+      break;
+    case 'inventory-select':
+      if (actionTarget.dataset.productId) selectInventoryItem(actionTarget.dataset.productId);
+      break;
+    case 'inventory-reserve':
+      updateInventoryStatus('reserved');
+      break;
+    case 'inventory-release':
+      updateInventoryStatus('available');
+      break;
+    case 'inventory-sell':
+      updateInventoryStatus('sold');
+      break;
+    case 'inventory-restock':
+      updateInventoryStatus('available');
+      break;
+    case 'inventory-highlight':
+      highlightInventoryItem();
+      break;
+    case 'customer-select':
+      if (actionTarget.dataset.customerId) selectCustomer(actionTarget.dataset.customerId);
+      break;
+    case 'customer-receipt':
+      sendCustomerReceipt();
+      break;
+    case 'customer-hold':
+      holdCustomerItem();
+      break;
+    case 'self-scan':
+      openScanner('self');
+      break;
+    case 'self-pay':
+      confirmSelfPayment();
+      break;
+    case 'self-validate':
+      validateSelfPass();
+      break;
+    case 'self-expire':
+      expireSelfPass(true);
+      break;
+    case 'scanner-close':
+      closeScanner();
+      break;
+    case 'scanner-trigger':
+      simulateScannerDetection(true);
+      break;
+    case 'scanner-confirm':
+      confirmScannerSelection();
+      break;
+    default:
+      break;
   }
-});
+}
+
+function handleSubmit(event) {
+  if (event.target === contactElements.form) {
+    event.preventDefault();
+    handleContactSubmit();
+  }
+}
+
+function openWorkspace() {
+  if (!workspaceElements.root) return;
+  ensureWorkspaceInitialized();
+  workspaceElements.root.setAttribute('aria-hidden', 'false');
+  workspaceElements.root.classList.add('is-visible');
+  document.body.classList.add('is-workspace-open');
+  setWorkspaceView(workspaceState.view || 'pdv');
+  window.setTimeout(() => workspaceElements.shell?.focus(), 0);
+}
+
+function closeWorkspace() {
+  if (!workspaceElements.root) return;
+  workspaceElements.root.setAttribute('aria-hidden', 'true');
+  workspaceElements.root.classList.remove('is-visible');
+  document.body.classList.remove('is-workspace-open');
+  closeScanner();
+}
+
+function ensureWorkspaceInitialized() {
+  ensureDemoDataset();
+  if (workspaceState.initialized) return;
+  initializeWorkspace();
+}
+
+function ensureDemoDataset() {
+  if (demoReportsData) return;
+  demoReportsData = {
+    products: [
+      { id: 'demo-prod-1', code: 'DEM-001', name: 'Vestido Demo Preto', category: 'Vestidos', size: 'M', color: 'Preto', price: 219, costPrice: 95 },
+      { id: 'demo-prod-2', code: 'DEM-002', name: 'Blusa Demo Verde', category: 'Blusas', size: 'P', color: 'Verde', price: 149, costPrice: 55 },
+      { id: 'demo-prod-3', code: 'DEM-003', name: 'Calça Demo Jeans', category: 'Calças', size: '38', color: 'Azul', price: 189, costPrice: 70 },
+      { id: 'demo-prod-4', code: 'DEM-004', name: 'Saia Demo Midi', category: 'Saias', size: 'M', color: 'Marinho', price: 169, costPrice: 60 },
+      { id: 'demo-prod-5', code: 'DEM-005', name: 'Casaco Demo Lã', category: 'Casacos', size: 'G', color: 'Cinza', price: 259, costPrice: 110 },
+    ],
+    users: [
+      { id: 'demo-user-1', name: 'Ana (Owner)' },
+      { id: 'demo-user-2', name: 'Bea (Clerk)' },
+    ],
+    customers: [
+      { id: 'demo-cust-1', name: 'Juliana Demo', phone: '(11) 98888-0001', tag: 'VIP' },
+      { id: 'demo-cust-2', name: 'Carlos Demo', phone: '(11) 97777-0002', tag: 'Fidelidade' },
+    ],
+    sales: [],
+    saleItems: [],
+    payments: [],
+  };
+}
+
+function initializeWorkspace() {
+  const baseProducts = (demoReportsData?.products || []).slice(0, 12);
+  const statusCycle = ['available', 'available', 'reserved', 'available', 'sold'];
+
+  workspaceState.products = (baseProducts.length > 0 ? baseProducts : demoReportsData.products || []).map((product, index) => ({
+    id: product.id,
+    code: product.code,
+    name: product.name,
+    price: product.price ?? 199,
+    category: product.category || 'Acervo',
+    size: product.size || 'U',
+    color: product.color || 'Sortido',
+  }));
+
+  if (workspaceState.products.length === 0) {
+    workspaceState.products = [
+      { id: 'fallback-prod', code: 'FAL-001', name: 'Peça Demo', price: 199, category: 'Acervo', size: 'U', color: 'Sortido' },
+    ];
+  }
+
+  workspaceState.inventory = workspaceState.products.map((product, index) => ({
+    ...product,
+    status: statusCycle[index % statusCycle.length],
+    quantity: index % 3 === 0 ? 2 : 1,
+  }));
+
+  const paidSales = (demoReportsData.sales || []).filter((sale) => sale.status === 'paid');
+  const totalRevenue = paidSales.reduce((sum, sale) => sum + sale.total, 0);
+  const salesCount = paidSales.length || 1;
+  const averageTicket = salesCount ? totalRevenue / salesCount : 0;
+  const pixPaid = (demoReportsData.payments || []).filter((payment) => payment.method === 'pix' && payment.status === 'paid');
+  const pixPending = (demoReportsData.payments || []).filter(
+    (payment) => payment.method === 'pix' && payment.status !== 'paid',
+  );
+
+  const productTotals = new Map();
+  (demoReportsData.saleItems || []).forEach((item) => {
+    const quantity = Math.abs(item.quantity ?? 1);
+    const product = workspaceState.products.find((entry) => entry.id === item.productId);
+    if (!product) return;
+    const current = productTotals.get(product.id) || { name: product.name, qty: 0 };
+    current.qty += quantity;
+    productTotals.set(product.id, current);
+  });
+
+  const sellerTotals = new Map();
+  (demoReportsData.sales || []).forEach((sale) => {
+    if (sale.status !== 'paid') return;
+    const seller = (demoReportsData.users || []).find((user) => user.id === sale.createdBy);
+    const name = seller ? seller.name : 'Equipe DEMO';
+    const key = sale.createdBy || 'demo';
+    const current = sellerTotals.get(key) || { name, total: 0 };
+    current.total += sale.total;
+    sellerTotals.set(key, current);
+  });
+
+  const customerTotals = new Map();
+  paidSales.forEach((sale) => {
+    const key = sale.customerId || 'walkin';
+    const customer = (demoReportsData.customers || []).find((entry) => entry.id === sale.customerId);
+    const name = customer ? customer.name : 'Cliente walk-in';
+    const current = customerTotals.get(key) || { name, total: 0, count: 0 };
+    current.total += sale.total;
+    current.count += 1;
+    customerTotals.set(key, current);
+  });
+
+  workspaceState.customers = (demoReportsData.customers || []).slice(0, 12).map((customer) => {
+    const stats = customerTotals.get(customer.id) || { total: 0, count: 0 };
+    return {
+      id: customer.id,
+      name: customer.name,
+      phone: customer.phone || customer.whatsapp || '(00) 00000-0000',
+      tag: customer.tag || 'VIP',
+      total: stats.total,
+      orders: stats.count,
+    };
+  });
+
+  if (workspaceState.customers.length === 0) {
+    workspaceState.customers = [
+      { id: 'demo-cust-fallback', name: 'Cliente Demo', phone: '(11) 90000-0000', tag: 'VIP', total: 0, orders: 0 },
+    ];
+  }
+
+  workspaceState.metrics = {
+    totalRevenue,
+    salesCount,
+    averageTicket,
+    pixPaid: pixPaid.length,
+    pixPending: pixPending.length,
+    availableCount: workspaceState.inventory.filter((item) => item.status === 'available').length,
+    productTotals,
+    sellerTotals,
+    customerTotals,
+  };
+
+  workspaceState.cart = [];
+  workspaceState.discountRate = 0;
+  workspaceState.pdvLog = [];
+  workspaceState.inventorySelection = null;
+  workspaceState.customerSelection = null;
+  workspaceState.initialized = true;
+
+  renderProductList();
+  renderCart();
+  renderInventoryFilters();
+  renderInventoryList();
+  renderInventoryActions();
+  renderCustomersList('');
+  renderCustomerDetails(null);
+  resetSelfSession();
+  renderWorkspaceKpis();
+  renderWorkspaceHighlights();
+  updateTicketLabel();
+}
+
+function renderProductList() {
+  if (!workspaceElements.productList) return;
+  workspaceElements.productList.innerHTML = workspaceState.products
+    .map(
+      (product) => `
+        <li>
+          <button type="button" class="workspace-item" data-action="pdv-add" data-product-id="${product.id}">
+            <div class="workspace-item__info">
+              <strong>${product.name}</strong>
+              <span>${product.code} • ${product.category}</span>
+            </div>
+            <span class="workspace-item__price">${formatCurrencyGlobal(product.price)}</span>
+          </button>
+        </li>
+      `,
+    )
+    .join('');
+}
+
+function addProductToCart(productId) {
+  const product = workspaceState.products.find((item) => item.id === productId);
+  if (!product) return;
+  const existing = workspaceState.cart.find((item) => item.id === productId);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    workspaceState.cart.push({
+      id: product.id,
+      name: product.name,
+      code: product.code,
+      price: product.price,
+      quantity: 1,
+    });
+  }
+  addPdvLog(`Peça ${product.code} adicionada ao carrinho.`);
+  renderCart();
+}
+
+function removeProductFromCart(productId) {
+  const index = workspaceState.cart.findIndex((item) => item.id === productId);
+  if (index === -1) return;
+  const [removed] = workspaceState.cart.splice(index, 1);
+  addPdvLog(`Peça ${removed.code} removida do carrinho.`);
+  renderCart();
+}
+
+function renderCart() {
+  if (!workspaceElements.cart) return;
+  if (workspaceState.cart.length === 0) {
+    workspaceElements.cart.innerHTML = '<p class="workspace-empty">Nenhum item. Escaneie para começar.</p>';
+  } else {
+    workspaceElements.cart.innerHTML = workspaceState.cart
+      .map(
+        (item) => `
+          <div class="workspace-cart__item">
+            <div>
+              <strong>${item.name}</strong>
+              <span>${item.code}</span>
+            </div>
+            <div class="workspace-cart__item-meta">
+              <span>${item.quantity} un.</span>
+              <strong>${formatCurrencyGlobal(item.price * item.quantity)}</strong>
+              <button type="button" class="workspace-remove" data-action="pdv-remove" data-product-id="${item.id}" aria-label="Remover ${item.name}">&times;</button>
+            </div>
+          </div>
+        `,
+      )
+      .join('');
+  }
+
+  const itemCount = workspaceState.cart.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = workspaceState.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = subtotal * (1 - workspaceState.discountRate);
+
+  if (workspaceElements.itemCount) workspaceElements.itemCount.textContent = String(itemCount);
+  if (workspaceElements.total) {
+    const suffix = workspaceState.discountRate > 0 ? ' (com desconto)' : '';
+    workspaceElements.total.textContent = `${formatCurrencyGlobal(total)}${suffix}`;
+  }
+}
+
+function addPdvLog(message) {
+  workspaceState.pdvLog.unshift({ message, timestamp: Date.now() });
+  workspaceState.pdvLog = workspaceState.pdvLog.slice(0, 4);
+  if (!workspaceElements.log) return;
+  workspaceElements.log.innerHTML = workspaceState.pdvLog
+    .map((entry) => `<p>${entry.message}</p>`)
+    .join('');
+}
+
+function applyPdvDiscount() {
+  if (workspaceState.cart.length === 0) {
+    addPdvLog('Adicione itens antes de aplicar desconto.');
+    return;
+  }
+  if (workspaceState.discountRate > 0) {
+    addPdvLog('Desconto de 10% já aplicado.');
+    return;
+  }
+  workspaceState.discountRate = 0.1;
+  addPdvLog('Desconto promocional de 10% aplicado.');
+  renderCart();
+}
+
+function completePdvCheckout() {
+  if (workspaceState.cart.length === 0) {
+    addPdvLog('Carrinho vazio. Escaneie uma peça primeiro.');
+    return;
+  }
+  const subtotal = workspaceState.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = subtotal * (1 - workspaceState.discountRate);
+  const customer = workspaceState.customerSelection
+    ? workspaceState.customers.find((item) => item.id === workspaceState.customerSelection)
+    : null;
+  const customerName = customer ? customer.name : 'Cliente walk-in';
+
+  addPdvLog(`PIX fake confirmado para ${customerName}. Total ${formatCurrencyGlobal(total)}.`);
+  updateMetricsAfterSale(total, workspaceState.cart, customer);
+
+  workspaceState.cart = [];
+  workspaceState.discountRate = 0;
+  renderCart();
+}
+
+function updateMetricsAfterSale(total, cartItems, customer) {
+  if (!workspaceState.metrics) return;
+  workspaceState.metrics.totalRevenue += total;
+  workspaceState.metrics.salesCount += 1;
+  workspaceState.metrics.averageTicket = workspaceState.metrics.totalRevenue / workspaceState.metrics.salesCount;
+  workspaceState.metrics.pixPaid += 1;
+
+  cartItems.forEach((item) => {
+    const entry = workspaceState.metrics.productTotals.get(item.id) || { name: item.name, qty: 0 };
+    entry.qty += item.quantity;
+    workspaceState.metrics.productTotals.set(item.id, entry);
+  });
+
+  if (customer) {
+    const entry = workspaceState.metrics.customerTotals.get(customer.id) || { name: customer.name, total: 0, count: 0 };
+    entry.total += total;
+    entry.count += 1;
+    workspaceState.metrics.customerTotals.set(customer.id, entry);
+    customer.total = entry.total;
+    customer.orders = entry.count;
+  }
+
+  renderWorkspaceKpis();
+  renderWorkspaceHighlights();
+  updateTicketLabel();
+  renderCustomersList(workspaceElements.customerSearch?.value || '');
+  renderCustomerDetails(customer || null);
+}
+
+function updateTicketLabel() {
+  if (!workspaceElements.ticketLabel || !workspaceState.metrics) return;
+  workspaceElements.ticketLabel.textContent = `Ticket médio: ${formatCurrencyGlobal(workspaceState.metrics.averageTicket)}`;
+}
+
+function renderInventoryFilters() {
+  if (!workspaceElements.inventoryCategory) return;
+  const categories = Array.from(new Set(workspaceState.products.map((product) => product.category))).filter(Boolean);
+  workspaceElements.inventoryCategory.innerHTML = ['<option value="all">Todas</option>']
+    .concat(categories.map((category) => `<option value="${category}">${category}</option>`))
+    .join('');
+  workspaceElements.inventoryCategory.value = 'all';
+  if (workspaceElements.inventoryStatus) workspaceElements.inventoryStatus.value = 'all';
+}
+
+function renderInventoryList() {
+  if (!workspaceElements.inventoryList) return;
+  const categoryFilter = workspaceElements.inventoryCategory?.value || 'all';
+  const statusFilter = workspaceElements.inventoryStatus?.value || 'all';
+
+  const filtered = workspaceState.inventory.filter((item) => {
+    const categoryOk = categoryFilter === 'all' || item.category === categoryFilter;
+    const statusOk = statusFilter === 'all' || item.status === statusFilter;
+    return categoryOk && statusOk;
+  });
+
+  if (filtered.length === 0) {
+    workspaceElements.inventoryList.innerHTML = '<li class="workspace-empty">Nenhuma peça encontrada.</li>';
+  } else {
+    workspaceElements.inventoryList.innerHTML = filtered
+      .map((item) => {
+        const isSelected = workspaceState.inventorySelection === item.id;
+        return `
+          <li>
+            <button type="button" class="workspace-item${isSelected ? ' is-selected' : ''}" data-action="inventory-select" data-product-id="${item.id}">
+              <div class="workspace-item__info">
+                <strong>${item.name}</strong>
+                <span>${item.code} • ${item.category}</span>
+              </div>
+              <span class="workspace-status workspace-status--${item.status}">${formatInventoryStatus(item.status)}</span>
+            </button>
+          </li>
+        `;
+      })
+      .join('');
+  }
+
+  if (workspaceState.metrics) {
+    workspaceState.metrics.availableCount = workspaceState.inventory.filter((item) => item.status === 'available').length;
+    renderWorkspaceKpis();
+  }
+}
+
+function selectInventoryItem(productId) {
+  if (!productId) return;
+  workspaceState.inventorySelection = productId;
+  renderInventoryList();
+  renderInventoryActions();
+}
+
+function renderInventoryActions() {
+  if (!workspaceElements.inventoryActions) return;
+  if (!workspaceState.inventorySelection) {
+    workspaceElements.inventoryActions.innerHTML = '<p>Selecione uma peça para simular as ações.</p>';
+    return;
+  }
+  const item = workspaceState.inventory.find((entry) => entry.id === workspaceState.inventorySelection);
+  if (!item) {
+    workspaceElements.inventoryActions.innerHTML = '<p>Peça não encontrada.</p>';
+    return;
+  }
+
+  const buttons = [];
+  if (item.status !== 'reserved') buttons.push('<button type="button" class="btn btn--ghost btn--small" data-action="inventory-reserve">Reservar 30 min</button>');
+  if (item.status === 'reserved') buttons.push('<button type="button" class="btn btn--ghost btn--small" data-action="inventory-release">Liberar</button>');
+  if (item.status !== 'sold') buttons.push('<button type="button" class="btn btn--primary btn--small" data-action="inventory-sell">Marcar como vendida</button>');
+  if (item.status === 'sold') buttons.push('<button type="button" class="btn btn--ghost btn--small" data-action="inventory-restock">Devolver ao estoque</button>');
+  buttons.push('<button type="button" class="btn btn--ghost btn--small" data-action="inventory-highlight">Destacar no catálogo</button>');
+
+  workspaceElements.inventoryActions.innerHTML = `
+    <div class="workspace-actions__card">
+      <h4>${item.name}</h4>
+      <p>Status atual: <strong>${formatInventoryStatus(item.status)}</strong></p>
+      <div class="workspace-actions__buttons">
+        ${buttons.join('')}
+      </div>
+    </div>
+  `;
+}
+
+function updateInventoryStatus(status) {
+  if (!workspaceState.inventorySelection) return;
+  const item = workspaceState.inventory.find((entry) => entry.id === workspaceState.inventorySelection);
+  if (!item) return;
+  item.status = status;
+  addPdvLog(`Peça ${item.code} agora está ${formatInventoryStatus(status).toLowerCase()}.`);
+  renderInventoryList();
+  renderInventoryActions();
+}
+
+function highlightInventoryItem() {
+  if (!workspaceState.inventorySelection) return;
+  const item = workspaceState.inventory.find((entry) => entry.id === workspaceState.inventorySelection);
+  if (!item) return;
+  addPdvLog(`Peça ${item.code} destacada no catálogo público.`);
+}
+
+function formatInventoryStatus(status) {
+  const map = {
+    available: 'Disponível',
+    reserved: 'Reservada',
+    sold: 'Vendida',
+  };
+  return map[status] || status;
+}
+
+function renderCustomersList(query) {
+  if (!workspaceElements.customerList) return;
+  const normalized = (query || '').trim().toLowerCase();
+  const filtered = workspaceState.customers.filter((customer) => {
+    if (!normalized) return true;
+    return customer.name.toLowerCase().includes(normalized) || customer.phone.toLowerCase().includes(normalized);
+  });
+
+  if (filtered.length === 0) {
+    workspaceElements.customerList.innerHTML = '<li class="workspace-empty">Nenhum cliente encontrado.</li>';
+    return;
+  }
+
+  workspaceElements.customerList.innerHTML = filtered
+    .map((customer) => {
+      const isSelected = workspaceState.customerSelection === customer.id;
+      return `
+        <li>
+          <button type="button" class="workspace-item${isSelected ? ' is-selected' : ''}" data-action="customer-select" data-customer-id="${customer.id}">
+            <div class="workspace-item__info">
+              <strong>${customer.name}</strong>
+              <span>${customer.phone}</span>
+            </div>
+            <span class="workspace-item__badge">${customer.orders || 0} pedidos</span>
+          </button>
+        </li>
+      `;
+    })
+    .join('');
+}
+
+function selectCustomer(customerId) {
+  workspaceState.customerSelection = customerId;
+  renderCustomersList(workspaceElements.customerSearch?.value || '');
+  const customer = workspaceState.customers.find((entry) => entry.id === customerId) || null;
+  renderCustomerDetails(customer);
+}
+
+function renderCustomerDetails(customer) {
+  if (!workspaceElements.customerDetails) return;
+  if (!customer) {
+    workspaceElements.customerDetails.innerHTML = '<p>Escolha um cliente para disparar recibo ou reservar peças.</p>';
+    return;
+  }
+
+  workspaceElements.customerDetails.innerHTML = `
+    <div class="workspace-customer__header">
+      <strong>${customer.name}</strong>
+      <span>${customer.phone}</span>
+    </div>
+    <p>Pedidos: <strong>${customer.orders || 0}</strong> • Total: <strong>${formatCurrencyGlobal(customer.total || 0)}</strong></p>
+    <div class="workspace-cart__actions">
+      <button type="button" class="btn btn--ghost btn--small" data-action="customer-receipt">Enviar recibo</button>
+      <button type="button" class="btn btn--ghost btn--small" data-action="customer-hold">Reservar peça</button>
+    </div>
+    <p class="workspace-note">Cliente selecionado será usado na próxima venda.</p>
+    <div class="workspace-customer__feedback"></div>
+  `;
+}
+
+function showCustomerFeedback(message) {
+  if (!workspaceElements.customerDetails) return;
+  const container = workspaceElements.customerDetails.querySelector('.workspace-customer__feedback');
+  if (!container) return;
+  container.textContent = message;
+}
+
+function sendCustomerReceipt() {
+  if (!workspaceState.customerSelection) {
+    addPdvLog('Selecione um cliente para enviar o recibo.');
+    return;
+  }
+  const customer = workspaceState.customers.find((entry) => entry.id === workspaceState.customerSelection);
+  if (!customer) return;
+  addPdvLog(`Recibo enviado para ${customer.name} via WhatsApp.`);
+  showCustomerFeedback(`${customer.name} recebeu o comprovante no WhatsApp.`);
+}
+
+function holdCustomerItem() {
+  if (!workspaceState.customerSelection) {
+    addPdvLog('Escolha um cliente antes de reservar a peça.');
+    return;
+  }
+  if (!workspaceState.inventorySelection) {
+    addPdvLog('Selecione uma peça no estoque para reservar.');
+    return;
+  }
+  const customer = workspaceState.customers.find((entry) => entry.id === workspaceState.customerSelection);
+  const item = workspaceState.inventory.find((entry) => entry.id === workspaceState.inventorySelection);
+  if (!customer || !item) return;
+  item.status = 'reserved';
+  addPdvLog(`Peça ${item.code} reservada para ${customer.name} por 30 minutos.`);
+  showCustomerFeedback(`Reserva criada para ${customer.name}.`);
+  renderInventoryList();
+  renderInventoryActions();
+}
+
+function resetSelfSession() {
+  clearSelfTimer();
+  workspaceState.self.stage = 'idle';
+  workspaceState.self.product = null;
+  workspaceState.self.passCode = null;
+  workspaceState.self.expiresAt = null;
+  workspaceState.self.log = [];
+  addSelfLog('Self-checkout liberado. Escaneie uma peça para iniciar.');
+  renderSelfSession();
+}
+
+function renderSelfSession() {
+  if (!workspaceElements.selfSession) return;
+  const { stage, product, passCode, expiresAt } = workspaceState.self;
+  let content = '';
+
+  if (stage === 'idle') {
+    content = '<p>Escaneie uma peça para abrir o self-checkout.</p>';
+  } else if (stage === 'awaitingPayment' && product) {
+    content = `
+      <div class="workspace-self__card">
+        <h4>${product.name}</h4>
+        <p>${product.code} • ${product.category}</p>
+        <strong>${formatCurrencyGlobal(product.price)}</strong>
+        <button type="button" class="btn btn--primary btn--small" data-action="self-pay">Simular pagamento PIX</button>
+      </div>
+    `;
+  } else if (stage === 'paid' && product) {
+    content = `
+      <div class="workspace-self__card is-paid">
+        <h4>${product.name}</h4>
+        <p>${product.code} • ${product.category}</p>
+        <strong>${formatCurrencyGlobal(product.price)}</strong>
+        <div class="workspace-pass">
+          <span class="workspace-pass__label">Passe liberado</span>
+          <span class="workspace-pass__code">${passCode}</span>
+          <span class="workspace-pass__timer" id="self-countdown">${expiresAt ? formatCountdownText(expiresAt - Date.now()) : ''}</span>
+        </div>
+      </div>
+    `;
+  } else if (stage === 'validated') {
+    content = '<p class="workspace-success">Passe validado pelo lojista. Cliente liberado.</p>';
+  } else if (stage === 'expired') {
+    content = '<p class="workspace-warning">Passe expirado. É preciso gerar novo pagamento.</p>';
+  }
+
+  workspaceElements.selfSession.innerHTML = content;
+  updateSelfButtons();
+}
+
+function addSelfLog(message) {
+  workspaceState.self.log.unshift({ message, timestamp: Date.now() });
+  workspaceState.self.log = workspaceState.self.log.slice(0, 4);
+  if (!workspaceElements.selfLog) return;
+  workspaceElements.selfLog.innerHTML = workspaceState.self.log.map((entry) => `<p>${entry.message}</p>`).join('');
+}
+
+function confirmSelfPayment() {
+  if (workspaceState.self.stage !== 'awaitingPayment' || !workspaceState.self.product) return;
+  workspaceState.self.stage = 'paid';
+  workspaceState.self.passCode = `PASS-${Math.floor(Math.random() * 900000 + 100000)}`;
+  workspaceState.self.expiresAt = Date.now() + 2 * 60 * 1000;
+  addSelfLog('Pagamento confirmado automaticamente pelo PSP demo.');
+  renderSelfSession();
+  startSelfTimer();
+}
+
+function validateSelfPass() {
+  if (workspaceState.self.stage !== 'paid') {
+    addSelfLog('Nenhum passe disponível para validar.');
+    return;
+  }
+  workspaceState.self.stage = 'validated';
+  addSelfLog('Passe validado. Estoque liberado.');
+  clearSelfTimer();
+  renderSelfSession();
+}
+
+function expireSelfPass(manual = false) {
+  if (workspaceState.self.stage !== 'paid') return;
+  workspaceState.self.stage = 'expired';
+  clearSelfTimer();
+  addSelfLog(manual ? 'Passe expirado manualmente pelo lojista.' : 'Passe expirou automaticamente após 2 minutos.');
+  renderSelfSession();
+}
+
+function updateSelfButtons() {
+  if (workspaceElements.selfValidateButton) {
+    workspaceElements.selfValidateButton.disabled = workspaceState.self.stage !== 'paid';
+  }
+  if (workspaceElements.selfExpireButton) {
+    workspaceElements.selfExpireButton.disabled = workspaceState.self.stage !== 'paid';
+  }
+  if (workspaceElements.selfScanButton) {
+    workspaceElements.selfScanButton.disabled = workspaceState.self.stage === 'paid';
+  }
+}
+
+function startSelfTimer() {
+  clearSelfTimer();
+  workspaceState.self.timerId = window.setInterval(() => {
+    if (workspaceState.self.stage !== 'paid' || !workspaceState.self.expiresAt) {
+      clearSelfTimer();
+      return;
+    }
+    const remaining = workspaceState.self.expiresAt - Date.now();
+    if (remaining <= 0) {
+      expireSelfPass(false);
+      return;
+    }
+    const countdown = document.getElementById('self-countdown');
+    if (countdown) countdown.textContent = formatCountdownText(remaining);
+  }, 500);
+}
+
+function clearSelfTimer() {
+  if (workspaceState.self.timerId) {
+    window.clearInterval(workspaceState.self.timerId);
+    workspaceState.self.timerId = null;
+  }
+}
+
+function openScanner(mode) {
+  if (!scannerElements.root) return;
+  ensureWorkspaceInitialized();
+  workspaceState.scanner.mode = mode;
+  workspaceState.scanner.product = null;
+  scannerElements.status.textContent = 'Aponte para um QR Code.';
+  if (scannerElements.confirmButton) scannerElements.confirmButton.disabled = true;
+  if (scannerElements.fallback) scannerElements.fallback.hidden = true;
+  scannerElements.root.setAttribute('aria-hidden', 'false');
+  scannerElements.root.classList.add('is-visible');
+  document.body.classList.add('is-scanner-open');
+  startScannerStream();
+}
+
+function startScannerStream() {
+  if (!scannerElements.video) return;
+  stopScannerStream();
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showScannerFallback();
+    return;
+  }
+  navigator.mediaDevices
+    .getUserMedia({ video: { facingMode: 'environment' } })
+    .then((stream) => {
+      workspaceState.scanner.stream = stream;
+      scannerElements.video.srcObject = stream;
+      scannerElements.video.play().catch(() => {});
+      scheduleScannerDetection();
+    })
+    .catch(() => {
+      showScannerFallback();
+    });
+}
+
+function showScannerFallback() {
+  if (scannerElements.fallback) scannerElements.fallback.hidden = false;
+  scannerElements.status.textContent = 'Não conseguimos acessar a câmera. Use o botão para simular a leitura.';
+}
+
+function scheduleScannerDetection() {
+  clearScannerTimeout();
+  workspaceState.scanner.timeoutId = window.setTimeout(() => simulateScannerDetection(false), 2200);
+}
+
+function clearScannerTimeout() {
+  if (workspaceState.scanner.timeoutId) {
+    window.clearTimeout(workspaceState.scanner.timeoutId);
+    workspaceState.scanner.timeoutId = null;
+  }
+}
+
+function simulateScannerDetection(force) {
+  if (!scannerElements.status) return;
+  if (workspaceState.scanner.product && !force) return;
+  clearScannerTimeout();
+  const product = getRandomProductForMode(workspaceState.scanner.mode);
+  if (!product) {
+    scannerElements.status.textContent = 'Nenhuma peça disponível para este modo.';
+    return;
+  }
+  workspaceState.scanner.product = product;
+  scannerElements.status.textContent = `Produto detectado: ${product.name} (${product.code})`;
+  if (scannerElements.confirmButton) scannerElements.confirmButton.disabled = false;
+}
+
+function getRandomProductForMode(mode) {
+  if (mode === 'self') {
+    const available = workspaceState.inventory.filter((item) => item.status === 'available');
+    if (available.length === 0) return workspaceState.products[0] || null;
+    return available[Math.floor(Math.random() * available.length)];
+  }
+  if (workspaceState.products.length === 0) return null;
+  return workspaceState.products[Math.floor(Math.random() * workspaceState.products.length)];
+}
+
+function confirmScannerSelection() {
+  if (!workspaceState.scanner.product) return;
+  const product = workspaceState.scanner.product;
+  if (workspaceState.scanner.mode === 'self') {
+    workspaceState.self.product = {
+      id: product.id,
+      name: product.name,
+      code: product.code,
+      category: product.category,
+      price: product.price,
+    };
+    workspaceState.self.stage = 'awaitingPayment';
+    addSelfLog(`Peça ${product.code} escaneada no modo cliente.`);
+    renderSelfSession();
+  } else {
+    addProductToCart(product.id);
+  }
+  closeScanner();
+}
+
+function closeScanner() {
+  if (!scannerElements.root) return;
+  stopScannerStream();
+  clearScannerTimeout();
+  workspaceState.scanner.product = null;
+  scannerElements.root.setAttribute('aria-hidden', 'true');
+  scannerElements.root.classList.remove('is-visible');
+  document.body.classList.remove('is-scanner-open');
+}
+
+function stopScannerStream() {
+  if (workspaceState.scanner.stream) {
+    workspaceState.scanner.stream.getTracks().forEach((track) => track.stop());
+    workspaceState.scanner.stream = null;
+  }
+  if (scannerElements.video) {
+    scannerElements.video.srcObject = null;
+  }
+}
+
+function openContactModal() {
+  if (!contactElements.root) return;
+  contactElements.root.setAttribute('aria-hidden', 'false');
+  contactElements.root.classList.add('is-visible');
+  document.body.classList.add('is-modal-open');
+  if (contactElements.form) contactElements.form.reset();
+  if (contactElements.feedback) contactElements.feedback.textContent = '';
+  window.setTimeout(() => contactElements.form?.querySelector('input')?.focus(), 0);
+}
+
+function closeContactModal() {
+  if (!contactElements.root) return;
+  contactElements.root.setAttribute('aria-hidden', 'true');
+  contactElements.root.classList.remove('is-visible');
+  document.body.classList.remove('is-modal-open');
+}
+
+function handleContactSubmit() {
+  if (!contactElements.form) return;
+  const formData = new FormData(contactElements.form);
+  const name = (formData.get('name') || 'Time').toString();
+  if (contactElements.feedback) {
+    contactElements.feedback.textContent = `${name}, recebemos o seu interesse! Entraremos em contato em até 1 dia útil.`;
+  }
+}
+
+function setWorkspaceView(view) {
+  workspaceState.view = view;
+  workspaceElements.navButtons.forEach((button) => {
+    const isActive = button.dataset.view === view;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-selected', String(isActive));
+  });
+  workspaceElements.views.forEach((panel) => {
+    const isActive = panel.dataset.view === view;
+    panel.classList.toggle('is-active', isActive);
+    if (isActive) {
+      panel.removeAttribute('aria-hidden');
+    } else {
+      panel.setAttribute('aria-hidden', 'true');
+    }
+  });
+}
+
+function renderWorkspaceKpis() {
+  if (!workspaceElements.kpis || !workspaceState.metrics) return;
+  const metrics = workspaceState.metrics;
+  const pixTotal = metrics.pixPaid + metrics.pixPending;
+  const pixConversion = pixTotal ? Math.round((metrics.pixPaid / pixTotal) * 100) : null;
+  workspaceElements.kpis.innerHTML = `
+    <div><dt>Vendas pagas</dt><dd>${metrics.salesCount}</dd></div>
+    <div><dt>Receita líquida</dt><dd>${formatCurrencyGlobal(metrics.totalRevenue)}</dd></div>
+    <div><dt>Ticket médio</dt><dd>${formatCurrencyGlobal(metrics.averageTicket)}</dd></div>
+    <div><dt>Conversão PIX</dt><dd>${pixConversion !== null ? `${pixConversion}%` : '—'}</dd></div>
+    <div><dt>Peças disponíveis</dt><dd>${metrics.availableCount}</dd></div>
+  `;
+}
+
+function renderWorkspaceHighlights() {
+  if (!workspaceElements.highlights || !workspaceState.metrics) return;
+  const metrics = workspaceState.metrics;
+  const topProduct = Array.from(metrics.productTotals.values()).sort((a, b) => b.qty - a.qty)[0] || null;
+  const topSeller = Array.from(metrics.sellerTotals.values()).sort((a, b) => b.total - a.total)[0] || null;
+  const topCustomer = Array.from(metrics.customerTotals.values()).sort((a, b) => b.total - a.total)[0] || null;
+
+  workspaceElements.highlights.innerHTML = `
+    <li><span>Produto destaque</span><strong>${topProduct ? `${topProduct.name} (${topProduct.qty} un.)` : '—'}</strong></li>
+    <li><span>Melhor vendedor</span><strong>${topSeller ? `${topSeller.name} (${formatCurrencyGlobal(topSeller.total)})` : '—'}</strong></li>
+    <li><span>Cliente VIP</span><strong>${topCustomer ? `${topCustomer.name} (${formatCurrencyGlobal(topCustomer.total)})` : '—'}</strong></li>
+  `;
+}
+
+function formatCountdownText(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  return `${minutes}:${seconds}`;
+}
+
