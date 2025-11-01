@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA - Roadmap DEMO no GitHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="github">
+    <div class="app" id="app">
+      <div class="demo-banner" role="status">MODO DEMO — dados fictícios</div>
+
+      <header class="app__shell">
+        <div class="app__topbar" role="navigation" aria-label="Acesso rápido">
+          <div class="app__identity">
+            <span class="brand-mark" aria-hidden="true">B</span>
+            <div class="identity__text">
+              <span class="identity__name">BIPA</span>
+              <span class="identity__tagline">PDV mobile para brechós</span>
+            </div>
+          </div>
+
+          <div class="topbar__actions">
+            <a class="topbar__link" href="index.html" data-nav="overview">Produto</a>
+            <a class="topbar__link" href="fluxos.html" data-nav="flows">Fluxos</a>
+            <a class="topbar__link" href="relatorios.html" data-nav="reports">Relatórios</a>
+            <a class="topbar__link" href="github.html" data-nav="github">Roadmap</a>
+            <a class="btn btn--ghost btn--small" href="fluxos.html#demo-workspace">Entrar na demo</a>
+            <a class="btn btn--primary btn--small" href="#contact-section">Falar com vendas</a>
+          </div>
+        </div>
+
+        <div class="hero">
+          <div class="hero__grid">
+            <div class="hero__content">
+              <span class="hero__badge">Planejamento público</span>
+              <h1 class="hero__title">Roadmap DEMO organizado no GitHub.</h1>
+              <p class="hero__subtitle">
+                Consulte milestones, issues sugeridas e próximas entregas para entender a evolução do produto demo sem backend.
+              </p>
+              <div class="hero__actions" role="group" aria-label="Ações principais">
+                <div class="hero__action">
+                  <a class="btn btn--primary" href="#github-panel">Ver roadmap</a>
+                  <span class="hero__action-note">Milestones do M0 ao hardening com critérios de aceite.</span>
+                </div>
+                <div class="hero__action">
+                  <a class="btn btn--outline" href="https://github.com/" target="_blank" rel="noopener">Abrir GitHub</a>
+                  <span class="hero__action-note">Acompanhe as issues reais e contribua com sugestões.</span>
+                </div>
+              </div>
+              <ul class="hero__highlights" aria-label="Destaques do roadmap">
+                <li>Milestones M0–M6 com status atualizado.</li>
+                <li>Cada entrega com critério de aceite objetivo.</li>
+                <li>Clareza sobre prioridades antes de levar ao backend.</li>
+              </ul>
+            </div>
+
+            <aside class="hero__summary" aria-label="Resumo do roadmap">
+              <div class="summary-card">
+                <header class="summary-card__header">
+                  <span class="summary-card__badge" aria-hidden="true">Roadmap</span>
+                  <h2 class="summary-card__title">Próximas etapas</h2>
+                  <p class="summary-card__subtitle">Do bootstrap à validação de saída com passe seguro.</p>
+                </header>
+                <ol class="summary-card__list">
+                  <li><strong>Bootstrap DEMO.</strong> Shell instalável, dados fake e reset.</li>
+                  <li><strong>Casca do app.</strong> Navegação mobile e avisos DEMO.</li>
+                  <li><strong>PDV completo.</strong> Scanner, descontos e recibos.</li>
+                </ol>
+                <dl class="summary-card__metrics">
+                  <div class="metric">
+                    <dt>6 etapas</dt>
+                    <dd>Do M0 ao hardening final</dd>
+                  </div>
+                  <div class="metric">
+                    <dt>100%</dt>
+                    <dd>Transparência das entregas</dd>
+                  </div>
+                  <div class="metric">
+                    <dt>DEMO</dt>
+                    <dd>Foco em validar experiência sem backend</dd>
+                  </div>
+                </dl>
+                <footer class="summary-card__footer">
+                  <p>
+                    Quer priorizar algo específico? <a class="link-cta" href="#contact-section">Entre em contato</a> e alinhe o cronograma.
+                  </p>
+                </footer>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </header>
+
+      <main class="app__content">
+        <section class="panel is-active" id="github-panel" aria-labelledby="github-heading">
+          <div class="panel__header">
+            <h2 class="panel__title" id="github-heading">Roadmap DEMO (GitHub)</h2>
+            <p class="panel__subtitle">
+              Milestones e issues sugeridas para organizar a entrega sem backend.
+            </p>
+          </div>
+
+          <div class="milestones">
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M0 — Bootstrap DEMO</h3>
+                <span class="chip">Em andamento</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: PWA + Tailwind + Tipos base</strong>
+                  <p>Aceite: app instala; tipos compilam.</p>
+                </li>
+                <li>
+                  <strong>feat: IndexedDB adapter (Dexie) + persist</strong>
+                  <p>Aceite: CRUD simples em db.demo.</p>
+                </li>
+                <li>
+                  <strong>feat: Seeds DEMO e Reset</strong>
+                  <p>Aceite: botão “Reset DEMO” repovoa org “DEMO BIPA”.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M1 — Casca do App</h3>
+                <span class="chip chip--outline">Próximo</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Shell mobile + bottom-nav + FAB</strong>
+                  <p>Aceite: tabs (Vender, Estoque, Clientes, Relatórios, Mais).</p>
+                </li>
+                <li>
+                  <strong>feat: Badges DEMO + aviso global</strong>
+                  <p>Aceite: “MODO DEMO — dados fictícios” visível.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M2 — PDV (venda em 3 toques)</h3>
+                <span class="chip chip--outline">Próximo</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Scanner (BarcodeDetector + fallback)</strong>
+                  <p>Aceite: escaneia e adiciona item ao carrinho.</p>
+                </li>
+                <li>
+                  <strong>feat: Carrinho + desconto R$/% + cliente rápido</strong>
+                  <p>Aceite: desconto aplica corretamente (ordem R$ → %).</p>
+                </li>
+                <li>
+                  <strong>feat: Pagamento PIX fake + recibo WhatsApp</strong>
+                  <p>Aceite: gera QR/copia-e-cola DEMO; “Marcar pago” muda sale.status=paid.</p>
+                </li>
+                <li>
+                  <strong>feat: Regras de estoque (available→sold)</strong>
+                  <p>Aceite: vender altera status e remove da vitrine.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M3 — Estoque &amp; Etiquetas</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Estoque (lista, filtros, CRUD + foto)</strong>
+                  <p>Aceite: salvar produto com foto e status=available.</p>
+                </li>
+                <li>
+                  <strong>feat: Etiquetas A7 com QR</strong>
+                  <p>Aceite: PDF A4 com 8–12 etiquetas; QR abre /p/{code} DEMO.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M4 — Clientes &amp; Relatórios</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Clientes (cadastro rápido + ficha)</strong>
+                  <p>Aceite: vínculo de vendas aparece na ficha.</p>
+                </li>
+                <li>
+                  <strong>feat: Relatórios (Hoje/Semana/Mês/Custom)</strong>
+                  <p>Aceite: KPIs (líquido, #vendas, ticket, descontos, mix) e TOPs calculam certo.</p>
+                </li>
+                <li>
+                  <strong>feat: Export CSV (client-side)</strong>
+                  <p>Aceite: CSV UTF-8 com filtros aplicados.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M5 — Self-Checkout (DEMO flag)</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>feat: Modo Cliente (flag)</strong>
+                  <p>Aceite: cliente escaneia, paga fake, recebe Passe (QR 1-uso/TTL).</p>
+                </li>
+                <li>
+                  <strong>feat: Validação de Saída (Exits)</strong>
+                  <p>Aceite: passe valida 1x; expira ≤2 min.</p>
+                </li>
+                <li>
+                  <strong>db: checkout_sessions + exit_passes</strong>
+                  <p>
+                    Aceite: <code>sales.channel=self_checkout</code>, <code>payments.paid_at</code>,
+                    <code>sales.exited_at</code> populados.
+                  </p>
+                </li>
+                <li>
+                  <strong>sec: Passe com HMAC + webhook PSP</strong>
+                  <p>Aceite: passe só aparece após confirmação server-side; logs de auditoria completos.</p>
+                </li>
+              </ul>
+            </article>
+
+            <article class="milestone-card">
+              <header>
+                <h3>Milestone M6 — Hardening DEMO</h3>
+                <span class="chip chip--outline">Planejado</span>
+              </header>
+              <ul>
+                <li>
+                  <strong>perf: Lighthouse A11y ≥95 / PWA ok</strong>
+                </li>
+                <li>
+                  <strong>sec: Limites de desconto por papel (local) + PIN gerente</strong>
+                </li>
+                <li>
+                  <strong>chore: Página LGPD/Termos DEMO + Onboarding</strong>
+                </li>
+                <li>
+                  <strong>docs: README (DEMO), Roadmap e como migrar p/ backend</strong>
+                </li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app__footer">
+        <span>BIPA © 2024</span>
+        <span>Termos · Privacidade</span>
+      </footer>
+    </div>
+
+    <section class="contact" id="contact-section" aria-labelledby="contact-title">
+      <div class="contact__shell">
+        <header class="contact__header">
+          <h2 id="contact-title">Vamos montar sua operação?</h2>
+          <p>Conte rapidamente sobre a sua operação e retornamos em até 1 dia útil.</p>
+        </header>
+        <form class="contact__form" id="contact-form">
+          <label>
+            <span>Nome</span>
+            <input type="text" name="name" required placeholder="Como podemos te chamar?" />
+          </label>
+          <label>
+            <span>E-mail</span>
+            <input type="email" name="email" required placeholder="nome@brecho.com" />
+          </label>
+          <label>
+            <span>WhatsApp</span>
+            <input type="tel" name="phone" required placeholder="(00) 90000-0000" />
+          </label>
+          <label>
+            <span>Principal objetivo</span>
+            <select name="goal" required>
+              <option value="checkout">Self-checkout</option>
+              <option value="pix">Receber via PIX</option>
+              <option value="catalog">Catalogar acervo</option>
+              <option value="consignacao">Consignação organizada</option>
+            </select>
+          </label>
+          <label>
+            <span>Mensagem</span>
+            <textarea name="message" rows="3" placeholder="Conte rapidamente sobre a sua operação"></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary">Enviar interesse</button>
+          <p class="contact__note" id="contact-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <script src="script.js"></script>
+  </body>
+</html>

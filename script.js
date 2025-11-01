@@ -1,10 +1,45 @@
+const navLinks = Array.from(document.querySelectorAll('[data-nav]'));
+const currentPage = document.body.dataset.page;
+
+if (currentPage) {
+  navLinks.forEach((link) => {
+    const isActive = link.dataset.nav === currentPage;
+    link.classList.toggle('is-active', isActive);
+    if (isActive) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
+}
+
 const tabs = Array.from(document.querySelectorAll('.tabs__button'));
-const panels = {
-  overview: document.getElementById('overview-panel'),
-  flows: document.getElementById('flows-panel'),
-  reports: document.getElementById('reports-panel'),
-  github: document.getElementById('github-panel'),
-};
+
+if (tabs.length > 0) {
+  const panels = {
+    overview: document.getElementById('overview-panel'),
+    flows: document.getElementById('flows-panel'),
+    reports: document.getElementById('reports-panel'),
+    github: document.getElementById('github-panel'),
+  };
+
+  function setActiveTab(tabName) {
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.tab === tabName;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+    });
+
+    Object.entries(panels).forEach(([key, panel]) => {
+      if (!panel) return;
+      panel.classList.toggle('is-active', key === tabName);
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
+  });
+}
 
 const currencyFormatterGlobal = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -18,23 +53,6 @@ function formatCurrencyGlobal(value) {
 }
 
 let demoReportsData = null;
-
-function setActiveTab(tabName) {
-  tabs.forEach((tab) => {
-    const isActive = tab.dataset.tab === tabName;
-    tab.classList.toggle('is-active', isActive);
-    tab.setAttribute('aria-selected', String(isActive));
-  });
-
-  Object.entries(panels).forEach(([key, panel]) => {
-    if (!panel) return;
-    panel.classList.toggle('is-active', key === tabName);
-  });
-}
-
-tabs.forEach((tab) => {
-  tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
-});
 
 // --------- Venda em 3 toques ---------
 const saleStepsElement = document.getElementById('sale-steps');
