@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Editar Produto BR-0002</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin-product-edit">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Gestão</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Mudar para PDV</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <div class="app-admin">
+      <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
+        <div class="sidebar__logo">BIPA</div>
+        <nav class="sidebar__nav">
+          <a class="sidebar__link" href="/app/admin/dashboard/">Dashboard</a>
+          <a class="sidebar__link is-active" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link" href="/app/admin/clientes/">Clientes</a>
+          <a class="sidebar__link" href="/app/admin/vendas/">Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="app-admin__content" aria-labelledby="product-edit-title">
+        <header class="page-header">
+          <div>
+            <h1 class="page-title" id="product-edit-title">Editar produto</h1>
+            <p class="page-subtitle">Atualize informações da peça BR-0002 — Vestido Midi Floral.</p>
+          </div>
+        </header>
+
+        <form class="form-grid" aria-describedby="product-edit-help">
+          <fieldset class="form-section">
+            <legend>Informações básicas</legend>
+            <label class="form-field">
+              <span class="form-label">Código</span>
+              <input type="text" value="BR-0002" readonly />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Nome</span>
+              <input type="text" value="Vestido Midi Floral" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Categoria</span>
+              <select>
+                <option>Vestidos</option>
+                <option>Blusas</option>
+                <option>Calças</option>
+                <option>Casacos</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Detalhes</legend>
+            <label class="form-field">
+              <span class="form-label">Tamanho</span>
+              <select>
+                <option>P</option>
+                <option selected>M</option>
+                <option>G</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span class="form-label">Preço (R$)</span>
+              <input type="number" min="0" step="0.01" value="129.9" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Custo (R$)</span>
+              <input type="number" min="0" step="0.01" value="59.9" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Origem</span>
+              <select>
+                <option>Consignado</option>
+                <option selected>Compra direta</option>
+                <option>Doação</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Imagens e status</legend>
+            <div class="photo-preview">
+              <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=320&q=60" alt="Vestido floral" />
+            </div>
+            <label class="form-field">
+              <span class="form-label">Substituir foto</span>
+              <input type="file" accept="image/*" capture="environment" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Status</span>
+              <select>
+                <option>Disponível</option>
+                <option selected>Reservado</option>
+                <option>Consignado</option>
+                <option>Vendido</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span class="form-label">Localização</span>
+              <input type="text" value="Arara B — Destaques" />
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section form-section--full">
+            <legend>Descrição</legend>
+            <label class="form-field">
+              <span class="sr-only">Descrição</span>
+              <textarea rows="4">Vestido midi com estampa floral em tons quentes. Tecido leve com forro e modelagem evasê.</textarea>
+            </label>
+          </fieldset>
+
+          <div class="form-actions">
+            <a class="btn btn--ghost" href="/app/admin/produtos/">Cancelar</a>
+            <button class="btn btn--primary" type="submit">Salvar alterações</button>
+          </div>
+        </form>
+        <p class="form-footer" id="product-edit-help">
+          Ambiente de demonstração — alterações não são persistidas.
+        </p>
+      </main>
+    </div>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>

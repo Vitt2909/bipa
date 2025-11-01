@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Recibo da Venda 0001</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="pdv-receipt">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Recibo</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Iniciar nova venda</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <main class="receipt-shell" aria-labelledby="receipt-title">
+      <section class="receipt-card">
+        <header class="receipt-card__header">
+          <h1 class="receipt-card__title" id="receipt-title">Venda concluída #0001</h1>
+          <p class="receipt-card__meta">Emitido em 12/09/2024 às 15:42</p>
+        </header>
+
+        <section class="receipt-section" aria-labelledby="receipt-items-title">
+          <h2 class="receipt-section__title" id="receipt-items-title">Itens</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Produto</th>
+                <th scope="col">Qtd.</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jaqueta Jeans Oversized</td>
+                <td>1</td>
+                <td>R$ 189,90</td>
+                <td>R$ 189,90</td>
+              </tr>
+              <tr>
+                <td>Vestido Midi Floral</td>
+                <td>1</td>
+                <td>R$ 129,90</td>
+                <td>R$ 129,90</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="receipt-section" aria-labelledby="receipt-payment-title">
+          <h2 class="receipt-section__title" id="receipt-payment-title">Pagamento</h2>
+          <dl class="key-value">
+            <div>
+              <dt>Cliente</dt>
+              <dd>Bianca Souza</dd>
+            </div>
+            <div>
+              <dt>Forma</dt>
+              <dd>PIX</dd>
+            </div>
+            <div>
+              <dt>Desconto aplicado</dt>
+              <dd>R$ 20,00</dd>
+            </div>
+            <div>
+              <dt>Total pago</dt>
+              <dd>R$ 299,80</dd>
+            </div>
+          </dl>
+        </section>
+
+        <footer class="receipt-card__footer">
+          <button class="btn btn--surface" type="button">Enviar por WhatsApp</button>
+          <button class="btn btn--ghost" type="button">Imprimir recibo</button>
+        </footer>
+      </section>
+    </main>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>

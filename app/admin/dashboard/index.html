@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin-dashboard">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Gestão</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Mudar para PDV</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <div class="app-admin">
+      <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
+        <div class="sidebar__logo">BIPA</div>
+        <nav class="sidebar__nav">
+          <a class="sidebar__link is-active" href="/app/admin/dashboard/">Dashboard</a>
+          <a class="sidebar__link" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link" href="/app/admin/clientes/">Clientes</a>
+          <a class="sidebar__link" href="/app/admin/vendas/">Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="app-admin__content" aria-labelledby="dashboard-title">
+        <header class="page-header">
+          <div>
+            <h1 class="page-title" id="dashboard-title">Visão geral do dia</h1>
+            <p class="page-subtitle">Números falsos para simulação do negócio.</p>
+          </div>
+          <div class="page-actions">
+            <a class="btn btn--primary" href="/app/admin/produtos/novo/">Cadastrar produto</a>
+            <a class="btn btn--surface" href="/app/admin/vendas/">Ver vendas de hoje</a>
+          </div>
+        </header>
+
+        <section class="metrics-grid" aria-label="Indicadores principais">
+          <article class="metric-card">
+            <h2>Vendas de hoje</h2>
+            <p class="metric-card__value">R$ 3.428,40</p>
+            <p class="metric-card__delta">+18% vs. ontem</p>
+          </article>
+          <article class="metric-card">
+            <h2>Peças em estoque</h2>
+            <p class="metric-card__value">482</p>
+            <p class="metric-card__delta">37 reservadas • 18 consignadas</p>
+          </article>
+          <article class="metric-card">
+            <h2>Ticket médio (30 dias)</h2>
+            <p class="metric-card__value">R$ 182,90</p>
+            <p class="metric-card__delta">+6% no período</p>
+          </article>
+        </section>
+
+        <section class="panel" aria-labelledby="top-products-title">
+          <header class="panel__header">
+            <div>
+              <h2 class="panel__title" id="top-products-title">Top 5 produtos mais vendidos (30 dias)</h2>
+              <p class="panel__subtitle">Atualizado automaticamente pelo BIPA Analytics.</p>
+            </div>
+          </header>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Produto</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Vendas</th>
+                <th scope="col">Faturamento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jaqueta Jeans Oversized</td>
+                <td>Outerwear</td>
+                <td>28</td>
+                <td>R$ 5.317,20</td>
+              </tr>
+              <tr>
+                <td>Camisa Linho Relax</td>
+                <td>Camisas</td>
+                <td>24</td>
+                <td>R$ 3.576,00</td>
+              </tr>
+              <tr>
+                <td>Vestido Midi Floral</td>
+                <td>Vestidos</td>
+                <td>19</td>
+                <td>R$ 2.468,10</td>
+              </tr>
+              <tr>
+                <td>Calça Alfaiataria Cropped</td>
+                <td>Calças</td>
+                <td>17</td>
+                <td>R$ 2.803,30</td>
+              </tr>
+              <tr>
+                <td>Saia Plissada Grafite</td>
+                <td>Saias</td>
+                <td>15</td>
+                <td>R$ 2.098,50</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>

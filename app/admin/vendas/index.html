@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Vendas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin-sales">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Gestão</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Mudar para PDV</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <div class="app-admin">
+      <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
+        <div class="sidebar__logo">BIPA</div>
+        <nav class="sidebar__nav">
+          <a class="sidebar__link" href="/app/admin/dashboard/">Dashboard</a>
+          <a class="sidebar__link" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link" href="/app/admin/clientes/">Clientes</a>
+          <a class="sidebar__link is-active" href="/app/admin/vendas/">Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="app-admin__content" aria-labelledby="sales-title">
+        <header class="page-header">
+          <div>
+            <h1 class="page-title" id="sales-title">Histórico de vendas</h1>
+            <p class="page-subtitle">Todas as vendas finalizadas pelo PDV.</p>
+          </div>
+          <div class="page-actions">
+            <label class="form-field">
+              <span class="form-label">Período</span>
+              <select>
+                <option>Hoje</option>
+                <option>Ontem</option>
+                <option>Últimos 7 dias</option>
+                <option>Últimos 30 dias</option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+        <table class="table table--clickable">
+          <thead>
+            <tr>
+              <th scope="col">Data</th>
+              <th scope="col">Venda</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Pagamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>12/09/2024 15:42</td>
+              <td><a class="link" href="/app/pdv/recibo/0001/">#0001</a></td>
+              <td>Bianca Souza</td>
+              <td>R$ 299,80</td>
+              <td>PIX</td>
+            </tr>
+            <tr>
+              <td>12/09/2024 14:18</td>
+              <td>#0000</td>
+              <td>Cliente Avulso</td>
+              <td>R$ 89,90</td>
+              <td>Dinheiro</td>
+            </tr>
+            <tr>
+              <td>12/09/2024 11:05</td>
+              <td>#0999</td>
+              <td>Fernanda Prado</td>
+              <td>R$ 189,90</td>
+              <td>Cartão</td>
+            </tr>
+            <tr>
+              <td>12/09/2024 10:02</td>
+              <td>#0998</td>
+              <td>Marcelo Torres</td>
+              <td>R$ 249,90</td>
+              <td>PIX</td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+    </div>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>

@@ -3,212 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BIPA - PDV mobile para brechós</title>
+    <title>BIPA — Acesse sua conta</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body data-page="overview">
-    <div class="app" id="app">
-      <div class="demo-banner" role="status">MODO DEMO — dados fictícios</div>
-
-      <header class="app__shell">
-        <div class="app__topbar" role="navigation" aria-label="Acesso rápido">
-          <div class="app__identity">
-            <span class="brand-mark" aria-hidden="true">B</span>
-            <div class="identity__text">
-              <span class="identity__name">BIPA</span>
-              <span class="identity__tagline">PDV mobile para brechós</span>
-            </div>
-          </div>
-
-          <div class="topbar__actions">
-            <a class="topbar__link" href="index.html" data-nav="overview">Produto</a>
-            <a class="topbar__link" href="fluxos.html" data-nav="flows">Fluxos</a>
-            <a class="topbar__link" href="relatorios.html" data-nav="reports">Relatórios</a>
-            <a class="topbar__link" href="github.html" data-nav="github">Roadmap</a>
-            <a class="btn btn--ghost btn--small" href="fluxos.html#demo-workspace">Entrar na demo</a>
-            <a class="btn btn--primary btn--small" href="#contact-section">Falar com vendas</a>
-          </div>
+  <body data-page="login">
+    <main class="public-shell">
+      <section class="auth-card" aria-labelledby="login-title">
+        <div class="auth-card__brand">
+          <span class="brand-mark" aria-hidden="true">B</span>
+          <h1 class="auth-card__title" id="login-title">Entre no BIPA</h1>
+          <p class="auth-card__subtitle">PDV mobile e gestão para brechós e lojas independentes.</p>
         </div>
 
-        <div class="hero">
-          <div class="hero__grid">
-            <div class="hero__content">
-              <span class="hero__badge">Solução omnichannel para varejo circular</span>
-              <h1 class="hero__title">Mini-ERP + PDV móvel para brechós modernos.</h1>
-              <p class="hero__subtitle">
-                Cadastre peças, gere QR Code, venda em 3 toques e receba via PIX — tudo em uma experiência
-                móvel pensada para times enxutos.
-              </p>
-              <div class="hero__actions" role="group" aria-label="Ações principais">
-                <div class="hero__action">
-                  <a class="btn btn--primary" href="fluxos.html#demo-workspace">Explorar versão demo</a>
-                  <span class="hero__action-note">Leva direto à conta de teste com dados fictícios prontos.</span>
-                </div>
-                <div class="hero__action">
-                  <a class="btn btn--outline" href="relatorios.html">Ver indicadores</a>
-                  <span class="hero__action-note">Mostra relatórios com números falsos para sentir a análise.</span>
-                </div>
-              </div>
-              <ul class="hero__highlights" aria-label="Destaques do BIPA">
-                <li>Catálogo com QR Code individual, consignação e reservas em segundos.</li>
-                <li>Venda assistida ou self-checkout com confirmação PIX integrada.</li>
-                <li>Indicadores financeiros, operacionais e de equipe em tempo real.</li>
-              </ul>
-            </div>
+        <form class="auth-form" aria-describedby="login-help">
+          <label class="form-field">
+            <span class="form-label">Email ou usuário</span>
+            <input type="email" name="email" placeholder="exemplo@bipa.demo" required />
+          </label>
 
-            <aside class="hero__summary" aria-label="Resumo do BIPA em 1 minuto">
-              <div class="summary-card">
-                <header class="summary-card__header">
-                  <span class="summary-card__badge" aria-hidden="true">1 min</span>
-                  <h2 class="summary-card__title">Entenda o BIPA agora</h2>
-                  <p class="summary-card__subtitle">O fluxo completo do varejo circular do cadastro ao passe de saída.</p>
-                </header>
-                <ol class="summary-card__list">
-                  <li><strong>Organize o acervo.</strong> Cadastre lotes, gere etiquetas QR e acompanhe consignação.</li>
-                  <li><strong>Venda em 3 toques.</strong> Escaneie, confirme PIX e entregue recibo sem fricção.</li>
-                  <li><strong>Controle a saída.</strong> Libere com passe validado e monitore tudo nos dashboards.</li>
-                </ol>
-                <dl class="summary-card__metrics">
-                  <div class="metric">
-                    <dt>2m07s</dt>
-                    <dd>Checkout médio com PIX confirmado</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>+38%</dt>
-                    <dd>Giro de estoque com reservas temporárias</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>0 chargebacks</dt>
-                    <dd>Saída liberada só após validação</dd>
-                  </div>
-                </dl>
-                <footer class="summary-card__footer">
-                  <p>
-                    Prefere conversar com a equipe? Clique em
-                    <a class="link-cta" href="#contact-section">falar com vendas</a> e receba um tour guiado.
-                  </p>
-                </footer>
-              </div>
-            </aside>
-          </div>
-        </div>
-      </header>
+          <label class="form-field">
+            <span class="form-label">Senha</span>
+            <input type="password" name="password" placeholder="••••••••" required />
+          </label>
 
-      <main class="app__content">
-        <section class="panel is-active" id="overview-panel" aria-labelledby="overview-heading">
-          <h2 class="panel__title" id="overview-heading">Mini-ERP + PDV móvel para brechós e lojas independentes.</h2>
-          <p class="panel__subtitle">
-            Cadastre peças, gere QR Code, venda em 3 toques e receba via PIX.
+          <button class="btn btn--primary" type="submit">Entrar no sistema</button>
+
+          <p class="auth-form__hint" id="login-help">
+            Acesso demonstrativo — use credenciais fictícias como <strong>demo@bipa.app</strong> / <strong>123456</strong>.
           </p>
-
-          <div class="features">
-            <article class="feature-card">
-              <div class="feature-card__icon">
-                <span class="icon icon--qr">&#9635;</span>
-              </div>
-              <div class="feature-card__content">
-                <h3>QR Code por peça</h3>
-                <p>Catálogo digital e controle de estoque instantâneo.</p>
-              </div>
-            </article>
-
-            <article class="feature-card">
-              <div class="feature-card__icon">
-                <span class="icon icon--touch">&#128070;</span>
-              </div>
-              <div class="feature-card__content">
-                <h3>Venda em 3 toques</h3>
-                <p>Abrir → Escanear → Receber. Simples e rápido.</p>
-              </div>
-            </article>
-
-            <article class="feature-card">
-              <div class="feature-card__icon">
-                <span class="icon icon--chart">&#128200;</span>
-              </div>
-              <div class="feature-card__content">
-                <h3>Gestão completa</h3>
-                <p>Clientes, gastos, relatórios e extrato público.</p>
-              </div>
-            </article>
-
-            <article class="feature-card">
-              <div class="feature-card__icon">
-                <span class="icon icon--shield">&#128274;</span>
-              </div>
-              <div class="feature-card__content">
-                <h3>Self-checkout seguro</h3>
-                <p>Cliente paga no celular; saída liberada só após confirmação PIX.</p>
-              </div>
-            </article>
-          </div>
-
-          <div class="demo-card">
-            <div class="demo-card__header">
-              <span class="status-dot"></span>
-              <span>Acesso Demo</span>
-            </div>
-            <p class="demo-card__description">
-              BIPA do BIM — base fictícia completa para explorar relatórios e estoque.
-            </p>
-            <a class="btn btn--surface" href="fluxos.html#demo-workspace">Entrar na conta demo</a>
-            <p class="demo-card__footer">
-              Quer ver mais? <a href="#contact-section">Fale com a nossa equipe</a>.
-            </p>
-          </div>
-        </section>
-      </main>
-
-      <footer class="app__footer">
-        <span>BIPA © 2024</span>
-        <span>Termos · Privacidade</span>
-      </footer>
-    </div>
-
-    <section class="contact" id="contact-section" aria-labelledby="contact-title">
-      <div class="contact__shell">
-        <header class="contact__header">
-          <h2 id="contact-title">Vamos montar sua operação?</h2>
-          <p>Conte rapidamente sobre a sua operação e retornamos em até 1 dia útil.</p>
-        </header>
-        <form class="contact__form" id="contact-form">
-          <label>
-            <span>Nome</span>
-            <input type="text" name="name" required placeholder="Como podemos te chamar?" />
-          </label>
-          <label>
-            <span>E-mail</span>
-            <input type="email" name="email" required placeholder="nome@brecho.com" />
-          </label>
-          <label>
-            <span>WhatsApp</span>
-            <input type="tel" name="phone" required placeholder="(00) 90000-0000" />
-          </label>
-          <label>
-            <span>Principal objetivo</span>
-            <select name="goal" required>
-              <option value="checkout">Self-checkout</option>
-              <option value="pix">Receber via PIX</option>
-              <option value="catalog">Catalogar acervo</option>
-              <option value="consignacao">Consignação organizada</option>
-            </select>
-          </label>
-          <label>
-            <span>Mensagem</span>
-            <textarea name="message" rows="3" placeholder="Conte rapidamente sobre a sua operação"></textarea>
-          </label>
-          <button type="submit" class="btn btn--primary">Enviar interesse</button>
-          <p class="contact__note" id="contact-feedback" role="status" aria-live="polite"></p>
         </form>
-      </div>
-    </section>
 
-    <script src="script.js"></script>
+        <footer class="auth-card__footer">
+          <p>
+            Quer conhecer a vitrine pública? Visite a loja demo em
+            <a href="/loja/brecho-da-ana/">bipa.app/loja/brecho-da-ana</a>.
+          </p>
+        </footer>
+      </section>
+    </main>
+    <script src="/script.js" defer></script>
   </body>
 </html>

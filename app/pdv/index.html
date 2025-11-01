@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — PDV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="pdv">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Frente de Caixa</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/admin/dashboard/">Ir para Gestão</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <main class="pdv-shell">
+      <section class="pdv-column pdv-column--search" aria-labelledby="pdv-search-title">
+        <header class="pdv-column__header">
+          <h2 class="pdv-column__title" id="pdv-search-title">Buscar produto</h2>
+          <p class="pdv-column__subtitle">Pesquise por nome ou código. Dados fictícios.</p>
+        </header>
+        <label class="form-field pdv-search">
+          <span class="sr-only">Buscar produto</span>
+          <input id="pdv-search" type="search" placeholder="Digite para encontrar" autocomplete="off" />
+        </label>
+
+        <ul class="pdv-product-list" id="pdv-product-list" aria-label="Produtos disponíveis"></ul>
+      </section>
+
+      <section class="pdv-column pdv-column--cart" aria-labelledby="pdv-cart-title">
+        <header class="pdv-column__header">
+          <h2 class="pdv-column__title" id="pdv-cart-title">Venda atual</h2>
+          <p class="pdv-column__subtitle">Selecione um cliente e aplique descontos.</p>
+        </header>
+
+        <div class="pdv-card">
+          <label class="form-field">
+            <span class="form-label">Cliente</span>
+            <input
+              id="pdv-client"
+              type="text"
+              list="pdv-client-list"
+              placeholder="Buscar cliente ou deixar Avulso"
+            />
+            <datalist id="pdv-client-list">
+              <option value="Cliente Avulso"></option>
+              <option value="Bianca Souza"></option>
+              <option value="Carlos Lima"></option>
+              <option value="Fernanda Prado"></option>
+              <option value="Marcelo Torres"></option>
+            </datalist>
+          </label>
+
+          <div class="pdv-cart" id="pdv-cart" aria-live="polite"></div>
+
+          <div class="pdv-discounts">
+            <label class="form-field">
+              <span class="form-label">Desconto (R$)</span>
+              <input id="pdv-discount-value" type="number" min="0" step="0.01" value="0" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Desconto (%)</span>
+              <input id="pdv-discount-percent" type="number" min="0" max="100" step="0.5" value="0" />
+            </label>
+          </div>
+
+          <dl class="pdv-summary">
+            <div>
+              <dt>Subtotal</dt>
+              <dd id="pdv-subtotal">R$ 0,00</dd>
+            </div>
+            <div>
+              <dt>Descontos</dt>
+              <dd id="pdv-total-discount">R$ 0,00</dd>
+            </div>
+            <div class="pdv-summary__total">
+              <dt>Total a pagar</dt>
+              <dd id="pdv-total">R$ 0,00</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="pdv-column pdv-column--payment" aria-labelledby="pdv-payment-title">
+        <header class="pdv-column__header">
+          <h2 class="pdv-column__title" id="pdv-payment-title">Pagamento</h2>
+          <p class="pdv-column__subtitle">Selecione a forma de pagamento e finalize.</p>
+        </header>
+
+        <div class="pdv-card pdv-payment" id="pdv-payment">
+          <div class="pdv-payment__methods" role="group" aria-label="Formas de pagamento">
+            <button class="payment-button is-active" data-payment="PIX" type="button">PIX</button>
+            <button class="payment-button" data-payment="Dinheiro" type="button">Dinheiro</button>
+            <button class="payment-button" data-payment="Cartão" type="button">Cartão</button>
+            <button class="payment-button" data-payment="Fiado" type="button">Fiado</button>
+          </div>
+
+          <div class="pdv-payment__details" id="pdv-payment-details">
+            <h3>Forma selecionada: PIX</h3>
+            <p>Chave da loja: <strong>pix@bipa.demo</strong></p>
+            <p>Confirme o recebimento no aplicativo do banco e finalize a venda.</p>
+          </div>
+
+          <button class="btn btn--primary btn--xl" id="pdv-finish" type="button">Finalizar venda</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="pdv-modal" id="pdv-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="pdv-modal__content">
+        <header class="pdv-modal__header">
+          <h2>Confirmar pagamento</h2>
+          <button class="pdv-modal__close" id="pdv-modal-close" type="button" aria-label="Fechar">×</button>
+        </header>
+        <div class="pdv-modal__body" id="pdv-modal-body"></div>
+        <footer class="pdv-modal__footer">
+          <a class="btn btn--surface" href="/app/pdv/recibo/0001/">Gerar recibo</a>
+          <button class="btn btn--primary" id="pdv-modal-confirm" type="button">Confirmar e registrar</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>

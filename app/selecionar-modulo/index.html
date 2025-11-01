@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Selecione o módulo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="module-select">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <span class="app-topbar__name">BIPA</span>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Ir para PDV</a>
+        <button class="btn btn--ghost" type="button">Sair</button>
+      </nav>
+    </header>
+
+    <main class="module-select" aria-labelledby="module-title">
+      <div class="module-select__card">
+        <h1 class="module-select__title" id="module-title">Escolha por onde quer começar</h1>
+        <p class="module-select__subtitle">Dados fictícios carregados automaticamente para demonstração.</p>
+
+        <div class="module-select__grid">
+          <a class="module-card" href="/app/pdv/">
+            <span class="module-card__badge">PDV</span>
+            <h2 class="module-card__title">Vendas</h2>
+            <p class="module-card__description">Caixa rápido, otimizado para tablet e celular.</p>
+          </a>
+
+          <a class="module-card" href="/app/admin/dashboard/">
+            <span class="module-card__badge">Admin</span>
+            <h2 class="module-card__title">Gestão</h2>
+            <p class="module-card__description">Dashboards, estoque, clientes e financeiro.</p>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>
