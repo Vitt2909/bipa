@@ -23,6 +23,234 @@ tabs.forEach((tab) => {
   tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
 });
 
+const catalogProducts = [
+  {
+    code: 'BR-00051',
+    name: 'Regata Basquete BIPA — Chumbo',
+    category: 'Regatas',
+    size: 'M',
+    color: 'Chumbo',
+    price: 129.9,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'PIX pronto',
+    updated: 'há 3 min',
+    image:
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00052',
+    name: 'Regata Basquete BIPA — Vermelha',
+    category: 'Regatas',
+    size: 'G',
+    color: 'Vermelha',
+    price: 129.9,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'QR enviado',
+    updated: 'há 5 min',
+    image:
+      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00053',
+    name: 'Regata Basquete BIPA — Azul',
+    category: 'Regatas',
+    size: 'P',
+    color: 'Azul',
+    price: 129.9,
+    badge: 'Reservado 10 min',
+    stock: '1 un',
+    status: 'Aguardando PIX',
+    updated: 'há 2 min',
+    image:
+      'https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00054',
+    name: 'Regata Basquete BIPA — Preta',
+    category: 'Regatas',
+    size: 'M',
+    color: 'Preta',
+    price: 129.9,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'Self-checkout ativo',
+    updated: 'há 1 min',
+    image:
+      'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00055',
+    name: 'Jaqueta Jeans Vintage',
+    category: 'Jaquetas',
+    size: 'M',
+    color: 'Azul',
+    price: 279.0,
+    badge: 'Novidade',
+    stock: '2 un',
+    status: 'QR impresso',
+    updated: 'há 8 min',
+    image:
+      'https://images.unsplash.com/photo-1525171254930-643fc658b64e?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00056',
+    name: 'Macacão Linho Areia',
+    category: 'Macacões',
+    size: 'M',
+    color: 'Areia',
+    price: 249.0,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'PIX pronto',
+    updated: 'há 12 min',
+    image:
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00057',
+    name: 'Vestido Midi Preto Clássico',
+    category: 'Vestidos',
+    size: 'M',
+    color: 'Preto',
+    price: 219.0,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'Pronto para retirada',
+    updated: 'há 20 min',
+    image:
+      'https://images.unsplash.com/photo-1542293787938-4d2226c0d4b3?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00058',
+    name: 'Vestido Envelope Floral',
+    category: 'Vestidos',
+    size: 'G',
+    color: 'Floral',
+    price: 229.0,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'Aguardando aprovação',
+    updated: 'há 35 min',
+    image:
+      'https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00059',
+    name: 'Saia Midi Listrada',
+    category: 'Saias',
+    size: 'M',
+    color: 'Marinho',
+    price: 189.0,
+    badge: 'Disponível',
+    stock: '2 un',
+    status: 'Catálogo público',
+    updated: 'há 1 h',
+    image:
+      'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00060',
+    name: 'Blusa Cetim Off White',
+    category: 'Blusas',
+    size: 'P',
+    color: 'Off White',
+    price: 149.0,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'PIX pronto',
+    updated: 'há 50 min',
+    image:
+      'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00061',
+    name: 'Calça Alfaiataria Preta',
+    category: 'Calças',
+    size: 'G',
+    color: 'Preta',
+    price: 219.0,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'QR impresso',
+    updated: 'há 2 h',
+    image:
+      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=640&q=80',
+  },
+  {
+    code: 'BR-00062',
+    name: 'Cardigan Tricô Verde',
+    category: 'Cardigans',
+    size: 'M',
+    color: 'Verde',
+    price: 189.0,
+    badge: 'Disponível',
+    stock: '1 un',
+    status: 'PIX pronto',
+    updated: 'há 3 h',
+    image:
+      'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=640&q=80',
+  },
+];
+
+const catalogGrid = document.getElementById('catalog-grid');
+
+if (catalogGrid) {
+  const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  catalogProducts.forEach((product) => {
+    const card = document.createElement('article');
+    card.className = 'catalog-card';
+
+    const media = document.createElement('div');
+    media.className = 'catalog-card__media';
+    media.style.backgroundImage = `url("${product.image}")`;
+
+    if (product.badge) {
+      const badge = document.createElement('span');
+      badge.className = 'catalog-card__badge';
+      badge.textContent = product.badge;
+      media.appendChild(badge);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'catalog-card__body';
+
+    const title = document.createElement('h4');
+    title.className = 'catalog-card__title';
+    title.textContent = product.name;
+
+    const meta = document.createElement('div');
+    meta.className = 'catalog-card__meta';
+    meta.innerHTML = `
+      <span>Cód: ${product.code}</span>
+      <span>Tam ${product.size}</span>
+      <span>${product.color}</span>
+      <span>Estoque: ${product.stock}</span>
+    `;
+
+    const price = document.createElement('div');
+    price.className = 'catalog-card__price';
+    price.textContent = formatter.format(product.price);
+
+    const actions = document.createElement('div');
+    actions.className = 'catalog-card__actions';
+
+    const status = document.createElement('span');
+    status.innerHTML = `<strong>${product.status}</strong> · ${product.updated}`;
+
+    const qr = document.createElement('span');
+    qr.className = 'catalog-card__qr';
+    qr.textContent = 'QR';
+
+    actions.append(status, qr);
+    body.append(title, meta, price, actions);
+    card.append(media, body);
+    catalogGrid.appendChild(card);
+  });
+}
+
 // --------- Venda em 3 toques ---------
 const saleStepsElement = document.getElementById('sale-steps');
 const saleNextButton = document.getElementById('sale-next');
@@ -1752,12 +1980,17 @@ if (reportsRoleSelect) {
 
     const products = [
       { id: 'prod-vest-001', code: 'VST-001', name: 'Vestido Midi Preto', category: 'Vestidos', size: 'M', color: 'Preto', costPrice: 98, price: 219 },
-      { id: 'prod-vest-002', code: 'VST-002', name: 'Vestido Envelope Floral', category: 'Vestidos', size: 'M', color: 'Preto', costPrice: 102, price: 229 },
+      { id: 'prod-vest-002', code: 'VST-002', name: 'Vestido Envelope Floral', category: 'Vestidos', size: 'G', color: 'Floral', costPrice: 102, price: 229 },
       { id: 'prod-vest-003', code: 'VST-003', name: 'Vestido Longo Azul', category: 'Vestidos', size: 'G', color: 'Azul', costPrice: 115, price: 249 },
       { id: 'prod-vest-004', code: 'VST-004', name: 'Vestido Curto Preto', category: 'Vestidos', size: 'P', color: 'Preto', costPrice: 90, price: 199 },
-      { id: 'prod-blusa-001', code: 'BLS-101', name: 'Blusa Cetim Off', category: 'Blusas', size: 'M', color: 'Off White', costPrice: 52, price: 149 },
-      { id: 'prod-calca-001', code: 'CAL-201', name: 'Calça Alfaiataria Preta', category: 'Calças', size: 'M', color: 'Preto', costPrice: 88, price: 219 },
+      { id: 'prod-regata-001', code: 'BR-00051', name: 'Regata Basquete Chumbo', category: 'Regatas', size: 'M', color: 'Chumbo', costPrice: 58, price: 129 },
+      { id: 'prod-regata-002', code: 'BR-00052', name: 'Regata Basquete Vermelha', category: 'Regatas', size: 'G', color: 'Vermelha', costPrice: 58, price: 129 },
+      { id: 'prod-regata-003', code: 'BR-00054', name: 'Regata Basquete Preta', category: 'Regatas', size: 'M', color: 'Preto', costPrice: 58, price: 129 },
+      { id: 'prod-blusa-001', code: 'BLS-101', name: 'Blusa Cetim Off', category: 'Blusas', size: 'P', color: 'Off White', costPrice: 52, price: 149 },
+      { id: 'prod-calca-001', code: 'CAL-201', name: 'Calça Alfaiataria Preta', category: 'Calças', size: 'G', color: 'Preto', costPrice: 88, price: 219 },
       { id: 'prod-saia-001', code: 'SAI-301', name: 'Saia Midi Listrada', category: 'Saias', size: 'M', color: 'Marinho', costPrice: 64, price: 189 },
+      { id: 'prod-jaqueta-001', code: 'JAQ-501', name: 'Jaqueta Jeans Vintage', category: 'Jaquetas', size: 'M', color: 'Azul', costPrice: 120, price: 279 },
+      { id: 'prod-cardigan-001', code: 'CAR-601', name: 'Cardigan Tricô Verde', category: 'Cardigans', size: 'M', color: 'Verde', costPrice: 72, price: 189 },
       { id: 'prod-short-001', code: 'SHT-401', name: 'Short Linho Areia', category: 'Shorts', size: 'M', color: 'Bege', costPrice: 48, price: 159 },
     ];
 
