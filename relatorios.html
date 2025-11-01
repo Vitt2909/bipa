@@ -27,12 +27,13 @@
           </div>
 
           <div class="topbar__actions">
-            <a class="topbar__link" href="index.html" data-nav="overview">Produto</a>
-            <a class="topbar__link" href="fluxos.html" data-nav="flows">Fluxos</a>
-            <a class="topbar__link" href="relatorios.html" data-nav="reports">Relatórios</a>
-            <a class="topbar__link" href="github.html" data-nav="github">Roadmap</a>
-            <a class="btn btn--ghost btn--small" href="fluxos.html#demo-workspace">Entrar na demo</a>
-            <a class="btn btn--primary btn--small" href="#contact-section">Falar com vendas</a>
+            <a class="topbar__link" href="index.html">Visão geral</a>
+            <a class="topbar__link" href="fluxos.html">Fluxos</a>
+            <a class="topbar__link" aria-current="page" href="relatorios.html">Relatórios</a>
+            <a class="topbar__link" href="github.html">Roadmap</a>
+            <a class="topbar__link" href="demo.html">Demo</a>
+            <a class="btn btn--ghost btn--small" href="login.html">Login</a>
+            <a class="btn btn--primary btn--small" href="contato.html">Contato</a>
           </div>
         </div>
 
@@ -46,11 +47,11 @@
               </p>
               <div class="hero__actions" role="group" aria-label="Ações principais">
                 <div class="hero__action">
-                  <a class="btn btn--primary" href="#reports-panel">Explorar painel</a>
+                  <a class="btn btn--primary" href="relatorios-dashboard.html">Explorar painel</a>
                   <span class="hero__action-note">Aplique filtros e gere CSV instantaneamente.</span>
                 </div>
                 <div class="hero__action">
-                  <a class="btn btn--outline" href="fluxos.html#demo-workspace">Ir para o workspace demo</a>
+                  <a class="btn btn--outline" href="demo.html">Ir para o workspace demo</a>
                   <span class="hero__action-note">Entenda como os dados surgem na operação.</span>
                 </div>
               </div>
@@ -89,7 +90,7 @@
                 </dl>
                 <footer class="summary-card__footer">
                   <p>
-                    Quer ver os números com sua operação? <a class="link-cta" href="#contact-section">Converse com a equipe</a> e receba um recorte personalizado.
+                    Quer ver os números com sua operação? <a class="link-cta" href="contato.html">Converse com a equipe</a> e receba um recorte personalizado.
                   </p>
                 </footer>
               </div>
@@ -371,47 +372,9 @@
 
       <footer class="app__footer">
         <span>BIPA © 2024</span>
-        <span>Termos · Privacidade</span>
+        <span><a class="link-cta" href="contato.html">Falar com vendas</a> · <a href="login.html">Entrar</a></span>
       </footer>
     </div>
-
-    <section class="contact" id="contact-section" aria-labelledby="contact-title">
-      <div class="contact__shell">
-        <header class="contact__header">
-          <h2 id="contact-title">Vamos montar sua operação?</h2>
-          <p>Conte rapidamente sobre a sua operação e retornamos em até 1 dia útil.</p>
-        </header>
-        <form class="contact__form" id="contact-form">
-          <label>
-            <span>Nome</span>
-            <input type="text" name="name" required placeholder="Como podemos te chamar?" />
-          </label>
-          <label>
-            <span>E-mail</span>
-            <input type="email" name="email" required placeholder="nome@brecho.com" />
-          </label>
-          <label>
-            <span>WhatsApp</span>
-            <input type="tel" name="phone" required placeholder="(00) 90000-0000" />
-          </label>
-          <label>
-            <span>Principal objetivo</span>
-            <select name="goal" required>
-              <option value="checkout">Self-checkout</option>
-              <option value="pix">Receber via PIX</option>
-              <option value="catalog">Catalogar acervo</option>
-              <option value="consignacao">Consignação organizada</option>
-            </select>
-          </label>
-          <label>
-            <span>Mensagem</span>
-            <textarea name="message" rows="3" placeholder="Conte rapidamente sobre a sua operação"></textarea>
-          </label>
-          <button type="submit" class="btn btn--primary">Enviar interesse</button>
-          <p class="contact__note" id="contact-feedback" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
 
     <script src="script.js"></script>
   </body>

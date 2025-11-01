@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BIPA — Acesse sua conta</title>
+    <title>BIPA — PDV verde para brechós modernos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,41 +12,148 @@
     />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body data-page="login">
-    <main class="public-shell">
-      <section class="auth-card" aria-labelledby="login-title">
-        <div class="auth-card__brand">
-          <span class="brand-mark" aria-hidden="true">B</span>
-          <h1 class="auth-card__title" id="login-title">Entre no BIPA</h1>
-          <p class="auth-card__subtitle">PDV mobile e gestão para brechós e lojas independentes.</p>
+  <body data-page="marketing-home">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-logo" href="index.html">
+          <span>B</span>
+          BIPA
+        </a>
+        <nav class="site-nav" aria-label="Navegação principal">
+          <a href="index.html" aria-current="page">Visão geral</a>
+          <a href="fluxos.html">Fluxos</a>
+          <a href="relatorios.html">Relatórios</a>
+          <a href="github.html">Roadmap</a>
+          <a href="demo.html">Demo</a>
+        </nav>
+        <div class="site-actions">
+          <a class="btn btn--ghost btn--small" href="login.html">Área do cliente</a>
+          <a class="btn btn--primary btn--small" href="contato.html">Falar com vendas</a>
         </div>
+      </div>
+    </header>
 
-        <form class="auth-form" aria-describedby="login-help">
-          <label class="form-field">
-            <span class="form-label">Email ou usuário</span>
-            <input type="email" name="email" placeholder="exemplo@bipa.demo" required />
-          </label>
-
-          <label class="form-field">
-            <span class="form-label">Senha</span>
-            <input type="password" name="password" placeholder="••••••••" required />
-          </label>
-
-          <button class="btn btn--primary" type="submit">Entrar no sistema</button>
-
-          <p class="auth-form__hint" id="login-help">
-            Acesso demonstrativo — use credenciais fictícias como <strong>demo@bipa.app</strong> / <strong>123456</strong>.
+    <main class="site-main">
+      <section class="site-hero">
+        <div class="site-hero__headline">
+          <span class="site-hero__eyebrow">Experiência verde, operação ágil</span>
+          <h1 class="site-hero__title">PDV inteligente e sustentável para brechós que respiram moda circular.</h1>
+          <p class="site-hero__subtitle">
+            Centralize vendas, estoque, clientes e relatórios em um ecossistema desenhado para lojas autorais. Interface mobile-first,
+            dados fictícios para testar e integrações prontas quando quiser escalar.
           </p>
-        </form>
+          <div class="site-hero__actions" role="group" aria-label="Chamadas principais">
+            <a class="btn btn--primary" href="demo.html">Explorar demo guiada</a>
+            <a class="btn btn--surface" href="fluxos.html">Ver fluxos operacionais</a>
+            <a class="btn btn--ghost" href="contato.html">Agendar apresentação</a>
+          </div>
+        </div>
+        <aside class="site-hero__media" aria-label="Destaques do produto">
+          <div class="site-hero__card">
+            <h2 class="summary-card__title">Painel vivo da operação</h2>
+            <p class="summary-card__subtitle">
+              Monitoramento em tempo real com insights sobre vendas, reservas, consignados e autoatendimento.
+            </p>
+            <div class="site-hero__stats" role="list">
+              <div class="site-hero__stat" role="listitem">
+                <span>Tempo médio de venda</span>
+                <strong>3 toques</strong>
+              </div>
+              <div class="site-hero__stat" role="listitem">
+                <span>Reservas controladas</span>
+                <strong>15/30/60 min</strong>
+              </div>
+              <div class="site-hero__stat" role="listitem">
+                <span>KPIs atualizados</span>
+                <strong>10 s</strong>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
 
-        <footer class="auth-card__footer">
+      <section class="feature-section" aria-labelledby="feature-heading">
+        <div class="section-heading">
+          <h2 id="feature-heading">Construa a jornada completa da sua loja independente</h2>
           <p>
-            Quer conhecer a vitrine pública? Visite a loja demo em
-            <a href="/loja/brecho-da-ana/">bipa.app/loja/brecho-da-ana</a>.
+            Teste o BIPA em modo demonstrativo, valide fluxos com sua equipe e migre para a operação real com a mesma interface. Tudo isso com uma
+            estética verde + preta que dialoga com a moda circular.
           </p>
-        </footer>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-card__icon">01</div>
+            <h3>Vendas assistidas no tablet</h3>
+            <p>
+              Escaneie etiquetas, aplique descontos e finalize pagamentos PIX fake em segundos. O PDV foi criado para ser usado em pé, sem fricção.
+            </p>
+            <a class="feature-card__link" href="fluxos-simulacoes.html">Simular jornada de venda →</a>
+          </article>
+          <article class="feature-card">
+            <div class="feature-card__icon">02</div>
+            <h3>Estoque vivo e vitrine online</h3>
+            <p>
+              Cadastre peças com status, tamanhos e consignados. Disponibilize vitrine instantânea para o público com filtros intuitivos.
+            </p>
+            <a class="feature-card__link" href="loja/brecho-da-ana/">Abrir vitrine demo →</a>
+          </article>
+          <article class="feature-card">
+            <div class="feature-card__icon">03</div>
+            <h3>Relatórios inteligentes</h3>
+            <p>
+              KPIs customizados por perfil, mix de pagamento, exportação CSV e filtros combináveis para entender o giro das peças.
+            </p>
+            <a class="feature-card__link" href="relatorios-dashboard.html">Ver dashboard demo →</a>
+          </article>
+          <article class="feature-card">
+            <div class="feature-card__icon">04</div>
+            <h3>Roadmap transparente</h3>
+            <p>
+              Planejamento aberto no GitHub com milestones, critérios de aceite e próximos lançamentos para evoluir com você.
+            </p>
+            <a class="feature-card__link" href="roadmap-detalhes.html">Acompanhar entregas →</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="split-section" aria-labelledby="cta-heading">
+        <div class="split-section__card">
+          <h2 id="cta-heading">Pronto para experimentar agora?</h2>
+          <p>
+            Acesse a demo completa, converse com vendas ou mergulhe direto no módulo de gestão. Cada botão abre uma página dedicada para você navegar sem perder o fio.
+          </p>
+          <div class="site-hero__actions">
+            <a class="btn btn--primary" href="demo.html">Abrir workspace demo</a>
+            <a class="btn btn--surface" href="app/selecionar-modulo/">Entrar no app de gestão</a>
+            <a class="btn btn--ghost" href="contato.html">Falar com uma pessoa</a>
+          </div>
+        </div>
+        <ul class="split-section__meta" aria-label="Diferenciais">
+          <li>
+            <span class="chip">Modo demo guiado</span>
+            Interface e dados fictícios com respostas imediatas.
+          </li>
+          <li>
+            <span class="chip chip--available">Design verde + preto</span>
+            Visual moderno alinhado à moda circular independente.
+          </li>
+          <li>
+            <span class="chip chip--reserved">Roadmap aberto</span>
+            Acompanhe entregas e priorize o que importa para sua operação.
+          </li>
+        </ul>
       </section>
     </main>
-    <script src="/script.js" defer></script>
+
+    <footer class="site-footer">
+      <span>BIPA © 2024 — PDV sustentável para brechós</span>
+      <span>
+        <a href="contato.html">Contato</a> ·
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="login.html">Entrar</a>
+      </span>
+    </footer>
+
+    <script src="script.js" defer></script>
   </body>
 </html>
