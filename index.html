@@ -757,63 +757,125 @@
         </header>
 
         <nav class="workspace__nav" role="tablist" aria-label="Seções do app demo">
-          <button type="button" class="workspace__nav-btn is-active" data-view="pdv" role="tab" aria-selected="true">
-            PDV
+          <button
+            type="button"
+            class="workspace__nav-btn is-active"
+            data-view="productForm"
+            role="tab"
+            aria-selected="true"
+          >
+            Cadastro de produto
           </button>
-          <button type="button" class="workspace__nav-btn" data-view="inventory" role="tab" aria-selected="false">
-            Estoque
+          <button type="button" class="workspace__nav-btn" data-view="catalog" role="tab" aria-selected="false">
+            Catálogo de produtos
           </button>
-          <button type="button" class="workspace__nav-btn" data-view="customers" role="tab" aria-selected="false">
-            Clientes
+          <button type="button" class="workspace__nav-btn" data-view="sell" role="tab" aria-selected="false">
+            Vender
           </button>
-          <button type="button" class="workspace__nav-btn" data-view="selfCheckout" role="tab" aria-selected="false">
-            Self-checkout
-          </button>
-          <button type="button" class="workspace__nav-btn" data-view="reports" role="tab" aria-selected="false">
-            Indicadores
+          <button type="button" class="workspace__nav-btn" data-view="analysis" role="tab" aria-selected="false">
+            Análise do dia
           </button>
         </nav>
 
         <div class="workspace__content">
-          <section class="workspace-view is-active" data-view="pdv" role="tabpanel">
-            <div class="workspace-split">
-              <div class="workspace-pane">
-                <header class="workspace-pane__header">
-                  <h3>Escaneie ou escolha uma peça</h3>
-                  <button type="button" class="btn btn--ghost btn--small" data-action="pdv-scan">Acessar câmera</button>
-                </header>
-                <ul class="workspace-list" id="pdv-product-list" aria-live="polite"></ul>
-              </div>
-              <div class="workspace-pane">
-                <header class="workspace-pane__header">
-                  <h3>Carrinho da venda</h3>
-                  <span class="workspace-pane__meta" id="pdv-ticket">Ticket médio: —</span>
-                </header>
-                <div class="workspace-cart" id="pdv-cart" aria-live="polite"></div>
-                <div class="workspace-cart__totals">
+          <section class="workspace-view is-active" data-view="productForm" role="tabpanel">
+            <div class="workspace-pane workspace-pane--form">
+              <header class="workspace-pane__header">
+                <h3>Cadastrar peça única</h3>
+                <span class="workspace-pane__meta">Código gerado automaticamente</span>
+              </header>
+              <form class="workspace-form" id="product-form">
+                <div class="workspace-form__grid">
+                  <label>
+                    <span>Nome da peça</span>
+                    <input type="text" name="name" id="product-name" placeholder="Vestido floral midi" required />
+                  </label>
+                  <label>
+                    <span>Categoria</span>
+                    <select name="category" id="product-category" required>
+                      <option value="">Selecione</option>
+                      <option value="Vestido">Vestido</option>
+                      <option value="Blusa">Blusa</option>
+                      <option value="Calça">Calça</option>
+                      <option value="Saia">Saia</option>
+                      <option value="Casaco">Casaco</option>
+                      <option value="Acessório">Acessório</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Tamanho</span>
+                    <input type="text" name="size" id="product-size" placeholder="P, M, G ou numérico" required />
+                  </label>
+                  <label>
+                    <span>Cor</span>
+                    <input type="text" name="color" id="product-color" placeholder="Azul marinho" required />
+                  </label>
+                  <label>
+                    <span>Gênero</span>
+                    <select name="gender" id="product-gender" required>
+                      <option value="Feminino">Feminino</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Unissex">Unissex</option>
+                      <option value="Infantil">Infantil</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Condição</span>
+                    <select name="condition" id="product-condition" required>
+                      <option value="Novo">Novo</option>
+                      <option value="Seminovo">Seminovo</option>
+                      <option value="Usado">Usado</option>
+                      <option value="Premium">Premium</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Preço de venda</span>
+                    <input type="number" name="price" id="product-price" min="0" step="0.01" required placeholder="199,90" />
+                  </label>
+                  <label>
+                    <span>Preço de custo (opcional)</span>
+                    <input type="number" name="costPrice" id="product-cost" min="0" step="0.01" placeholder="89,90" />
+                  </label>
+                  <label>
+                    <span>Origem</span>
+                    <select name="origin" id="product-origin" required>
+                      <option value="Consignado">Consignado</option>
+                      <option value="Doação">Doação</option>
+                      <option value="Estoque próprio">Estoque próprio</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Status inicial</span>
+                    <select name="status" id="product-status" required>
+                      <option value="available">Disponível</option>
+                      <option value="reserved">Reservado</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Foto</span>
+                    <input type="file" name="photo" id="product-photo" accept="image/*" />
+                  </label>
+                </div>
+                <div class="workspace-form__footer">
                   <div>
-                    <span>Itens</span>
-                    <strong id="pdv-item-count">0</strong>
+                    <p class="workspace-note">Próximo código: <strong id="product-code">BR-0001</strong></p>
+                    <p class="workspace-note">Ao salvar, a peça entra no estoque com quantidade = 1.</p>
                   </div>
-                  <div>
-                    <span>Total</span>
-                    <strong id="pdv-total">R$ 0,00</strong>
+                  <div class="workspace-form__actions">
+                    <button type="button" class="btn btn--ghost" id="product-form-reset">Limpar</button>
+                    <button type="submit" class="btn btn--primary">Salvar produto</button>
                   </div>
                 </div>
-                <div class="workspace-cart__actions">
-                  <button type="button" class="btn btn--ghost" data-action="pdv-discount">Aplicar 10% de desconto</button>
-                  <button type="button" class="btn btn--primary" data-action="pdv-checkout">Confirmar PIX fake</button>
-                </div>
-                <div class="workspace-log" id="pdv-log" aria-live="polite"></div>
-              </div>
+                <p class="workspace-note" id="product-form-feedback" role="status" aria-live="polite"></p>
+              </form>
             </div>
           </section>
 
-          <section class="workspace-view" data-view="inventory" role="tabpanel" aria-hidden="true">
+          <section class="workspace-view" data-view="catalog" role="tabpanel" aria-hidden="true">
             <div class="workspace-split">
               <div class="workspace-pane">
                 <header class="workspace-pane__header">
-                  <h3>Filtrar acervo</h3>
+                  <h3>Catálogo interno</h3>
                   <div class="workspace-filter">
                     <label>
                       <span>Categoria</span>
@@ -830,6 +892,7 @@
                     </label>
                   </div>
                 </header>
+                <p class="workspace-note">Mostrando apenas peças cadastradas nesta demo.</p>
                 <ul class="workspace-list" id="inventory-list" aria-live="polite"></ul>
               </div>
               <div class="workspace-pane">
@@ -843,57 +906,116 @@
             </div>
           </section>
 
-          <section class="workspace-view" data-view="customers" role="tabpanel" aria-hidden="true">
+          <section class="workspace-view" data-view="sell" role="tabpanel" aria-hidden="true">
             <div class="workspace-split">
               <div class="workspace-pane">
                 <header class="workspace-pane__header">
-                  <h3>Buscar clientes</h3>
+                  <h3>Escolha o produto</h3>
+                  <button type="button" class="btn btn--ghost btn--small" data-action="pdv-scan">Escanear QR</button>
+                </header>
+                <p class="workspace-note">Peças reservadas ou vendidas não aparecem aqui.</p>
+                <ul class="workspace-list" id="pdv-product-list" aria-live="polite"></ul>
+              </div>
+              <div class="workspace-pane workspace-pane--stacked">
+                <header class="workspace-pane__header">
+                  <h3>Resumo da venda</h3>
+                  <span class="workspace-pane__meta" id="pdv-ticket">Ticket médio: —</span>
+                </header>
+                <div class="workspace-cart" id="pdv-cart" aria-live="polite"></div>
+                <div class="workspace-cart__totals">
+                  <div>
+                    <span>Itens</span>
+                    <strong id="pdv-item-count">0</strong>
+                  </div>
+                  <div>
+                    <span>Desconto</span>
+                    <strong id="pdv-discount">R$ 0,00</strong>
+                  </div>
+                  <div>
+                    <span>Total</span>
+                    <strong id="pdv-total">R$ 0,00</strong>
+                  </div>
+                </div>
+                <div class="workspace-section">
+                  <h4>Descontos</h4>
+                  <div class="workspace-discount">
+                    <label>
+                      <span>Desconto (%)</span>
+                      <input type="number" id="discount-percent" min="0" max="100" step="1" value="0" />
+                    </label>
+                    <label>
+                      <span>Desconto (R$)</span>
+                      <input type="number" id="discount-value" min="0" step="0.01" value="0" />
+                    </label>
+                    <button type="button" class="btn btn--ghost btn--small" id="discount-clear">Limpar</button>
+                  </div>
+                </div>
+                <div class="workspace-section">
+                  <h4>Pagamento</h4>
+                  <div class="workspace-payment" role="radiogroup" aria-label="Formas de pagamento">
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="pix" checked />
+                      <span>PIX</span>
+                    </label>
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="cash" />
+                      <span>Dinheiro</span>
+                    </label>
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="card" />
+                      <span>Cartão</span>
+                    </label>
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="fiado" />
+                      <span>Fiado</span>
+                    </label>
+                  </div>
+                  <p class="workspace-note" id="payment-summary">Recebe via PIX com confirmação instantânea.</p>
+                </div>
+                <div class="workspace-section">
+                  <h4>Cliente</h4>
                   <input type="search" id="customers-search" placeholder="Nome ou telefone" aria-label="Buscar clientes" />
-                </header>
-                <ul class="workspace-list" id="customers-list" aria-live="polite"></ul>
-              </div>
-              <div class="workspace-pane">
-                <header class="workspace-pane__header">
-                  <h3>Detalhes</h3>
-                </header>
-                <div class="workspace-customer" id="customer-details">
-                  <p>Escolha um cliente para disparar recibo ou reservar peças.</p>
+                  <ul class="workspace-list workspace-list--compact" id="customers-list" aria-live="polite"></ul>
+                  <div class="workspace-customer" id="customer-details">
+                    <p>Escolha um cliente para disparar recibo ou reservar peças.</p>
+                  </div>
+                  <form class="workspace-form workspace-form--inline" id="customer-quick-form" aria-label="Cadastro rápido de cliente">
+                    <div class="workspace-form__row">
+                      <label>
+                        <span>Nome</span>
+                        <input type="text" name="quick-name" placeholder="Nome completo" required />
+                      </label>
+                      <label>
+                        <span>WhatsApp</span>
+                        <input type="tel" name="quick-phone" placeholder="(00) 90000-0000" required />
+                      </label>
+                    </div>
+                    <label>
+                      <span>Tag</span>
+                      <input type="text" name="quick-tag" placeholder="VIP, consignado, amiga..." />
+                    </label>
+                    <button type="submit" class="btn btn--surface btn--small">Cadastrar rápido</button>
+                    <p class="workspace-note" id="customer-quick-feedback" role="status" aria-live="polite"></p>
+                  </form>
                 </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="workspace-view" data-view="selfCheckout" role="tabpanel" aria-hidden="true">
-            <div class="workspace-split">
-              <div class="workspace-pane">
-                <header class="workspace-pane__header">
-                  <h3>Modo cliente ativo</h3>
-                  <button type="button" class="btn btn--ghost btn--small" data-action="self-scan">Escanear outra peça</button>
-                </header>
-                <div class="workspace-self" id="self-session"></div>
-              </div>
-              <div class="workspace-pane">
-                <header class="workspace-pane__header">
-                  <h3>Validação do lojista</h3>
-                </header>
-                <div class="workspace-log" id="self-log" aria-live="polite"></div>
                 <div class="workspace-cart__actions">
-                  <button type="button" class="btn btn--ghost" data-action="self-expire">Forçar expiração</button>
-                  <button type="button" class="btn btn--primary" data-action="self-validate">Validar passe</button>
+                  <button type="button" class="btn btn--primary" data-action="pdv-checkout">Finalizar venda</button>
                 </div>
+                <div class="workspace-log" id="pdv-log" aria-live="polite"></div>
               </div>
             </div>
           </section>
 
-          <section class="workspace-view" data-view="reports" role="tabpanel" aria-hidden="true">
-            <div class="workspace-reports">
+          <section class="workspace-view" data-view="analysis" role="tabpanel" aria-hidden="true">
+            <div class="workspace-reports workspace-reports--analysis">
               <div>
-                <h3>Resumo instantâneo</h3>
+                <h3>Indicadores do dia</h3>
                 <dl class="workspace-kpis" id="workspace-kpis"></dl>
               </div>
               <div>
-                <h3>Melhores do dia</h3>
+                <h3>Destaques e pagamentos</h3>
                 <ul class="workspace-list" id="workspace-highlights"></ul>
+                <ul class="workspace-list workspace-list--compact" id="payment-breakdown"></ul>
               </div>
             </div>
           </section>
