@@ -48,22 +48,27 @@
         </header>
 
         <div class="pdv-card">
-          <label class="form-field">
-            <span class="form-label">Cliente</span>
-            <input
-              id="pdv-client"
-              type="text"
-              list="pdv-client-list"
-              placeholder="Buscar cliente ou deixar Avulso"
-            />
-            <datalist id="pdv-client-list">
-              <option value="Cliente Avulso"></option>
-              <option value="Bianca Souza"></option>
-              <option value="Carlos Lima"></option>
-              <option value="Fernanda Prado"></option>
-              <option value="Marcelo Torres"></option>
-            </datalist>
-          </label>
+          <div class="customer-picker">
+            <label class="form-field customer-picker__search">
+              <span class="form-label">Cliente</span>
+              <input
+                id="pdv-client"
+                type="search"
+                list="pdv-client-list"
+                placeholder="Buscar por nome ou telefone"
+                autocomplete="off"
+              />
+              <datalist id="pdv-client-list"></datalist>
+            </label>
+            <div class="customer-picker__meta">
+              <div class="customer-pill" id="pdv-client-selected" aria-live="polite">
+                <strong>Cliente avulso</strong>
+                <span>Venda não vinculada ao CRM.</span>
+              </div>
+              <button class="customer-picker__clear" id="pdv-client-clear" type="button">Limpar</button>
+            </div>
+            <div class="customer-suggestions" id="pdv-client-results" hidden role="listbox"></div>
+          </div>
 
           <div class="pdv-cart" id="pdv-cart" aria-live="polite"></div>
 
