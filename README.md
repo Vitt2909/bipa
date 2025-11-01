@@ -157,6 +157,77 @@ Camada fake que replica a futura API, simplificando a troca por um backend real:
 - **Passe de saída:** QR fake 1-uso com HMAC/nonce. Expira em 2 minutos, muda para `used_at` ao validar em `/api/exits/validate`.
 - **Fallback:** se o pagamento não for confirmado, o passe não aparece e o lojista deve concluir manualmente.
 
+## Próximos incrementos: checkout e marketplace
+
+### Checkout avançado
+- **Fluxo enxuto e rápido:** consolidar itens, cliente (ou visita), descontos e pagamento em uma única tela responsiva, reduzindo etapas obrigatórias.
+- **Checkout como visitante:** permitir finalizar compras sem login, capturando contatos apenas quando o cliente optar por receber recibos ou criar conta.
+- **Transparência e confiança:** mostrar resumo detalhado do pedido (foto, nome, categoria, valores, descontos) e indicadores de progresso até a confirmação.
+- **Pagamentos flexíveis:** manter PIX, dinheiro, cartão e fiado, adicionando meios digitais (ex.: PicPay, PayPal) com configuração modular por loja.
+- **Autopreenchimento inteligente:** resgatar dados de clientes frequentes (WhatsApp, preferências) e validar campos em tempo real para evitar erros.
+
+### Evolução para marketplace de desapegos
+- **Perfis de usuário:** além de lojistas, incluir vendedores independentes com onboarding simplificado e etapas de verificação.
+- **Catálogo colaborativo:** permitir cadastro de anúncios com fotos, descrição completa, condição da peça, medidas, preço e status (ativo, reservado, vendido).
+- **Vitrine com filtros:** ampliar busca pública com filtros por categoria, tamanho, estado de conservação, localização e preço.
+- **Mensageria e suporte:** disponibilizar chat interno ou redirecionamento para WhatsApp, além de canais de suporte e avaliação entre compradores e vendedores.
+- **Pagamentos intermediados:** reutilizar o checkout aprimorado calculando comissões da plataforma, segurando valores até confirmação de entrega e exibindo taxas com clareza.
+
+### Novos modelos de dados (extensão)
+Para suportar o marketplace, novas tabelas se somam às coleções atuais:
+
+```ts
+interface MarketplaceUser extends User {
+  profileType: 'store' | 'individual';
+  displayName: string;
+  phone?: string;
+  documentStatus: 'pending' | 'verified' | 'rejected';
+  reputationScore: number; // média ponderada de avaliações
+}
+
+interface Listing {
+  id: string;
+  sellerId: string;
+  title: string;
+  category: string;
+  size?: string;
+  color?: string;
+  condition: 'new' | 'like_new' | 'used';
+  description: string;
+  price: number;
+  status: 'active' | 'reserved' | 'sold' | 'archived';
+  photos: string[];
+  createdAt: string;
+  location?: string;
+}
+
+interface Order {
+  id: string;
+  buyerId: string;
+  sellerId: string;
+  listingId: string;
+  subtotal: number;
+  serviceFee: number;
+  total: number;
+  status: 'pending' | 'paid' | 'in_transit' | 'completed' | 'refunded';
+  paymentMethod: PaymentMethod;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Payout {
+  id: string;
+  orderId: string;
+  sellerId: string;
+  amount: number;
+  status: 'scheduled' | 'released' | 'on_hold';
+  scheduledFor: string;
+  processedAt?: string;
+}
+```
+
+Essas extensões mantêm compatibilidade com as coleções `products`, `customers`, `sales` e `sale_items`, permitindo que a PWA funcione como PDV e marketplace colaborativo.
+
 ### Incrementos de dados
 - `organizations`: colunas `store_slug` (único), `public_urls_enabled` (toggle) e `timezone` (default `America/Manaus`).
 - `sales`: campo obrigatório `channel` (`in_store | whatsapp | link | self_checkout`) e `exited_at` para logar liberação da saída.
