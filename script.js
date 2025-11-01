@@ -307,6 +307,26 @@ const page = body.dataset.page;
 
 const formatCustomerOption = (customer) => `${customer.name} · ${customer.phoneLabel}`;
 
+// --------- Login ---------
+if (page === 'login') {
+  const form = document.querySelector('.auth-form');
+  if (form) {
+    form.setAttribute('novalidate', 'novalidate');
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const submitButton = form.querySelector('[type="submit"]');
+      if (submitButton) {
+        submitButton.setAttribute('aria-busy', 'true');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Entrando...';
+      }
+      window.setTimeout(() => {
+        window.location.href = '/app/selecionar-modulo/';
+      }, 400);
+    });
+  }
+}
+
 // --------- Admin > Customers list ---------
 if (page === 'admin-customers') {
   const tableBody = document.getElementById('customer-table-body');
