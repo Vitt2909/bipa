@@ -179,26 +179,43 @@
           <h2>Novo cliente rápido</h2>
           <button class="pdv-modal__close" id="pdv-register-close" type="button" aria-label="Fechar">×</button>
         </header>
-        <form class="pdv-modal__body pdv-register__form" id="pdv-register-form">
-          <label class="form-field">
-            <span class="form-label">Nome completo</span>
-            <input id="pdv-register-name" type="text" required autocomplete="off" />
-          </label>
-          <label class="form-field">
-            <span class="form-label">WhatsApp</span>
-            <input
-              id="pdv-register-whatsapp"
-              type="tel"
-              required
-              inputmode="tel"
-              autocomplete="off"
-              placeholder="(99) 99999-9999"
-            />
-          </label>
-          <footer class="pdv-modal__footer pdv-register__actions">
+        <form class="pdv-modal__body pdv-register__form step-form" id="pdv-register-form" data-step-form>
+          <ol class="step-indicator" data-step-progress role="list">
+            <li data-step-progress-item>Identificação</li>
+            <li data-step-progress-item>Contato</li>
+          </ol>
+
+          <div class="step-form__step" data-step-index="0" data-step-label="Identificação">
+            <label class="form-field">
+              <span class="form-label">Nome completo</span>
+              <input id="pdv-register-name" type="text" required autocomplete="off" data-autofocus />
+              <span class="form-field__feedback" id="pdv-register-name-feedback" hidden></span>
+            </label>
+          </div>
+
+          <div class="step-form__step" data-step-index="1" data-step-label="Contato" hidden aria-hidden="true">
+            <label class="form-field">
+              <span class="form-label">WhatsApp</span>
+              <input
+                id="pdv-register-whatsapp"
+                type="tel"
+                required
+                inputmode="tel"
+                autocomplete="off"
+                placeholder="(99) 99999-9999"
+              />
+              <span class="form-field__feedback" id="pdv-register-whatsapp-feedback" hidden></span>
+            </label>
+          </div>
+
+          <div class="step-form__controls pdv-register__actions">
             <button class="btn btn--surface" id="pdv-register-cancel" type="button">Cancelar</button>
-            <button class="btn btn--primary" type="submit">Salvar e usar na venda</button>
-          </footer>
+            <div class="step-form__nav">
+              <button class="btn btn--ghost" type="button" data-step-prev hidden>Voltar</button>
+              <button class="btn btn--primary" type="button" data-step-next>Continuar</button>
+              <button class="btn btn--primary" type="submit" data-step-submit hidden>Salvar e usar na venda</button>
+            </div>
+          </div>
         </form>
       </div>
     </div>

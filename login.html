@@ -102,50 +102,66 @@
             </div>
           </div>
 
-          <form class="auth-form" aria-describedby="login-help login-error-summary">
+          <form class="auth-form step-form" aria-describedby="login-help login-error-summary" data-step-form>
             <div class="form-errors" id="login-error-summary" role="alert" aria-live="polite" hidden>
               <strong>Mensagem do sistema</strong>
               <ul></ul>
             </div>
 
-            <div class="form-field" data-field="email">
-              <label class="form-label" for="login-email">Email ou usuário</label>
-              <input
-                id="login-email"
-                type="text"
-                name="email"
-                inputmode="email"
-                autocomplete="username"
-                placeholder="usuario@bipa.app"
-                required
-                aria-describedby="login-email-feedback"
-              />
-              <p class="form-field__feedback" id="login-email-feedback" hidden></p>
-            </div>
+            <ol class="step-indicator" data-step-progress role="list">
+              <li data-step-progress-item>Identificação</li>
+              <li data-step-progress-item>Segurança</li>
+            </ol>
 
-            <div class="form-field" data-field="password">
-              <label class="form-label" for="login-password">Senha</label>
-              <input
-                id="login-password"
-                type="password"
-                name="password"
-                autocomplete="current-password"
-                placeholder="••••••••"
-                required
-                minlength="6"
-                aria-describedby="login-password-feedback"
-              />
-              <p class="form-field__feedback" id="login-password-feedback" hidden></p>
-            </div>
+            <section class="step-form__step" data-step-index="0" data-step-label="Identificação">
+              <div class="form-field" data-field="email">
+                <label class="form-label" for="login-email">Email ou usuário</label>
+                <input
+                  id="login-email"
+                  type="text"
+                  name="email"
+                  inputmode="email"
+                  autocomplete="username"
+                  placeholder="usuario@bipa.app"
+                  required
+                  aria-describedby="login-email-feedback"
+                  data-autofocus
+                />
+                <p class="form-field__feedback" id="login-email-feedback" hidden></p>
+              </div>
+            </section>
 
-            <div class="form-utilities">
-              <a class="link" href="#login-email" data-forgot-password>Esqueci minha senha</a>
-              <a class="link" href="https://ajuda.bipa.app/contato" target="_blank" rel="noreferrer"
-                >Precisa de ajuda?</a
-              >
-            </div>
+            <section class="step-form__step" data-step-index="1" data-step-label="Segurança" hidden aria-hidden="true">
+              <div class="form-field" data-field="password">
+                <label class="form-label" for="login-password">Senha</label>
+                <input
+                  id="login-password"
+                  type="password"
+                  name="password"
+                  autocomplete="current-password"
+                  placeholder="••••••••"
+                  required
+                  minlength="6"
+                  aria-describedby="login-password-feedback"
+                />
+                <p class="form-field__feedback" id="login-password-feedback" hidden></p>
+              </div>
 
-            <button class="btn btn--primary" type="submit">Entrar no sistema</button>
+              <div class="form-utilities">
+                <a class="link" href="#login-email" data-forgot-password>Esqueci minha senha</a>
+                <a class="link" href="https://ajuda.bipa.app/contato" target="_blank" rel="noreferrer"
+                  >Precisa de ajuda?</a
+                >
+              </div>
+            </section>
+
+            <div class="step-form__controls">
+              <button class="btn btn--ghost" type="button" data-step-prev hidden>Voltar</button>
+              <div class="step-form__nav">
+                <button class="btn btn--primary" type="button" data-step-next>Continuar</button>
+                <button class="btn btn--primary" type="submit" data-step-submit hidden>Entrar no sistema</button>
+              </div>
+            </div>
 
             <p class="auth-form__hint" id="login-help">
               Acesso exclusivo para lojistas BIPA. Você será redirecionado ao painel assim que as credenciais forem

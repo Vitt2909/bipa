@@ -47,12 +47,18 @@
           </div>
         </header>
 
-        <form class="form-grid form-grid--two" aria-describedby="settings-help">
-          <fieldset class="form-section">
+        <form class="form-grid form-grid--two step-form" aria-describedby="settings-help" data-step-form>
+          <ol class="step-indicator" data-step-progress role="list">
+            <li data-step-progress-item>Identidade</li>
+            <li data-step-progress-item>Pagamentos</li>
+            <li data-step-progress-item>Conta</li>
+          </ol>
+
+          <fieldset class="form-section" data-step-index="0" data-step-label="Identidade">
             <legend>Identidade da loja</legend>
             <label class="form-field">
               <span class="form-label">Nome exibido</span>
-              <input type="text" value="Brechó da Ana" />
+              <input type="text" value="Brechó da Ana" data-autofocus />
             </label>
             <label class="form-field">
               <span class="form-label">Slug da vitrine</span>
@@ -65,7 +71,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section">
+          <fieldset class="form-section" data-step-index="1" data-step-label="Pagamentos" hidden aria-hidden="true">
             <legend>Pagamentos</legend>
             <label class="form-field">
               <span class="form-label">Chave PIX</span>
@@ -85,7 +91,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section form-section--full">
+          <fieldset class="form-section form-section--full" data-step-index="2" data-step-label="Conta" hidden aria-hidden="true">
             <legend>Conta do usuário</legend>
             <label class="form-field">
               <span class="form-label">Email</span>
@@ -101,9 +107,13 @@
             </label>
           </fieldset>
 
-          <div class="form-actions">
+          <div class="step-form__controls">
             <button class="btn btn--ghost" type="button">Cancelar</button>
-            <button class="btn btn--primary" type="submit">Salvar alterações</button>
+            <div class="step-form__nav">
+              <button class="btn btn--ghost" type="button" data-step-prev hidden>Voltar etapa</button>
+              <button class="btn btn--primary" type="button" data-step-next>Avançar</button>
+              <button class="btn btn--primary" type="submit" data-step-submit hidden>Salvar alterações</button>
+            </div>
           </div>
         </form>
         <p class="form-footer" id="settings-help">

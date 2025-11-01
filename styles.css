@@ -3565,6 +3565,7 @@ body[data-theme='workspace'] .page-subtitle {
   border-radius: 999px;
 }
 
+
 .form-grid {
   display: grid;
   gap: 1.5rem;
@@ -3572,6 +3573,97 @@ body[data-theme='workspace'] .page-subtitle {
 
 .form-grid--two {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.step-form {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.step-indicator {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 0.75rem;
+  counter-reset: step;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.step-indicator li {
+  counter-increment: step;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: rgba(16, 35, 24, 0.55);
+  color: rgba(210, 229, 219, 0.7);
+  border: 1px solid rgba(30, 243, 155, 0.18);
+  font-weight: 600;
+  scroll-snap-align: center;
+  transition: background var(--transition-base), color var(--transition-base), border var(--transition-base);
+}
+
+.step-indicator li::before {
+  content: counter(step);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: rgba(30, 243, 155, 0.12);
+  color: var(--color-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.step-indicator li.is-active {
+  background: rgba(30, 243, 155, 0.18);
+  color: var(--color-heading);
+  border-color: rgba(30, 243, 155, 0.35);
+}
+
+.step-indicator li.is-active::before {
+  background: var(--color-primary);
+  color: #052216;
+}
+
+.step-indicator li.is-complete {
+  background: rgba(30, 243, 155, 0.12);
+  color: var(--color-primary);
+  border-color: rgba(30, 243, 155, 0.28);
+}
+
+.step-indicator li.is-complete::before {
+  content: '✓';
+  background: rgba(30, 243, 155, 0.22);
+  color: var(--color-primary);
+  font-size: 1rem;
+}
+
+.step-form__step[hidden] {
+  display: none !important;
+}
+
+.step-form__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.step-form__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.step-form__nav .btn {
+  min-width: 140px;
 }
 
 .form-section {
@@ -3602,6 +3694,45 @@ body[data-theme='workspace'] .page-subtitle {
   margin: 0;
   color: var(--color-muted);
   font-size: 0.85rem;
+}
+
+@media (max-width: 720px) {
+  .step-indicator {
+    gap: 0.5rem;
+  }
+
+  .step-indicator li {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+  }
+
+  .step-form__controls {
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .step-form__nav {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .step-form__nav .btn {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .step-form__controls > .btn,
+  .step-form__controls > a.btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-section {
+    border-radius: 20px;
+    padding: 1.35rem;
+  }
 }
 
 .photo-preview {
