@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Visão Mestra do Produto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin-product-master" data-theme="workspace">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Gestão</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Mudar para PDV</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <div class="app-admin">
+      <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
+        <div class="sidebar__logo">BIPA</div>
+        <nav class="sidebar__nav">
+          <a class="sidebar__link" href="/app/admin/dashboard/">Dashboard</a>
+          <a class="sidebar__link is-active" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link" href="/app/admin/clientes/">Clientes</a>
+          <a class="sidebar__link" href="/app/admin/vendas/">Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="app-admin__content app-admin__content--wide" aria-labelledby="master-view-title">
+        <nav class="breadcrumb" aria-label="Navegação">
+          <a href="/app/admin/produtos/" class="breadcrumb__link">Estoque</a>
+          <span aria-hidden="true">/</span>
+          <span class="breadcrumb__current">Visão mestra</span>
+        </nav>
+
+        <header class="page-header page-header--master">
+          <div class="product-hero">
+            <img
+              class="product-hero__thumb"
+              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=60"
+              alt="Vestido midi floral"
+            />
+            <div class="product-hero__info">
+              <span class="product-hero__sku">SKU BR-0002 · EAN 7900000000029</span>
+              <h1 class="page-title" id="master-view-title">Vestido Midi Floral — Visão Mestra</h1>
+              <div class="product-hero__tags">
+                <span class="chip chip--available">Disponível</span>
+                <span class="chip chip--warning">Estoque baixo</span>
+                <span class="chip chip--sync">Multicanal</span>
+              </div>
+            </div>
+          </div>
+          <div class="page-actions page-actions--stacked">
+            <button class="btn btn--surface" type="button">Imprimir etiquetas / QR</button>
+            <button class="btn btn--ghost" type="button" data-open-master-modal>Gerar QR Code</button>
+            <button class="btn btn--primary" type="button" data-open-master-modal data-modal-context="register">
+              Registrar movimentação
+            </button>
+          </div>
+        </header>
+
+        <section class="product-alerts" aria-label="Alertas de estoque">
+          <article class="alert-card alert-card--warning">
+            <header>
+              <h2>Estoque em ponto de pedido</h2>
+              <span class="alert-card__badge">Mínimo 8 · Atual 6</span>
+            </header>
+            <p>
+              Reposição recomendada de <strong>12 unidades</strong> para recuperar a cobertura de 30 dias no canal físico e
+              marketplaces. Sugestão: antecipar pedido ao fornecedor Atelier Aurora.
+            </p>
+          </article>
+          <article class="alert-card">
+            <header>
+              <h2>Movimentações recentes</h2>
+              <span class="alert-card__meta">Últimas 72h</span>
+            </header>
+            <ul class="alert-card__list">
+              <li>Inventário cíclico ajustou -2 peças (Lucas Prado)</li>
+              <li>Entrada NF 4587 adicionou +10 peças (Ana Silva)</li>
+              <li>Picking pedido #1245 reservou -1 peça (Fernanda Prado)</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="master-tabs" data-tabs>
+          <div class="master-tabs__list" role="tablist" aria-label="Seções da visão mestra">
+            <button role="tab" aria-selected="true" aria-controls="tab-gerais" id="tab-gerais-control">Gerais</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-precos" id="tab-precos-control">Preços e fornecedores</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-logistica" id="tab-logistica-control">
+              Logística e canais
+            </button>
+            <button role="tab" aria-selected="false" aria-controls="tab-historico" id="tab-historico-control">Histórico</button>
+          </div>
+
+          <div class="master-tabs__panels">
+            <section
+              id="tab-gerais"
+              class="master-tabs__panel is-active"
+              role="tabpanel"
+              aria-labelledby="tab-gerais-control"
+            >
+              <div class="panel-grid">
+                <article class="panel-card">
+                  <header>
+                    <h2>Informações básicas</h2>
+                    <p class="panel-card__meta">Dados cadastrais e atributos-chave</p>
+                  </header>
+                  <dl class="panel-card__list">
+                    <div>
+                      <dt>Nome</dt>
+                      <dd>Vestido Midi Floral</dd>
+                    </div>
+                    <div>
+                      <dt>Categoria</dt>
+                      <dd>Vestidos</dd>
+                    </div>
+                    <div>
+                      <dt>Coleção</dt>
+                      <dd>Jardim Tropical 24</dd>
+                    </div>
+                    <div>
+                      <dt>Origem</dt>
+                      <dd>Compra direta</dd>
+                    </div>
+                  </dl>
+                </article>
+                <article class="panel-card">
+                  <header>
+                    <h2>Variações</h2>
+                    <p class="panel-card__meta">Controle por grade</p>
+                  </header>
+                  <table class="panel-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Variação</th>
+                        <th scope="col">SKU filho</th>
+                        <th scope="col">Estoque</th>
+                        <th scope="col">Mínimo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>P</td>
+                        <td>BR-0002-P</td>
+                        <td>2</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td>M</td>
+                        <td>BR-0002-M</td>
+                        <td>4</td>
+                        <td>4</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </article>
+                <article class="panel-card">
+                  <header>
+                    <h2>Etiquetas e QR Code</h2>
+                    <p class="panel-card__meta">Integração físico + digital</p>
+                  </header>
+                  <div class="qr-preview">
+                    <div class="qr-preview__code" aria-hidden="true">QR</div>
+                    <div>
+                      <p>QR Code vinculado ao SKU BR-0002 para check-in, inventário e picking.</p>
+                      <div class="qr-preview__actions">
+                        <button class="btn btn--surface" type="button">Baixar etiqueta</button>
+                        <button class="btn btn--ghost" type="button">Enviar para impressora</button>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="qr-preview__hint">
+                    Utiliza formatação padrão GS1-128, compatível com leitores USB e aplicativo mobile de inventário BIPA.
+                  </p>
+                </article>
+              </div>
+            </section>
+
+            <section
+              id="tab-precos"
+              class="master-tabs__panel"
+              role="tabpanel"
+              aria-labelledby="tab-precos-control"
+              hidden
+            >
+              <div class="panel-grid">
+                <article class="panel-card">
+                  <header>
+                    <h2>Estrutura de preços</h2>
+                    <p class="panel-card__meta">Margens e políticas comerciais</p>
+                  </header>
+                  <dl class="panel-card__list">
+                    <div>
+                      <dt>Custo unitário</dt>
+                      <dd>R$ 59,90</dd>
+                    </div>
+                    <div>
+                      <dt>Preço de venda</dt>
+                      <dd>R$ 129,90</dd>
+                    </div>
+                    <div>
+                      <dt>Margem</dt>
+                      <dd>53,8%</dd>
+                    </div>
+                    <div>
+                      <dt>Política promocional</dt>
+                      <dd>Desconto máximo 20% · Campanhas válidas até 31/10</dd>
+                    </div>
+                  </dl>
+                </article>
+                <article class="panel-card">
+                  <header>
+                    <h2>Fornecedores</h2>
+                    <p class="panel-card__meta">Relacionamento e SLA</p>
+                  </header>
+                  <table class="panel-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Fornecedor</th>
+                        <th scope="col">Lead time</th>
+                        <th scope="col">Última compra</th>
+                        <th scope="col">Contato</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Atelier Aurora</td>
+                        <td>12 dias</td>
+                        <td>05/09/2024 — 40 unidades</td>
+                        <td>aurora@fornecedores.demo</td>
+                      </tr>
+                      <tr>
+                        <td>Coletivo Flora (consignado)</td>
+                        <td>Reposição semanal</td>
+                        <td>28/08/2024 — 12 unidades</td>
+                        <td>contato@coletivoflora.demo</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </article>
+              </div>
+            </section>
+
+            <section
+              id="tab-logistica"
+              class="master-tabs__panel"
+              role="tabpanel"
+              aria-labelledby="tab-logistica-control"
+              hidden
+            >
+              <div class="panel-grid">
+                <article class="panel-card">
+                  <header>
+                    <h2>Dados de logística</h2>
+                    <p class="panel-card__meta">Dimensões e requisitos de envio</p>
+                  </header>
+                  <dl class="panel-card__list panel-card__list--columns">
+                    <div>
+                      <dt>Peso unitário</dt>
+                      <dd>0,68 kg</dd>
+                    </div>
+                    <div>
+                      <dt>Dimensões</dt>
+                      <dd>32 × 24 × 6 cm</dd>
+                    </div>
+                    <div>
+                      <dt>Código fiscal</dt>
+                      <dd>NCM 6104.43.00</dd>
+                    </div>
+                    <div>
+                      <dt>Requisitos especiais</dt>
+                      <dd>Etiqueta frágil opcional para envios marketplace premium</dd>
+                    </div>
+                  </dl>
+                </article>
+                <article class="panel-card">
+                  <header>
+                    <h2>Distribuição por canal</h2>
+                    <p class="panel-card__meta">Onde cada unidade está alocada</p>
+                  </header>
+                  <table class="panel-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Canal</th>
+                        <th scope="col">Disponível</th>
+                        <th scope="col">Reservado</th>
+                        <th scope="col">Mínimo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Loja física</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td>Marketplace</td>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>2</td>
+                      </tr>
+                      <tr>
+                        <td>E-commerce</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>2</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </article>
+                <article class="panel-card">
+                  <header>
+                    <h2>Checklist operacional</h2>
+                    <p class="panel-card__meta">Status dos processos logísticos</p>
+                  </header>
+                  <ul class="panel-card__checklist">
+                    <li><span aria-hidden="true">✔</span> Etiqueta QR impressa para último lote</li>
+                    <li><span aria-hidden="true">✔</span> Cadastro sincronizado com PDV e marketplace</li>
+                    <li><span aria-hidden="true">•</span> Inventário cíclico agendado para 18/09</li>
+                    <li><span aria-hidden="true">•</span> Necessário validar peso no app mobile</li>
+                  </ul>
+                </article>
+              </div>
+            </section>
+
+            <section
+              id="tab-historico"
+              class="master-tabs__panel"
+              role="tabpanel"
+              aria-labelledby="tab-historico-control"
+              hidden
+            >
+              <article class="panel-card panel-card--full">
+                <header>
+                  <h2>Livro de movimentações (Ledger)</h2>
+                  <p class="panel-card__meta">Registros imutáveis das alterações de estoque</p>
+                </header>
+                <div class="ledger-table-wrapper">
+                  <table class="ledger-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Data</th>
+                        <th scope="col">Usuário</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Referência</th>
+                        <th scope="col">Quantidade</th>
+                        <th scope="col">Saldo</th>
+                        <th scope="col">Observação</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><time datetime="2024-09-12T09:20">12/09/2024 09:20</time></td>
+                        <td>Ana Silva</td>
+                        <td>Entrada NF-e</td>
+                        <td>NF 4587</td>
+                        <td class="ledger-table__quantity ledger-table__quantity--positive">+10</td>
+                        <td>16</td>
+                        <td>Recebimento lote fornecedor Atelier Aurora</td>
+                      </tr>
+                      <tr>
+                        <td><time datetime="2024-09-10T18:05">10/09/2024 18:05</time></td>
+                        <td>Lucas Prado</td>
+                        <td>Ajuste de balanço</td>
+                        <td>Inventário cíclico</td>
+                        <td class="ledger-table__quantity ledger-table__quantity--negative">-2</td>
+                        <td>6</td>
+                        <td>Divergência prateleira B2 confirmada via QR</td>
+                      </tr>
+                      <tr>
+                        <td><time datetime="2024-09-09T15:42">09/09/2024 15:42</time></td>
+                        <td>Fernanda Prado</td>
+                        <td>Picking</td>
+                        <td>Pedido #1245</td>
+                        <td class="ledger-table__quantity ledger-table__quantity--negative">-1</td>
+                        <td>8</td>
+                        <td>Separação para envio marketplace</td>
+                      </tr>
+                      <tr>
+                        <td><time datetime="2024-09-05T11:12">05/09/2024 11:12</time></td>
+                        <td>Ana Silva</td>
+                        <td>Entrada NF-e</td>
+                        <td>NF 4532</td>
+                        <td class="ledger-table__quantity ledger-table__quantity--positive">+12</td>
+                        <td>9</td>
+                        <td>Lote recebido com conferência via app</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+            </section>
+          </div>
+        </section>
+
+        <section class="product-insights" aria-label="Rastreabilidade e próximos passos">
+          <article class="panel-card panel-card--full">
+            <header>
+              <h2>Rastreabilidade conectada</h2>
+              <p class="panel-card__meta">
+                Toda movimentação exige justificativa — histórico protegido contra edição para auditorias fiscais.
+              </p>
+            </header>
+            <div class="product-insights__grid">
+              <div>
+                <h3>Check-in e inventário</h3>
+                <p>
+                  Utilize o app mobile para bipar o QR Code no recebimento e nos inventários cíclicos. Divergências são
+                  registradas instantaneamente no ledger e notificam os gestores.
+                </p>
+              </div>
+              <div>
+                <h3>Picking guiado</h3>
+                <p>
+                  Cada separação de pedido exige confirmação via leitura do QR Code. O sistema bloqueia expedição caso o
+                  SKU esteja em ruptura ou com saldo insuficiente no canal de origem.
+                </p>
+              </div>
+              <div>
+                <h3>Alertas proativos</h3>
+                <p>
+                  Estoques mínimos definidos nesta visão atualizam automaticamente o status "Estoque baixo" na lista
+                  geral e disparam e-mails para o time de compras.
+                </p>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="modal" id="master-modal" aria-labelledby="master-modal-title">
+      <form method="dialog" class="modal__content">
+        <header class="modal__header">
+          <h2 class="modal__title" id="master-modal-title">Registrar movimentação de estoque</h2>
+          <button class="modal__close" type="submit" value="cancelar" aria-label="Fechar">&times;</button>
+        </header>
+        <p class="modal__subtitle">Informe o motivo e os dados para que o registro seja auditável.</p>
+        <div class="modal__body">
+          <div class="modal__field">
+            <span class="modal__label">Produto</span>
+            <strong>SKU BR-0002 — Vestido Midi Floral</strong>
+          </div>
+          <label class="form-field">
+            <span class="form-label">Tipo de movimentação</span>
+            <select required>
+              <option value="" disabled selected>Selecione</option>
+              <option>Entrada por NF-e</option>
+              <option>Devolução</option>
+              <option>Perda / dano</option>
+              <option>Ajuste de balanço</option>
+              <option>Transferência entre canais</option>
+            </select>
+          </label>
+          <div class="modal__grid">
+            <label class="form-field">
+              <span class="form-label">Quantidade</span>
+              <input type="number" min="1" step="1" placeholder="0" required />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Documento de referência</span>
+              <input type="text" placeholder="NF, lote ou pedido" />
+            </label>
+          </div>
+          <label class="form-field">
+            <span class="form-label">Observação</span>
+            <textarea rows="3" placeholder="Detalhe o motivo da movimentação"></textarea>
+          </label>
+        </div>
+        <footer class="modal__footer">
+          <button class="btn btn--ghost" type="submit" value="cancelar">Cancelar</button>
+          <button class="btn btn--primary" type="submit" value="confirmar">Registrar movimentação</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <nav class="app-bottom-nav" aria-label="Navegação principal">
+      <ul class="app-bottom-nav__list">
+        <li>
+          <a class="app-bottom-nav__link" href="/app/pdv/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M7 8h10l-1 11H8L7 8Z" stroke-linejoin="round" />
+                <path d="M9 9V6a3 3 0 0 1 6 0v3" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Vender</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link is-active" aria-current="page" href="/app/admin/produtos/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="4" y="4" width="16" height="16" rx="3" />
+                <path d="M4 10h16M10 4v16" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Estoque</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link" href="/app/admin/clientes/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" />
+                <path d="M5 20.5a7 7 0 0 1 14 0" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Clientes</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link" href="/app/admin/vendas/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M5 7h14" stroke-linecap="round" />
+                <path d="M10 11h9" stroke-linecap="round" />
+                <path d="M6 15h6" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Vendas</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link" href="/app/admin/configuracoes/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path
+                  d="M11.5 3a2 2 0 0 1 1 0l1.18.39a2 2 0 0 0 1.88-.35l.87-.7a2 2 0 0 1 2.83.24l.63.78a2 2 0 0 1 .37 1.95l-.37 1.14a2 2 0 0 0 .52 2.09l.84.74a2 2 0 0 1 .22 2.78l-.63.78a2 2 0 0 1-2.07.66l-1.18-.33a2 2 0 0 0-1.95.52l-.7.84a2 2 0 0 1-2.78.22l-.78-.63a2 2 0 0 0-2.09-.37l-1.14.37a2 2 0 0 1-1.95-.52l-.84-.74a2 2 0 0 1-.22-2.78l.63-.78a2 2 0 0 0 .33-1.95l-.39-1.18a2 2 0 0 1 .52-1.95l.7-.84a2 2 0 0 1 2.78-.22l.78.63a2 2 0 0 0 2.09.37Z"
+                />
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+              </svg>
+            </span>
+            <span>Configurações</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <script>
+      const tabsContainer = document.querySelector('[data-tabs]');
+      const tabButtons = tabsContainer ? Array.from(tabsContainer.querySelectorAll('[role="tab"]')) : [];
+      const tabPanels = tabsContainer ? Array.from(tabsContainer.querySelectorAll('[role="tabpanel"]')) : [];
+      const masterModal = document.getElementById('master-modal');
+
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          tabButtons.forEach((tab) => {
+            const isActive = tab === button;
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            tab.classList.toggle('is-active', isActive);
+          });
+
+          tabPanels.forEach((panel) => {
+            const shouldShow = panel.id === button.getAttribute('aria-controls');
+            panel.classList.toggle('is-active', shouldShow);
+            panel.toggleAttribute('hidden', !shouldShow);
+          });
+        });
+      });
+
+      const openMasterModal = (context) => {
+        if (!masterModal) return;
+
+        const titleElement = masterModal.querySelector('.modal__title');
+        const subtitleElement = masterModal.querySelector('.modal__subtitle');
+        const modalBody = masterModal.querySelector('.modal__body');
+
+        if (!modalBody) return;
+
+        const isRegister = context === 'register';
+
+        if (titleElement) {
+          titleElement.textContent = isRegister ? 'Registrar movimentação de estoque' : 'Gerar QR Code';
+        }
+        if (subtitleElement) {
+          subtitleElement.textContent = isRegister
+            ? 'Informe o motivo e os dados para que o registro seja auditável.'
+            : 'Baixe ou envie para impressão etiquetas com QR Code válido para operações.';
+        }
+
+        if (isRegister) {
+          masterModal.classList.remove('modal--qr');
+          modalBody.classList.remove('modal__body--qr');
+          modalBody.innerHTML = `
+            <div class="modal__field">
+              <span class="modal__label">Produto</span>
+              <strong>SKU BR-0002 — Vestido Midi Floral</strong>
+            </div>
+            <label class="form-field">
+              <span class="form-label">Tipo de movimentação</span>
+              <select required>
+                <option value="" disabled selected>Selecione</option>
+                <option>Entrada por NF-e</option>
+                <option>Devolução</option>
+                <option>Perda / dano</option>
+                <option>Ajuste de balanço</option>
+                <option>Transferência entre canais</option>
+              </select>
+            </label>
+            <div class="modal__grid">
+              <label class="form-field">
+                <span class="form-label">Quantidade</span>
+                <input type="number" min="1" step="1" placeholder="0" required />
+              </label>
+              <label class="form-field">
+                <span class="form-label">Documento de referência</span>
+                <input type="text" placeholder="NF, lote ou pedido" />
+              </label>
+            </div>
+            <label class="form-field">
+              <span class="form-label">Observação</span>
+              <textarea rows="3" placeholder="Detalhe o motivo da movimentação"></textarea>
+            </label>
+          `;
+        } else {
+          masterModal.classList.add('modal--qr');
+          modalBody.classList.add('modal__body--qr');
+
+          const qrWrapper = document.createElement('div');
+          qrWrapper.className = 'qr-preview qr-preview--modal';
+          qrWrapper.innerHTML = `
+            <div class="qr-preview__code" aria-hidden="true">QR</div>
+            <div>
+              <p>Seu QR Code inclui SKU, lote e hash de auditoria. Utilize a impressora térmica homologada BIPA.</p>
+              <div class="qr-preview__actions">
+                <button class="btn btn--surface" type="button">Baixar PDF</button>
+                <button class="btn btn--ghost" type="button">Compartilhar via e-mail</button>
+              </div>
+            </div>
+          `;
+          modalBody.replaceChildren(qrWrapper);
+        }
+
+        if (typeof masterModal.showModal === 'function') {
+          masterModal.showModal();
+        } else {
+          masterModal.setAttribute('open', '');
+        }
+      };
+
+      document.querySelectorAll('[data-open-master-modal]').forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+          openMasterModal(trigger.getAttribute('data-modal-context'));
+        });
+      });
+
+      const closeMasterModal = () => {
+        if (!masterModal) return;
+        if (typeof masterModal.close === 'function') {
+          masterModal.close();
+        }
+        masterModal.removeAttribute('open');
+      };
+
+      masterModal?.addEventListener('click', (event) => {
+        if (event.target === masterModal) {
+          closeMasterModal();
+        }
+      });
+
+      if (masterModal) {
+        masterModal.querySelectorAll('.modal__close')?.forEach((button) => {
+          button.addEventListener('click', () => {
+            closeMasterModal();
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

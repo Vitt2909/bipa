@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BIPA — Produtos</title>
+    <title>BIPA — Estoque inteligente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -40,91 +40,356 @@
       </aside>
 
       <main class="app-admin__content" aria-labelledby="products-title">
-        <header class="page-header">
+        <header class="page-header page-header--inventory">
           <div>
-            <h1 class="page-title" id="products-title">Estoque completo</h1>
-            <p class="page-subtitle">Mostrando apenas itens disponíveis por padrão.</p>
+            <h1 class="page-title" id="products-title">Central de estoque</h1>
+            <p class="page-subtitle">
+              Controle total das peças, visibilidade multicanal e rastreabilidade ponta a ponta.
+            </p>
           </div>
-          <div class="page-actions">
+          <div class="page-actions page-actions--stacked" aria-label="Ações rápidas">
             <a class="btn btn--primary" href="/app/admin/produtos/novo/">Adicionar novo produto</a>
+            <button class="btn btn--surface" type="button" data-open-adjust data-context="bulk">
+              Dar entrada (NF-e / lote)
+            </button>
           </div>
         </header>
 
-        <form class="filters-bar" aria-label="Filtros do estoque">
+        <section class="inventory-dashboard" aria-label="Indicadores de estoque">
+          <div class="inventory-kpis">
+            <article class="kpi-card">
+              <header class="kpi-card__header">
+                <span class="kpi-card__label">Valor total do estoque</span>
+              </header>
+              <strong class="kpi-card__value">R$ 128.540,90</strong>
+              <p class="kpi-card__meta">Custo contabilizado dos SKUs ativos</p>
+            </article>
+            <article class="kpi-card">
+              <header class="kpi-card__header">
+                <span class="kpi-card__label">SKUs ativos</span>
+              </header>
+              <strong class="kpi-card__value">312</strong>
+              <p class="kpi-card__meta">Somando variações em todos os canais</p>
+            </article>
+            <article class="kpi-card kpi-card--warning" role="link" tabindex="0">
+              <header class="kpi-card__header">
+                <span class="kpi-card__label">Itens em ponto de pedido</span>
+                <span class="kpi-card__indicator">12</span>
+              </header>
+              <strong class="kpi-card__value">Ver lista crítica</strong>
+              <p class="kpi-card__meta">Priorize reposição para evitar ruptura</p>
+            </article>
+            <article class="kpi-card kpi-card--danger" role="link" tabindex="0">
+              <header class="kpi-card__header">
+                <span class="kpi-card__label">Itens esgotados</span>
+                <span class="kpi-card__indicator">5</span>
+              </header>
+              <strong class="kpi-card__value">Rupturas ativas</strong>
+              <p class="kpi-card__meta">Analise causas e direcione transferências</p>
+            </article>
+          </div>
+          <div class="inventory-dashboard__legend" aria-live="polite">
+            <span class="legend-pill legend-pill--ok">Saudável</span>
+            <span class="legend-pill legend-pill--warn">Ponto de pedido</span>
+            <span class="legend-pill legend-pill--alert">Ruptura</span>
+          </div>
+        </section>
+
+        <form class="filters-bar filters-bar--inventory" aria-label="Filtros do estoque">
           <label class="form-field">
             <span class="form-label">Status</span>
             <select>
+              <option>Todos</option>
               <option>Disponível</option>
               <option>Reservado</option>
-              <option>Vendido</option>
+              <option>Ruptura</option>
               <option>Consignado</option>
             </select>
           </label>
           <label class="form-field">
             <span class="form-label">Categoria</span>
             <select>
-              <option>Todos</option>
+              <option>Todas</option>
               <option>Vestidos</option>
               <option>Calças</option>
               <option>Saias</option>
               <option>Camisas</option>
+              <option>Outerwear</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span class="form-label">Canal</span>
+            <select>
+              <option>Todos</option>
+              <option>Loja física</option>
+              <option>Marketplace</option>
+              <option>E-commerce</option>
+              <option>PDV móvel</option>
             </select>
           </label>
           <label class="form-field filters-bar__search">
             <span class="sr-only">Buscar produto</span>
-            <input type="search" placeholder="Busque por nome ou código" />
+            <input type="search" placeholder="Busque por nome, SKU ou EAN" />
           </label>
         </form>
 
-        <table class="table table--products">
-          <thead>
-            <tr>
-              <th scope="col">Foto</th>
-              <th scope="col">Nome</th>
-              <th scope="col">Código</th>
-              <th scope="col">Preço</th>
-              <th scope="col">Status</th>
-              <th scope="col">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="avatar" aria-hidden="true">JJ</span></td>
-              <td>Jaqueta Jeans Oversized</td>
-              <td>BR-0001</td>
-              <td>R$ 189,90</td>
-              <td><span class="chip chip--available">Disponível</span></td>
-              <td>
-                <a class="link" href="/app/admin/produtos/editar/BR-0001/">Editar</a>
-                <button class="link" type="button">Excluir</button>
-              </td>
-            </tr>
-            <tr>
-              <td><span class="avatar" aria-hidden="true">VM</span></td>
-              <td>Vestido Midi Floral</td>
-              <td>BR-0002</td>
-              <td>R$ 129,90</td>
-              <td><span class="chip chip--reserved">Reservado</span></td>
-              <td>
-                <a class="link" href="/app/admin/produtos/editar/BR-0002/">Editar</a>
-                <button class="link" type="button">Excluir</button>
-              </td>
-            </tr>
-            <tr>
-              <td><span class="avatar" aria-hidden="true">CL</span></td>
-              <td>Calça Linho Areia</td>
-              <td>BR-0003</td>
-              <td>R$ 159,90</td>
-              <td><span class="chip">Vendido</span></td>
-              <td>
-                <a class="link" href="/app/admin/produtos/editar/BR-0003/">Editar</a>
-                <button class="link" type="button">Excluir</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <section class="inventory-toolbar" aria-label="Ações em lote">
+          <div class="inventory-toolbar__selection">
+            <label class="checkbox">
+              <input type="checkbox" aria-label="Selecionar todos os produtos" data-master-checkbox />
+              <span>Selecionar todos</span>
+            </label>
+            <span class="inventory-toolbar__count" data-selection-count>0 itens selecionados</span>
+          </div>
+          <div class="inventory-toolbar__actions" aria-hidden="true" data-bulk-actions>
+            <button class="btn btn--ghost" type="button">Imprimir etiquetas / QR</button>
+            <button class="btn btn--ghost" type="button">Arquivar</button>
+            <button class="btn btn--ghost" type="button">Editar categoria</button>
+          </div>
+        </section>
+
+        <div class="table-wrapper">
+          <table class="table table--inventory" aria-describedby="inventory-help">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <span class="sr-only">Selecionar</span>
+                </th>
+                <th scope="col">Produto</th>
+                <th scope="col">Códigos</th>
+                <th scope="col">Estoque</th>
+                <th scope="col">Status</th>
+                <th scope="col">Canais</th>
+                <th scope="col">Última movimentação</th>
+                <th scope="col" class="table--actions">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <label class="checkbox">
+                    <input type="checkbox" data-row-select data-sku="BR-0001" />
+                    <span class="sr-only">Selecionar Jaqueta Jeans Oversized</span>
+                  </label>
+                </td>
+                <td>
+                  <div class="inventory-product">
+                    <img
+                      class="inventory-product__thumb"
+                      src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=96&q=60"
+                      alt="Jaqueta jeans azul"
+                    />
+                    <div>
+                      <strong>Jaqueta Jeans Oversized</strong>
+                      <p class="inventory-product__meta">Variações: M, G — Coleção Denim Essencial</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-codes">
+                    <span><strong>SKU:</strong> BR-0001</span>
+                    <span><strong>EAN:</strong> 7900000000012</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-stock">
+                    <span class="inventory-stock__total">18 un.</span>
+                    <span class="inventory-stock__breakdown">Disponível: 14 · Reservado: 2 · Separação: 2</span>
+                    <span class="inventory-stock__badge">Mínimo: 12</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-status">
+                    <span class="chip chip--available">Em estoque</span>
+                    <span class="chip chip--sync">Ponto de pedido</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="channel-list" aria-label="Produto ativo nos canais">
+                    <span class="channel-list__item" title="PDV">PDV</span>
+                    <span class="channel-list__item" title="Loja física">Loja</span>
+                    <span class="channel-list__item" title="Marketplace">Mkt</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-activity">
+                    <span>Entrada NF-e 4587</span>
+                    <time datetime="2024-09-12">12/09/2024 · Ana Silva</time>
+                  </div>
+                </td>
+                <td class="table--actions">
+                  <a class="link" href="/app/admin/produtos/visao-mestra/">Visão mestra</a>
+                  <button class="link" type="button" data-open-adjust data-sku="BR-0001">Ajustar estoque</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="checkbox">
+                    <input type="checkbox" data-row-select data-sku="BR-0002" />
+                    <span class="sr-only">Selecionar Vestido Midi Floral</span>
+                  </label>
+                </td>
+                <td>
+                  <div class="inventory-product">
+                    <img
+                      class="inventory-product__thumb"
+                      src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=96&q=60"
+                      alt="Vestido floral"
+                    />
+                    <div>
+                      <strong>Vestido Midi Floral</strong>
+                      <p class="inventory-product__meta">Variações: P, M — Coleção Jardim</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-codes">
+                    <span><strong>SKU:</strong> BR-0002</span>
+                    <span><strong>EAN:</strong> 7900000000029</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-stock">
+                    <span class="inventory-stock__total">6 un.</span>
+                    <span class="inventory-stock__breakdown">Disponível: 3 · Reservado: 2 · Separação: 1</span>
+                    <span class="inventory-stock__badge inventory-stock__badge--alert">Mínimo: 8</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-status">
+                    <span class="chip chip--warning">Estoque baixo</span>
+                    <span class="chip chip--sync chip--attention">Priorizar compra</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="channel-list" aria-label="Produto ativo nos canais">
+                    <span class="channel-list__item" title="E-commerce">E-comm</span>
+                    <span class="channel-list__item" title="Marketplace">Mkt</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-activity">
+                    <span>Ajuste balanço inventário</span>
+                    <time datetime="2024-09-10">10/09/2024 · Lucas Prado</time>
+                  </div>
+                </td>
+                <td class="table--actions">
+                  <a class="link" href="/app/admin/produtos/visao-mestra/">Visão mestra</a>
+                  <button class="link" type="button" data-open-adjust data-sku="BR-0002">Ajustar estoque</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="checkbox">
+                    <input type="checkbox" data-row-select data-sku="BR-0003" />
+                    <span class="sr-only">Selecionar Calça Linho Areia</span>
+                  </label>
+                </td>
+                <td>
+                  <div class="inventory-product">
+                    <img
+                      class="inventory-product__thumb"
+                      src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=96&q=60"
+                      alt="Calça de linho bege"
+                    />
+                    <div>
+                      <strong>Calça Linho Areia</strong>
+                      <p class="inventory-product__meta">Variações: P, M, G — Linha Essenciais</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-codes">
+                    <span><strong>SKU:</strong> BR-0003</span>
+                    <span><strong>EAN:</strong> 7900000000036</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-stock">
+                    <span class="inventory-stock__total">0 un.</span>
+                    <span class="inventory-stock__breakdown">Disponível: 0 · Reservado: 0 · Separação: 0</span>
+                    <span class="inventory-stock__badge inventory-stock__badge--alert">Mínimo: 5</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-status">
+                    <span class="chip chip--danger">Esgotado</span>
+                    <span class="chip chip--sync chip--attention">Aguardando reposição</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="channel-list" aria-label="Produto ativo nos canais">
+                    <span class="channel-list__item" title="Loja física">Loja</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="inventory-activity">
+                    <span>Picking pedido #1245</span>
+                    <time datetime="2024-09-09">09/09/2024 · Fernanda Prado</time>
+                  </div>
+                </td>
+                <td class="table--actions">
+                  <a class="link" href="/app/admin/produtos/visao-mestra/">Visão mestra</a>
+                  <button class="link" type="button" data-open-adjust data-sku="BR-0003">Ajustar estoque</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-footnote" id="inventory-help">
+          Alterações de quantidade exigem registro no livro de movimentações. Utilize o botão "Ajustar estoque" para
+          manter a rastreabilidade.
+        </p>
       </main>
     </div>
+
+    <dialog class="modal" id="stock-adjust-modal" aria-labelledby="stock-adjust-title">
+      <form method="dialog" class="modal__content">
+        <header class="modal__header">
+          <h2 class="modal__title" id="stock-adjust-title">Registrar movimentação de estoque</h2>
+          <button class="modal__close" type="submit" value="cancelar" aria-label="Fechar">&times;</button>
+        </header>
+        <p class="modal__subtitle">
+          Nenhuma alteração é aplicada sem registro. Informe o tipo de movimentação e um comentário opcional para o
+          livro-razão.
+        </p>
+        <div class="modal__body">
+          <div class="modal__field">
+            <span class="modal__label">Produto</span>
+            <strong data-selected-sku>SKU BR-0001 — Jaqueta Jeans Oversized</strong>
+          </div>
+          <label class="form-field">
+            <span class="form-label">Tipo de movimentação</span>
+            <select required>
+              <option value="" disabled selected>Selecione</option>
+              <option>Entrada por NF-e</option>
+              <option>Entrada por devolução</option>
+              <option>Perda / dano</option>
+              <option>Ajuste de balanço</option>
+              <option>Transferência entre canais</option>
+            </select>
+          </label>
+          <div class="modal__grid">
+            <label class="form-field">
+              <span class="form-label">Quantidade</span>
+              <input type="number" min="1" step="1" placeholder="0" required />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Documento (NF-e, lote ou ordem)</span>
+              <input type="text" placeholder="Ex.: NF 4587, Lote 23" />
+            </label>
+          </div>
+          <label class="form-field">
+            <span class="form-label">Observação</span>
+            <textarea rows="3" placeholder="Justifique a movimentação para auditoria futura"></textarea>
+          </label>
+        </div>
+        <footer class="modal__footer">
+          <button class="btn btn--ghost" type="submit" value="cancelar">Cancelar</button>
+          <button class="btn btn--primary" type="submit" value="confirmar">Registrar movimentação</button>
+        </footer>
+      </form>
+    </dialog>
 
     <nav class="app-bottom-nav" aria-label="Navegação principal">
       <ul class="app-bottom-nav__list">
@@ -162,16 +427,15 @@
           </a>
         </li>
         <li>
-          <a class="app-bottom-nav__link" href="/app/admin/dashboard/">
+          <a class="app-bottom-nav__link" href="/app/admin/vendas/">
             <span class="app-bottom-nav__icon" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                <path d="M6 16v-4" stroke-linecap="round" />
-                <path d="M12 16V8" stroke-linecap="round" />
-                <path d="M18 16v-7" stroke-linecap="round" />
-                <path d="M5 16h14" stroke-linecap="round" />
+                <path d="M5 7h14" stroke-linecap="round" />
+                <path d="M10 11h9" stroke-linecap="round" />
+                <path d="M6 15h6" stroke-linecap="round" />
               </svg>
             </span>
-            <span>Relatórios</span>
+            <span>Vendas</span>
           </a>
         </li>
         <li>
@@ -179,18 +443,106 @@
             <span class="app-bottom-nav__icon" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path
-                  d="m12 7.5 1.2-2.1a1 1 0 0 1 1.74 0l1.2 2.1 2.3.4a1 1 0 0 1 .8 1.2l-.6 2.2.6 2.2a1 1 0 0 1-.8 1.2l-2.3.4-1.2 2.1a1 1 0 0 1-1.74 0L12 16.5l-2.3-.4a1 1 0 0 1-.8-1.2l.6-2.2-.6-2.2a1 1 0 0 1 .8-1.2Z"
-                  stroke-linejoin="round"
+                  d="M11.5 3a2 2 0 0 1 1 0l1.18.39a2 2 0 0 0 1.88-.35l.87-.7a2 2 0 0 1 2.83.24l.63.78a2 2 0 0 1 .37 1.95l-.37 1.14a2 2 0 0 0 .52 2.09l.84.74a2 2 0 0 1 .22 2.78l-.63.78a2 2 0 0 1-2.07.66l-1.18-.33a2 2 0 0 0-1.95.52l-.7.84a2 2 0 0 1-2.78.22l-.78-.63a2 2 0 0 0-2.09-.37l-1.14.37a2 2 0 0 1-1.95-.52l-.84-.74a2 2 0 0 1-.22-2.78l.63-.78a2 2 0 0 0 .33-1.95l-.39-1.18a2 2 0 0 1 .52-1.95l.7-.84a2 2 0 0 1 2.78-.22l.78.63a2 2 0 0 0 2.09.37Z"
                 />
-                <circle cx="12" cy="12" r="2" />
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
               </svg>
             </span>
-            <span>Config</span>
+            <span>Configurações</span>
           </a>
         </li>
       </ul>
     </nav>
 
-    <script src="/script.js" defer></script>
+    <script>
+      const masterCheckbox = document.querySelector('[data-master-checkbox]');
+      const rowCheckboxes = document.querySelectorAll('[data-row-select]');
+      const selectionCount = document.querySelector('[data-selection-count]');
+      const bulkActions = document.querySelector('[data-bulk-actions]');
+      const modal = document.getElementById('stock-adjust-modal');
+      const selectedSku = modal ? modal.querySelector('[data-selected-sku]') : null;
+
+      const updateBulkState = () => {
+        const selected = Array.from(rowCheckboxes).filter((checkbox) => checkbox.checked);
+        if (selectionCount) {
+          selectionCount.textContent = `${selected.length} ${selected.length === 1 ? 'item selecionado' : 'itens selecionados'}`;
+        }
+        if (bulkActions) {
+          bulkActions.setAttribute('aria-hidden', selected.length === 0 ? 'true' : 'false');
+          bulkActions.classList.toggle('is-visible', selected.length > 0);
+        }
+        if (masterCheckbox) {
+          const allSelected = selected.length === rowCheckboxes.length && rowCheckboxes.length > 0;
+          masterCheckbox.checked = allSelected;
+          masterCheckbox.indeterminate = !allSelected && selected.length > 0;
+        }
+      };
+
+      masterCheckbox?.addEventListener('change', () => {
+        rowCheckboxes.forEach((checkbox) => {
+          checkbox.checked = masterCheckbox.checked;
+        });
+        updateBulkState();
+      });
+
+      rowCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', updateBulkState);
+      });
+
+      const openModal = (button) => {
+        if (!modal) return;
+        const sku = button.getAttribute('data-sku') || 'BR-0001';
+        const context = button.getAttribute('data-context');
+
+        if (selectedSku) {
+          const productCell = button.closest('tr')?.querySelector('.inventory-product strong');
+          const productName = productCell ? productCell.textContent : 'Produto selecionado';
+          selectedSku.textContent = `SKU ${sku} — ${productName}`;
+        }
+
+        if (context === 'bulk' && selectedSku) {
+          const selectedRows = Array.from(rowCheckboxes).filter((checkbox) => checkbox.checked);
+          if (selectedRows.length > 1) {
+            selectedSku.textContent = `${selectedRows.length} produtos selecionados`;
+          } else if (selectedRows.length === 0) {
+            selectedSku.textContent = 'Selecione ao menos um item para movimentar';
+          }
+        }
+
+        if (typeof modal.showModal === 'function') {
+          modal.showModal();
+        } else {
+          modal.setAttribute('open', '');
+        }
+      };
+
+      const closeModal = () => {
+        if (!modal) return;
+        if (typeof modal.close === 'function') {
+          modal.close();
+        }
+        modal.removeAttribute('open');
+      };
+
+      document.querySelectorAll('[data-open-adjust]').forEach((button) => {
+        button.addEventListener('click', () => openModal(button));
+      });
+
+      if (modal) {
+        modal.addEventListener('click', (event) => {
+          if (event.target === modal) {
+            closeModal();
+          }
+        });
+
+        modal.querySelectorAll('.modal__close')?.forEach((button) => {
+          button.addEventListener('click', () => {
+            closeModal();
+          });
+        });
+      }
+
+      updateBulkState();
+    </script>
   </body>
 </html>
