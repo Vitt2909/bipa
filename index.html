@@ -30,8 +30,8 @@
             <a class="topbar__link" href="#overview-panel">Produto</a>
             <a class="topbar__link" href="#flows-panel">Fluxos</a>
             <a class="topbar__link" href="#reports-panel">Relatórios</a>
-            <button class="btn btn--ghost btn--small" data-action="open-login">Entrar na demo</button>
-            <button class="btn btn--primary btn--small" data-action="contact-sales">Falar com vendas</button>
+            <a class="btn btn--ghost btn--small" href="#demo-workspace">Entrar na demo</a>
+            <a class="btn btn--primary btn--small" href="#contact-section">Falar com vendas</a>
           </div>
         </div>
 
@@ -46,8 +46,8 @@
               </p>
               <div class="hero__actions" role="group" aria-label="Ações principais">
                 <div class="hero__action">
-                  <button class="btn btn--primary" data-action="open-login">Explorar versão demo</button>
-                  <span class="hero__action-note">Abre a conta de teste com dados fictícios prontos.</span>
+                  <a class="btn btn--primary" href="#demo-workspace">Explorar versão demo</a>
+                  <span class="hero__action-note">Leva direto à conta de teste com dados fictícios prontos.</span>
                 </div>
                 <div class="hero__action">
                   <a class="btn btn--outline" href="#reports-panel">Ver indicadores</a>
@@ -90,8 +90,7 @@
                 <footer class="summary-card__footer">
                   <p>
                     Prefere conversar com a equipe? Clique em
-                    <button type="button" class="link-cta" data-action="contact-sales">falar com vendas</button> e receba um
-                    tour guiado.
+                    <a class="link-cta" href="#contact-section">falar com vendas</a> e receba um tour guiado.
                   </p>
                 </footer>
               </div>
@@ -200,11 +199,11 @@
               <span>Acesso Demo</span>
             </div>
             <p class="demo-card__description">
-              Bipa do BIM — mais dados fictícios.
+              BIPA do BIM — base fictícia completa para explorar relatórios e estoque.
             </p>
-            <button class="btn btn--surface" data-action="open-login">Entrar na conta demo</button>
+            <a class="btn btn--surface" href="#demo-workspace">Entrar na conta demo</a>
             <p class="demo-card__footer">
-              Quer ver mais? Entre em contato com a nossa equipe.
+              Quer ver mais? <a href="#contact-section">Fale com a nossa equipe</a>.
             </p>
           </div>
         </section>
@@ -282,9 +281,9 @@
                   <div class="workspace-preview__scan-area"></div>
                   <p>Simule uma venda real com câmera e PIX fake.</p>
                 </div>
-                <button type="button" class="btn btn--primary workspace-preview__cta" data-action="open-login">
+                <a class="btn btn--primary workspace-preview__cta" href="#demo-workspace">
                   Abrir BIPA interativo
-                </button>
+                </a>
               </div>
             </div>
             <div class="workspace-preview__details">
@@ -299,9 +298,9 @@
                 <li>CRM enxuto: procure clientes e dispare recibos instantâneos.</li>
                 <li>Self-checkout com passe temporário e validação em tempo real.</li>
               </ul>
-              <button type="button" class="btn btn--surface workspace-preview__ghost" data-action="open-login">
+              <a class="btn btn--surface workspace-preview__ghost" href="#demo-workspace">
                 Ver jornada completa
-              </button>
+              </a>
             </div>
           </section>
         </section>
@@ -745,15 +744,15 @@
       </footer>
     </div>
 
-    <div class="workspace" id="demo-workspace" aria-hidden="true">
-      <div class="workspace__backdrop" data-action="close-workspace" tabindex="-1"></div>
-      <section class="workspace__shell" role="dialog" aria-modal="true" aria-labelledby="workspace-title" tabindex="-1">
+    <section class="workspace" id="demo-workspace" aria-labelledby="workspace-title">
+      <div class="workspace__shell">
         <header class="workspace__header">
           <div>
             <p class="workspace__badge">Demo viva</p>
             <h2 class="workspace__title" id="workspace-title">BIPA em modo operando</h2>
+            <p class="workspace__lead">Fluxos completos do cadastro ao passe de saída para testar no seu tempo.</p>
           </div>
-          <button type="button" class="btn btn--ghost btn--small" data-action="close-workspace">Fechar</button>
+          <a class="workspace__back-link" href="#app">Voltar para o início</a>
         </header>
 
         <nav class="workspace__nav" role="tablist" aria-label="Seções do app demo">
@@ -1020,17 +1019,45 @@
             </div>
           </section>
         </div>
-      </section>
-    </div>
 
-    <div class="modal" id="contact-modal" aria-hidden="true">
-      <div class="modal__backdrop" data-action="close-contact"></div>
-      <section class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="contact-title" tabindex="-1">
-        <header class="modal__header">
+        <section class="workspace-scanner" id="scanner-panel" hidden aria-labelledby="scanner-title">
+          <header class="workspace-scanner__header">
+            <div>
+              <h3 id="scanner-title">Simulador de câmera</h3>
+              <p>Use o leitor para testar fluxos de PDV e self-checkout sem sair do painel.</p>
+            </div>
+            <button type="button" class="btn btn--ghost btn--small" data-action="scanner-hide">Fechar painel</button>
+          </header>
+          <div class="workspace-scanner__body">
+            <div class="scanner__viewport">
+              <video id="scanner-video" autoplay playsinline muted></video>
+              <div class="scanner__overlay">
+                <span class="scanner__corner"></span>
+                <span class="scanner__corner"></span>
+                <span class="scanner__corner"></span>
+                <span class="scanner__corner"></span>
+              </div>
+              <div class="scanner__fallback" id="scanner-fallback" hidden>
+                <p>Não conseguimos acessar a câmera. Você pode simular a leitura manualmente.</p>
+              </div>
+            </div>
+            <div class="workspace-scanner__status" id="scanner-status" aria-live="polite">Aponte para um QR Code.</div>
+            <div class="workspace-scanner__actions">
+              <button type="button" class="btn btn--ghost" data-action="scanner-trigger">Simular leitura agora</button>
+              <button type="button" class="btn btn--primary" data-action="scanner-confirm" disabled>Adicionar ao carrinho</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="contact" id="contact-section" aria-labelledby="contact-title">
+      <div class="contact__shell">
+        <header class="contact__header">
           <h2 id="contact-title">Vamos montar sua operação?</h2>
-          <button type="button" class="btn btn--ghost btn--small" data-action="close-contact">Fechar</button>
+          <p>Conte rapidamente sobre a sua operação e retornamos em até 1 dia útil.</p>
         </header>
-        <form class="modal__form" id="contact-form">
+        <form class="contact__form" id="contact-form">
           <label>
             <span>Nome</span>
             <input type="text" name="name" required placeholder="Como podemos te chamar?" />
@@ -1054,43 +1081,13 @@
           </label>
           <label>
             <span>Mensagem</span>
-            <textarea name="message" rows="3" placeholder="Conte rapidamente sua operação"></textarea>
+            <textarea name="message" rows="3" placeholder="Conte rapidamente sobre a sua operação"></textarea>
           </label>
           <button type="submit" class="btn btn--primary">Enviar interesse</button>
-          <p class="modal__note" id="contact-feedback" role="status" aria-live="polite"></p>
+          <p class="contact__note" id="contact-feedback" role="status" aria-live="polite"></p>
         </form>
-      </section>
-    </div>
-
-    <div class="scanner" id="scanner-modal" aria-hidden="true">
-      <div class="scanner__backdrop" data-action="scanner-close"></div>
-      <section class="scanner__dialog" role="dialog" aria-modal="true" aria-labelledby="scanner-title" tabindex="-1">
-        <header class="scanner__header">
-          <div>
-            <h2 id="scanner-title">Simulador de câmera</h2>
-            <p>Apontamos para um QR Code e detectamos a peça em segundos.</p>
-          </div>
-          <button type="button" class="btn btn--ghost btn--small" data-action="scanner-close">Fechar</button>
-        </header>
-        <div class="scanner__viewport">
-          <video id="scanner-video" autoplay playsinline muted></video>
-          <div class="scanner__overlay">
-            <span class="scanner__corner"></span>
-            <span class="scanner__corner"></span>
-            <span class="scanner__corner"></span>
-            <span class="scanner__corner"></span>
-          </div>
-          <div class="scanner__fallback" id="scanner-fallback" hidden>
-            <p>Não conseguimos acessar a câmera. Você pode simular a leitura manualmente.</p>
-          </div>
-        </div>
-        <div class="scanner__status" id="scanner-status" aria-live="polite">Aponte para um QR Code.</div>
-        <div class="scanner__actions">
-          <button type="button" class="btn btn--ghost" data-action="scanner-trigger">Simular leitura agora</button>
-          <button type="button" class="btn btn--primary" data-action="scanner-confirm" disabled>Adicionar ao carrinho</button>
-        </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
     <script src="script.js"></script>
   </body>

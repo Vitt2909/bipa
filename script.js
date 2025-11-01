@@ -2010,18 +2010,21 @@ const workspaceElements = {
 };
 
 const contactElements = {
-  root: document.getElementById('contact-modal'),
   form: document.getElementById('contact-form'),
   feedback: document.getElementById('contact-feedback'),
 };
 
 const scannerElements = {
-  root: document.getElementById('scanner-modal'),
+  root: document.getElementById('scanner-panel'),
   video: document.getElementById('scanner-video'),
   status: document.getElementById('scanner-status'),
   fallback: document.getElementById('scanner-fallback'),
   confirmButton: document.querySelector('[data-action="scanner-confirm"]'),
 };
+
+if (contactElements.form) {
+  contactElements.form.reset();
+}
 
 const workspaceState = {
   initialized: false,
@@ -2092,14 +2095,27 @@ if (workspaceElements.root) {
 
   document.addEventListener('click', handleActionClick);
   document.addEventListener('submit', handleSubmit);
-}
 
-if (contactElements.root) {
-  contactElements.root.querySelector('.modal__dialog')?.setAttribute('tabindex', '-1');
+  ensureWorkspaceInitialized();
+  setWorkspaceView(workspaceState.view || 'productForm');
+  updateProductFormCode();
+  syncDiscountInputs();
+  updatePaymentSummary();
+  workspaceElements.paymentRadios.forEach((radio) => {
+    radio.checked = radio.value === workspaceState.paymentMethod;
+  });
+  if (workspaceElements.productFormFeedback) {
+    workspaceElements.productFormFeedback.textContent = '';
+    workspaceElements.productFormFeedback.classList.remove('workspace-success');
+  }
+  if (workspaceElements.customerQuickFeedback) {
+    workspaceElements.customerQuickFeedback.textContent = '';
+    workspaceElements.customerQuickFeedback.classList.remove('workspace-success');
+  }
 }
 
 if (scannerElements.root) {
-  scannerElements.root.querySelector('.scanner__dialog')?.setAttribute('tabindex', '-1');
+  scannerElements.root.setAttribute('tabindex', '-1');
 }
 
 function handleActionClick(event) {
@@ -2108,20 +2124,6 @@ function handleActionClick(event) {
   const action = actionTarget.dataset.action;
 
   switch (action) {
-    case 'open-login':
-      event.preventDefault();
-      openWorkspace();
-      break;
-    case 'close-workspace':
-      closeWorkspace();
-      break;
-    case 'contact-sales':
-      event.preventDefault();
-      openContactModal();
-      break;
-    case 'close-contact':
-      closeContactModal();
-      break;
     case 'pdv-scan':
       openScanner('pdv');
       break;
@@ -2176,7 +2178,7 @@ function handleActionClick(event) {
     case 'self-expire':
       expireSelfPass(true);
       break;
-    case 'scanner-close':
+    case 'scanner-hide':
       closeScanner();
       break;
     case 'scanner-trigger':
@@ -2205,38 +2207,6 @@ function handleSubmit(event) {
     event.preventDefault();
     handleQuickCustomerSubmit();
   }
-}
-
-function openWorkspace() {
-  if (!workspaceElements.root) return;
-  ensureWorkspaceInitialized();
-  workspaceElements.root.setAttribute('aria-hidden', 'false');
-  workspaceElements.root.classList.add('is-visible');
-  document.body.classList.add('is-workspace-open');
-  setWorkspaceView(workspaceState.view || 'productForm');
-  updateProductFormCode();
-  syncDiscountInputs();
-  updatePaymentSummary();
-  workspaceElements.paymentRadios.forEach((radio) => {
-    radio.checked = radio.value === workspaceState.paymentMethod;
-  });
-  if (workspaceElements.productFormFeedback) {
-    workspaceElements.productFormFeedback.textContent = '';
-    workspaceElements.productFormFeedback.classList.remove('workspace-success');
-  }
-  if (workspaceElements.customerQuickFeedback) {
-    workspaceElements.customerQuickFeedback.textContent = '';
-    workspaceElements.customerQuickFeedback.classList.remove('workspace-success');
-  }
-  window.setTimeout(() => workspaceElements.shell?.focus(), 0);
-}
-
-function closeWorkspace() {
-  if (!workspaceElements.root) return;
-  workspaceElements.root.setAttribute('aria-hidden', 'true');
-  workspaceElements.root.classList.remove('is-visible');
-  document.body.classList.remove('is-workspace-open');
-  closeScanner();
 }
 
 function formatInternalProductCode(sequence) {
@@ -3336,10 +3306,10 @@ function openScanner(mode) {
   scannerElements.status.textContent = 'Aponte para um QR Code.';
   if (scannerElements.confirmButton) scannerElements.confirmButton.disabled = true;
   if (scannerElements.fallback) scannerElements.fallback.hidden = true;
-  scannerElements.root.setAttribute('aria-hidden', 'false');
-  scannerElements.root.classList.add('is-visible');
-  document.body.classList.add('is-scanner-open');
+  scannerElements.root.hidden = false;
+  scannerElements.root.classList.add('is-active');
   startScannerStream();
+  scannerElements.root.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function startScannerStream() {
@@ -3428,9 +3398,8 @@ function closeScanner() {
   stopScannerStream();
   clearScannerTimeout();
   workspaceState.scanner.product = null;
-  scannerElements.root.setAttribute('aria-hidden', 'true');
-  scannerElements.root.classList.remove('is-visible');
-  document.body.classList.remove('is-scanner-open');
+  scannerElements.root.hidden = true;
+  scannerElements.root.classList.remove('is-active');
 }
 
 function stopScannerStream() {
@@ -3443,27 +3412,11 @@ function stopScannerStream() {
   }
 }
 
-function openContactModal() {
-  if (!contactElements.root) return;
-  contactElements.root.setAttribute('aria-hidden', 'false');
-  contactElements.root.classList.add('is-visible');
-  document.body.classList.add('is-modal-open');
-  if (contactElements.form) contactElements.form.reset();
-  if (contactElements.feedback) contactElements.feedback.textContent = '';
-  window.setTimeout(() => contactElements.form?.querySelector('input')?.focus(), 0);
-}
-
-function closeContactModal() {
-  if (!contactElements.root) return;
-  contactElements.root.setAttribute('aria-hidden', 'true');
-  contactElements.root.classList.remove('is-visible');
-  document.body.classList.remove('is-modal-open');
-}
-
 function handleContactSubmit() {
   if (!contactElements.form) return;
   const formData = new FormData(contactElements.form);
   const name = (formData.get('name') || 'Time').toString();
+  contactElements.form.reset();
   if (contactElements.feedback) {
     contactElements.feedback.textContent = `${name}, recebemos o seu interesse! Entraremos em contato em até 1 dia útil.`;
   }
