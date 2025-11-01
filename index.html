@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BIPA — PDV verde para brechós modernos</title>
+    <title>BIPA — Acesso à plataforma</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,204 +12,27 @@
     />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body data-page="marketing-home">
-    <header class="site-header">
-      <div class="site-header__inner">
-        <a class="site-logo" href="index.html">
-          <span>B</span>
-          BIPA
-        </a>
-        <nav class="site-nav" aria-label="Navegação principal">
-          <a href="index.html" aria-current="page">Visão geral</a>
-          <a href="fluxos.html">Fluxos</a>
-          <a href="relatorios.html">Relatórios</a>
-          <a href="github.html">Roadmap</a>
-          <a href="demo.html">Demo</a>
-          <a href="marketplace.html">Marketplace</a>
-        </nav>
-        <div class="site-actions">
-          <a class="btn btn--ghost btn--small" href="login.html">Área do cliente</a>
-          <a class="btn btn--primary btn--small" href="contato.html">Falar com vendas</a>
-        </div>
-      </div>
-    </header>
-
-    <main class="site-main">
-      <section class="site-hero">
-        <div class="site-hero__headline">
-          <span class="site-hero__eyebrow">Experiência verde, operação ágil</span>
-          <h1 class="site-hero__title">PDV inteligente e marketplace circular para brechós que respiram moda consciente.</h1>
-          <p class="site-hero__subtitle">
-            Centralize vendas, estoque, clientes e relatórios em um ecossistema desenhado para lojas autorais. Agora com um marketplace
-            inspirado em OLX e Enjoei para desapegar de peças, testar demanda e vender online sem atrito.
-          </p>
-          <div class="site-hero__actions" role="group" aria-label="Chamadas principais">
-            <a class="btn btn--primary" href="demo.html">Explorar demo guiada</a>
-            <a class="btn btn--surface" href="fluxos.html">Ver fluxos operacionais</a>
-            <a class="btn btn--ghost" href="marketplace.html">Explorar marketplace</a>
-          </div>
-        </div>
-        <aside class="site-hero__media" aria-label="Destaques do produto">
-          <div class="site-hero__card">
-            <h2 class="summary-card__title">Painel vivo da operação</h2>
-            <p class="summary-card__subtitle">
-              Monitoramento em tempo real com insights sobre vendas, reservas, consignados e autoatendimento.
-            </p>
-            <div class="site-hero__stats" role="list">
-              <div class="site-hero__stat" role="listitem">
-                <span>Tempo médio de venda</span>
-                <strong>3 toques</strong>
-              </div>
-              <div class="site-hero__stat" role="listitem">
-                <span>Reservas controladas</span>
-                <strong>15/30/60 min</strong>
-              </div>
-              <div class="site-hero__stat" role="listitem">
-                <span>KPIs atualizados</span>
-                <strong>10 s</strong>
-              </div>
-            </div>
-          </div>
-        </aside>
-      </section>
-
-      <section class="feature-section" aria-labelledby="feature-heading">
-        <div class="section-heading">
-          <h2 id="feature-heading">Construa a jornada completa da sua loja independente</h2>
-          <p>
-            Teste o BIPA em modo demonstrativo, valide fluxos com sua equipe e migre para a operação real com a mesma interface. Tudo isso com uma
-            estética verde + preta que dialoga com a moda circular.
+  <body data-page="welcome">
+    <main class="public-shell">
+      <section class="auth-card" aria-labelledby="welcome-title">
+        <div class="auth-card__brand">
+          <span class="brand-mark" aria-hidden="true">B</span>
+          <h1 class="auth-card__title" id="welcome-title">Bem-vindo ao BIPA</h1>
+          <p class="auth-card__subtitle">
+            A plataforma oficial para operar o PDV, gestão e marketplace da sua loja circular.
           </p>
         </div>
-        <div class="feature-grid">
-          <article class="feature-card">
-            <div class="feature-card__icon">01</div>
-            <h3>Vendas assistidas no tablet</h3>
-            <p>
-              Escaneie etiquetas, aplique descontos e finalize pagamentos PIX fake em segundos. O PDV foi criado para ser usado em pé, sem fricção.
-            </p>
-            <a class="feature-card__link" href="fluxos-simulacoes.html">Simular jornada de venda →</a>
-          </article>
-          <article class="feature-card">
-            <div class="feature-card__icon">02</div>
-            <h3>Estoque vivo e vitrine online</h3>
-            <p>
-              Cadastre peças com status, tamanhos e consignados. Disponibilize vitrine instantânea para o público com filtros intuitivos.
-            </p>
-            <a class="feature-card__link" href="loja/brecho-da-ana/">Abrir vitrine demo →</a>
-          </article>
-          <article class="feature-card">
-            <div class="feature-card__icon">03</div>
-            <h3>Relatórios inteligentes</h3>
-            <p>
-              KPIs customizados por perfil, mix de pagamento, exportação CSV e filtros combináveis para entender o giro das peças.
-            </p>
-            <a class="feature-card__link" href="relatorios-dashboard.html">Ver dashboard demo →</a>
-          </article>
-          <article class="feature-card">
-            <div class="feature-card__icon">04</div>
-            <h3>Roadmap transparente</h3>
-            <p>
-              Planejamento aberto no GitHub com milestones, critérios de aceite e próximos lançamentos para evoluir com você.
-            </p>
-            <a class="feature-card__link" href="roadmap-detalhes.html">Acompanhar entregas →</a>
-          </article>
-          <article class="feature-card feature-card--highlight">
-            <div class="feature-card__icon">05</div>
-            <h3>Marketplace de desapego integrado</h3>
-            <p>
-              Exponha peças consignadas, desapegos e coleções colaborativas em uma vitrine estilo OLX/Enjoei com chat seguro, avaliação de vendedores e pagamentos rastreáveis.
-            </p>
-            <a class="feature-card__link" href="marketplace.html">Ver vitrine circular →</a>
-          </article>
-        </div>
-      </section>
 
-      <section class="marketplace-preview" aria-labelledby="marketplace-preview-heading">
-        <div class="marketplace-preview__content">
-          <h2 id="marketplace-preview-heading">Desapegue sem sair do ecossistema BIPA</h2>
-          <p>
-            Crie anúncios em segundos a partir do seu estoque, receba propostas, negocie com chat moderado e finalize pagamentos com proteção BIPA Pay.
-            Compradores encontram filtros inteligentes, recomendações de look e logística verde com pontos de coleta parceiros.
-          </p>
-          <ul class="marketplace-preview__list">
-            <li><span class="chip">Match inteligente</span> Algoritmo que cruza estilos, tamanhos e histórico de compras.</li>
-            <li><span class="chip chip--available">Propostas rápidas</span> Compradores enviam ofertas, reservas temporárias e agendam retirada.</li>
-            <li><span class="chip chip--reserved">Segurança</span> Pagamentos em custódia, reputação transparente e suporte especializado.</li>
-          </ul>
-          <div class="site-hero__actions">
-            <a class="btn btn--primary" href="marketplace.html">Abrir marketplace</a>
-            <a class="btn btn--surface" href="contato.html">Cadastrar meu brechó</a>
-          </div>
+        <div class="auth-card__actions" role="group" aria-label="Ações iniciais">
+          <a class="btn btn--primary" href="login.html">Entrar na minha conta</a>
+          <a class="btn btn--surface" href="criar-loja.html">Criar uma nova loja</a>
         </div>
-        <aside class="marketplace-preview__media" aria-label="Destaques do marketplace">
-          <div class="marketplace-preview__card">
-            <h3>Top peças vendidas esta semana</h3>
-            <ul>
-              <li>Jaqueta Jeans Oversized · R$ 189,90</li>
-              <li>Vestido Midi Floral · R$ 129,90</li>
-              <li>Bolsa Vintage Couro | Reserva confirmada em 45 min</li>
-            </ul>
-            <a class="feature-card__link" href="marketplace.html#listings">Ver catálogo completo →</a>
-          </div>
-          <div class="marketplace-preview__card marketplace-preview__card--alt">
-            <h3>Indicadores do marketplace</h3>
-            <dl>
-              <div>
-                <dt>Ticket médio</dt>
-                <dd>R$ 162,40</dd>
-              </div>
-              <div>
-                <dt>Tempo médio para venda</dt>
-                <dd>3 dias</dd>
-              </div>
-              <div>
-                <dt>Brechós ativos</dt>
-                <dd>128 lojistas</dd>
-              </div>
-            </dl>
-          </div>
-        </aside>
-      </section>
 
-      <section class="split-section" aria-labelledby="cta-heading">
-        <div class="split-section__card">
-          <h2 id="cta-heading">Pronto para experimentar agora?</h2>
-          <p>
-            Acesse a demo completa, converse com vendas ou mergulhe direto no módulo de gestão. Cada botão abre uma página dedicada para você navegar sem perder o fio.
-          </p>
-          <div class="site-hero__actions">
-            <a class="btn btn--primary" href="demo.html">Abrir workspace demo</a>
-            <a class="btn btn--surface" href="app/selecionar-modulo/">Entrar no app de gestão</a>
-            <a class="btn btn--ghost" href="contato.html">Falar com uma pessoa</a>
-          </div>
-        </div>
-        <ul class="split-section__meta" aria-label="Diferenciais">
-          <li>
-            <span class="chip">Modo demo guiado</span>
-            Interface e dados fictícios com respostas imediatas.
-          </li>
-          <li>
-            <span class="chip chip--available">Design verde + preto</span>
-            Visual moderno alinhado à moda circular independente.
-          </li>
-          <li>
-            <span class="chip chip--reserved">Roadmap aberto</span>
-            Acompanhe entregas e priorize o que importa para sua operação.
-          </li>
-        </ul>
+        <p class="auth-card__hint">
+          O acesso é exclusivo para lojistas com contrato ativo. Em caso de dúvidas, acione o suporte pelo painel interno.
+        </p>
       </section>
     </main>
-
-    <footer class="site-footer">
-      <span>BIPA © 2024 — PDV sustentável para brechós</span>
-      <span>
-        <a href="contato.html">Contato</a> ·
-        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> ·
-        <a href="login.html">Entrar</a>
-      </span>
-    </footer>
-
-    <script src="script.js" defer></script>
+    <script src="/script.js" defer></script>
   </body>
 </html>
