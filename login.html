@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Acesse sua conta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="login">
+    <main class="public-shell">
+      <section class="auth-card" aria-labelledby="login-title">
+        <div class="auth-card__brand">
+          <span class="brand-mark" aria-hidden="true">B</span>
+          <h1 class="auth-card__title" id="login-title">Entre no BIPA</h1>
+          <p class="auth-card__subtitle">PDV mobile e gestão para brechós e lojas independentes.</p>
+        </div>
+
+        <form class="auth-form" aria-describedby="login-help">
+          <label class="form-field">
+            <span class="form-label">Email ou usuário</span>
+            <input type="email" name="email" placeholder="exemplo@bipa.demo" required />
+          </label>
+
+          <label class="form-field">
+            <span class="form-label">Senha</span>
+            <input type="password" name="password" placeholder="••••••••" required />
+          </label>
+
+          <button class="btn btn--primary" type="submit">Entrar no sistema</button>
+
+          <p class="auth-form__hint" id="login-help">
+            Acesso demonstrativo — use credenciais fictícias como <strong>demo@bipa.app</strong> / <strong>123456</strong>.
+          </p>
+        </form>
+
+        <footer class="auth-card__footer">
+          <p>
+            Quer conhecer a vitrine pública? Visite a loja demo em
+            <a href="/loja/brecho-da-ana/">bipa.app/loja/brecho-da-ana</a>.
+          </p>
+        </footer>
+      </section>
+    </main>
+    <script src="script.js" defer></script>
+  </body>
+</html>
