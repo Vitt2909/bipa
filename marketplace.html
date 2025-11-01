@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA Marketplace — Moda circular sem atrito</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="marketplace">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-logo" href="index.html">
+          <span>B</span>
+          BIPA
+        </a>
+        <nav class="site-nav" aria-label="Navegação principal">
+          <a href="index.html">Visão geral</a>
+          <a href="fluxos.html">Fluxos</a>
+          <a href="relatorios.html">Relatórios</a>
+          <a href="github.html">Roadmap</a>
+          <a href="demo.html">Demo</a>
+          <a href="marketplace.html" aria-current="page">Marketplace</a>
+        </nav>
+        <div class="site-actions">
+          <a class="btn btn--ghost btn--small" href="login.html">Área do cliente</a>
+          <a class="btn btn--primary btn--small" href="contato.html">Quero vender</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="site-main marketplace">
+      <section class="marketplace-hero">
+        <div class="marketplace-hero__content">
+          <span class="site-hero__eyebrow">Marketplace circular BIPA</span>
+          <h1>Seu desapego com cara de OLX, cuidado de brechó e curadoria da sua marca.</h1>
+          <p>
+            Anuncie peças únicas, negocie com compradores apaixonados por moda consciente e finalize com pagamento protegido. Tudo
+            integrado ao PDV e estoque do BIPA para você não perder o controle de nada.
+          </p>
+          <div class="site-hero__actions" role="group" aria-label="Ações do marketplace">
+            <a class="btn btn--primary" href="#listings">Ver peças disponíveis</a>
+            <a class="btn btn--surface" href="#seller-hub">Abrir central de vendedores</a>
+            <a class="btn btn--ghost" href="contato.html">Falar com especialista</a>
+          </div>
+          <dl class="marketplace-hero__metrics">
+            <div>
+              <dt>Peças ativas</dt>
+              <dd id="marketplace-metric-active">420</dd>
+            </div>
+            <div>
+              <dt>Ofertas enviadas</dt>
+              <dd id="marketplace-metric-offers">2.310</dd>
+            </div>
+            <div>
+              <dt>Ticket médio</dt>
+              <dd id="marketplace-metric-ticket">R$ 162</dd>
+            </div>
+          </dl>
+        </div>
+        <aside class="marketplace-hero__media" aria-label="Destaques do marketplace">
+          <div class="marketplace-hero__card">
+            <h2>Destaques que acabaram de entrar</h2>
+            <ul id="marketplace-latest" aria-live="polite"></ul>
+          </div>
+          <div class="marketplace-hero__card marketplace-hero__card--secondary">
+            <h2>Porque o BIPA protege você</h2>
+            <p>Custódia financeira, selo verde para lojistas certificados e disputas mediadas por especialistas.</p>
+            <a class="feature-card__link" href="#trust">Conhecer garantias →</a>
+          </div>
+        </aside>
+      </section>
+
+      <section class="marketplace-search" aria-labelledby="marketplace-search-heading">
+        <div class="section-heading">
+          <h2 id="marketplace-search-heading">Encontre a próxima peça do seu guarda-roupa inteligente</h2>
+          <p>
+            Filtre por categoria, tamanho, estado de conservação e alcance geográfico. Receba recomendações com base na sua pegada
+            de consumo e estilo preferido.
+          </p>
+        </div>
+        <form id="marketplace-filters" class="marketplace-filters" aria-label="Filtros do marketplace">
+          <label>
+            <span class="sr-only">Buscar por nome ou descrição</span>
+            <input type="search" id="marketplace-search-input" placeholder="Buscar por nome, marca ou estilo" />
+          </label>
+          <label>
+            <span class="sr-only">Categoria</span>
+            <select id="marketplace-filter-category">
+              <option value="">Todas as categorias</option>
+            </select>
+          </label>
+          <label>
+            <span class="sr-only">Tamanho</span>
+            <select id="marketplace-filter-size">
+              <option value="">Todos os tamanhos</option>
+              <option value="PP">PP</option>
+              <option value="P">P</option>
+              <option value="M">M</option>
+              <option value="G">G</option>
+              <option value="GG">GG</option>
+            </select>
+          </label>
+          <label>
+            <span class="sr-only">Condição</span>
+            <select id="marketplace-filter-condition">
+              <option value="">Qualquer condição</option>
+              <option value="Novo com etiqueta">Novo com etiqueta</option>
+              <option value="Como novo">Como novo</option>
+              <option value="Usado com amor">Usado com amor</option>
+            </select>
+          </label>
+          <label class="marketplace-filters__range">
+            <span>Preço máximo</span>
+            <input type="range" id="marketplace-filter-price" min="50" max="800" value="800" step="10" />
+            <output id="marketplace-filter-price-output">Até R$ 800</output>
+          </label>
+          <label>
+            <span class="sr-only">Localização</span>
+            <select id="marketplace-filter-location">
+              <option value="">Qualquer localização</option>
+            </select>
+          </label>
+          <button type="reset" class="btn btn--ghost btn--small">Limpar filtros</button>
+        </form>
+      </section>
+
+      <section class="marketplace-listings" id="listings" aria-label="Resultados do marketplace">
+        <div class="marketplace-listings__header">
+          <h2>Resultados</h2>
+          <p id="marketplace-results-count">Carregando peças...</p>
+        </div>
+        <div class="marketplace-listings__grid" id="marketplace-listings" role="list"></div>
+      </section>
+
+      <section class="marketplace-how" id="seller-hub" aria-labelledby="marketplace-how-heading">
+        <div class="section-heading">
+          <h2 id="marketplace-how-heading">Venda como nos apps populares, com gestão profissional</h2>
+          <p>
+            Use a força do OLX e do Enjoei como referência, mas com automações e integrações exclusivas para brechós e marcas
+            autorais.
+          </p>
+        </div>
+        <div class="marketplace-how__grid">
+          <article class="marketplace-how__card">
+            <h3>Publicação em 3 passos</h3>
+            <ol>
+              <li>Escolha peças do estoque ou cadastre novidades direto do app.</li>
+              <li>Defina preço, aceita propostas e disponibilidade para retirada ou envio.</li>
+              <li>Publicação instantânea com pré-visualização otimizada para mobile.</li>
+            </ol>
+          </article>
+          <article class="marketplace-how__card">
+            <h3>Negocie com segurança</h3>
+            <p>
+              Chat com envio de mensagens rápidas, pré-propostas sugeridas e botões de contraoferta. Tudo moderado por IA para
+              barrar spam e golpes.
+            </p>
+            <ul>
+              <li>Mensagens salvas para respostas frequentes.</li>
+              <li>Botão de reservar peça com contagem regressiva.</li>
+              <li>Controle de comissão para consignados.</li>
+            </ul>
+          </article>
+          <article class="marketplace-how__card">
+            <h3>Pagamento e logística</h3>
+            <p>
+              Pagamento em custódia BIPA Pay, split automático entre loja e dono da peça, etiquetas de envio com parceiros verdes e
+              pontos de coleta urbanos.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="marketplace-trust" id="trust" aria-labelledby="marketplace-trust-heading">
+        <div class="section-heading">
+          <h2 id="marketplace-trust-heading">Garantias que aumentam confiança e giro</h2>
+          <p>
+            Inspirado em marketplaces líderes, mas com foco em moda circular e reputação transparente entre lojistas e compradores.
+          </p>
+        </div>
+        <div class="marketplace-trust__grid">
+          <article class="marketplace-trust__card">
+            <h3>Selo Verde BIPA</h3>
+            <p>Brechós auditados ganham destaque, métricas de entrega e impacto de carbono evitado.</p>
+          </article>
+          <article class="marketplace-trust__card">
+            <h3>Avaliações detalhadas</h3>
+            <p>Notas com fotos, comentários sobre ajuste e relatórios de conservação após 30 dias.</p>
+          </article>
+          <article class="marketplace-trust__card">
+            <h3>Proteção financeira</h3>
+            <p>Fundos em custódia até a peça chegar ao comprador, com seguro opcional e split automático.</p>
+          </article>
+          <article class="marketplace-trust__card">
+            <h3>Analytics de moda</h3>
+            <p>Entenda quais estilos vendem mais, acompanhe sazonalidade e margens por categoria.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="marketplace-faq" aria-labelledby="marketplace-faq-heading">
+        <div class="section-heading">
+          <h2 id="marketplace-faq-heading">Perguntas frequentes</h2>
+        </div>
+        <div class="marketplace-faq__grid">
+          <article class="marketplace-faq__item">
+            <h3>Posso importar meu estoque atual?</h3>
+            <p>Sim, o BIPA importa planilhas e integra com o PDV para você criar anúncios em lote com poucos cliques.</p>
+          </article>
+          <article class="marketplace-faq__item">
+            <h3>Como funcionam as taxas?</h3>
+            <p>Você define a comissão por peça. O BIPA adiciona uma taxa de serviço transparente e mostra tudo na tela de checkout.</p>
+          </article>
+          <article class="marketplace-faq__item">
+            <h3>Existe suporte para logística reversa?</h3>
+            <p>Sim, oferecemos etiquetas de devolução e rastreio integrado com parceiros sustentáveis.</p>
+          </article>
+          <article class="marketplace-faq__item">
+            <h3>Consigo usar no celular?</h3>
+            <p>Todo o marketplace foi desenhado mobile-first, com telas responsivas e app PWA para equipe e clientes.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>BIPA © 2024 — Marketplace sustentável para moda circular</span>
+      <span>
+        <a href="contato.html">Contato</a> ·
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="login.html">Entrar</a>
+      </span>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

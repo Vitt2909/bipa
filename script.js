@@ -159,6 +159,149 @@ const demoStorefronts = {
   },
 };
 
+const marketplaceListings = [
+  {
+    id: 'mp-0001',
+    title: 'Jaqueta Jeans Oversized Vintage',
+    description: 'Lavagem média com bordados exclusivos e modelagem ampla.',
+    category: 'Jaquetas',
+    size: 'M',
+    condition: 'Como novo',
+    price: 189.9,
+    inventory: 64,
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=720&q=60',
+    seller: 'Brechó da Ana',
+    location: 'São Paulo, SP',
+    postedAt: '2024-09-09',
+    highlight: 'Hot agora',
+    offers: 420,
+    watchers: 1180,
+    tags: ['Denim', 'Unissex'],
+  },
+  {
+    id: 'mp-0002',
+    title: 'Vestido Midi Floral Enjoei Edition',
+    description: 'Modelo fluido com decote reto, tecido leve e bolso invisível.',
+    category: 'Vestidos',
+    size: 'P',
+    condition: 'Novo com etiqueta',
+    price: 239.0,
+    inventory: 58,
+    image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=720&q=60',
+    seller: 'Closet da Bia',
+    location: 'Rio de Janeiro, RJ',
+    postedAt: '2024-09-08',
+    highlight: 'Novo com etiqueta',
+    offers: 360,
+    watchers: 960,
+    tags: ['Romântico', 'Eventos'],
+  },
+  {
+    id: 'mp-0003',
+    title: 'Blazer Alfaiataria Verde Esmeralda',
+    description: 'Corte reto, botões em madrepérola e forro acetinado.',
+    category: 'Blazers',
+    size: 'G',
+    condition: 'Como novo',
+    price: 259.9,
+    inventory: 54,
+    image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=720&q=60',
+    seller: 'Studio Circular',
+    location: 'São Paulo, SP',
+    postedAt: '2024-09-07',
+    highlight: 'Favorito da semana',
+    offers: 310,
+    watchers: 870,
+    tags: ['Executivo', 'Consignado'],
+  },
+  {
+    id: 'mp-0004',
+    title: 'Calça Wide Leg Linho Orgânico',
+    description: 'Cintura alta, botão de coco reaproveitado e tingimento natural.',
+    category: 'Calças',
+    size: 'M',
+    condition: 'Usado com amor',
+    price: 179.9,
+    inventory: 48,
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=720&q=60',
+    seller: 'Brechó Horizonte',
+    location: 'Belo Horizonte, MG',
+    postedAt: '2024-09-05',
+    offers: 280,
+    watchers: 640,
+    tags: ['Linho', 'Comfort'],
+  },
+  {
+    id: 'mp-0005',
+    title: 'Bolsa Bucket Couro Upcycling',
+    description: 'Peça única confeccionada a partir de couro reaproveitado.',
+    category: 'Acessórios',
+    size: 'Único',
+    condition: 'Como novo',
+    price: 329.0,
+    inventory: 46,
+    image: 'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=720&q=60',
+    seller: 'Ateliê Circular',
+    location: 'Curitiba, PR',
+    postedAt: '2024-09-06',
+    highlight: 'Peça única',
+    offers: 260,
+    watchers: 520,
+    tags: ['Artesanal', 'Vegano'],
+  },
+  {
+    id: 'mp-0006',
+    title: 'Tênis Vintage 90s Branco',
+    description: 'Tênis raro com sola restaurada e palmilha biodegradável.',
+    category: 'Calçados',
+    size: '38',
+    condition: 'Usado com amor',
+    price: 219.5,
+    inventory: 52,
+    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=720&q=60',
+    seller: 'Sneaker Lovers BR',
+    location: 'Porto Alegre, RS',
+    postedAt: '2024-09-04',
+    offers: 240,
+    watchers: 480,
+    tags: ['Street', 'Unissex'],
+  },
+  {
+    id: 'mp-0007',
+    title: 'Cardigã Tricot Handmade',
+    description: 'Produção colaborativa com fios recuperados, caimento oversized.',
+    category: 'Malhas',
+    size: 'GG',
+    condition: 'Usado com amor',
+    price: 159.0,
+    inventory: 38,
+    image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=720&q=60',
+    seller: 'Casa do Tricô Circular',
+    location: 'Florianópolis, SC',
+    postedAt: '2024-09-03',
+    offers: 220,
+    watchers: 360,
+    tags: ['Artesanal', 'Inverno'],
+  },
+  {
+    id: 'mp-0008',
+    title: 'Saia Midi Plissada Metalizada',
+    description: 'Peça statement com elástico confortável e brilho acetinado.',
+    category: 'Saias',
+    size: 'P',
+    condition: 'Como novo',
+    price: 189.0,
+    inventory: 60,
+    image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=720&q=60',
+    seller: 'Brechó Futuro',
+    location: 'Recife, PE',
+    postedAt: '2024-09-02',
+    offers: 220,
+    watchers: 410,
+    tags: ['Festivo', 'Consignado'],
+  },
+];
+
 const body = document.body;
 const page = body.dataset.page;
 
@@ -254,6 +397,219 @@ if (page === 'admin-customer-profile') {
         historyBody.appendChild(row);
       });
     }
+  }
+}
+
+// --------- Marketplace ---------
+if (page === 'marketplace') {
+  const listingsElement = document.getElementById('marketplace-listings');
+  const resultsCountElement = document.getElementById('marketplace-results-count');
+  const categorySelect = document.getElementById('marketplace-filter-category');
+  const sizeSelect = document.getElementById('marketplace-filter-size');
+  const conditionSelect = document.getElementById('marketplace-filter-condition');
+  const locationSelect = document.getElementById('marketplace-filter-location');
+  const priceInput = document.getElementById('marketplace-filter-price');
+  const priceOutput = document.getElementById('marketplace-filter-price-output');
+  const searchInput = document.getElementById('marketplace-search-input');
+  const filtersForm = document.getElementById('marketplace-filters');
+  const latestList = document.getElementById('marketplace-latest');
+  const activeMetric = document.getElementById('marketplace-metric-active');
+  const offersMetric = document.getElementById('marketplace-metric-offers');
+  const ticketMetric = document.getElementById('marketplace-metric-ticket');
+
+  if (listingsElement && resultsCountElement && filtersForm) {
+    const baseSizeOptions = new Set();
+    if (sizeSelect) {
+      Array.from(sizeSelect.options).forEach((option) => {
+        if (option.value) baseSizeOptions.add(option.value);
+      });
+    }
+
+    const categories = Array.from(new Set(marketplaceListings.map((item) => item.category))).sort();
+    categories.forEach((category) => {
+      if (!categorySelect) return;
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      categorySelect.appendChild(option);
+    });
+
+    const sizes = Array.from(new Set(marketplaceListings.map((item) => item.size))).sort();
+    sizes.forEach((size) => {
+      if (!sizeSelect || baseSizeOptions.has(size)) return;
+      const option = document.createElement('option');
+      option.value = size;
+      option.textContent = size;
+      sizeSelect.appendChild(option);
+    });
+
+    const locations = Array.from(new Set(marketplaceListings.map((item) => item.location))).sort();
+    locations.forEach((location) => {
+      if (!locationSelect) return;
+      const option = document.createElement('option');
+      option.value = location;
+      option.textContent = location;
+      locationSelect.appendChild(option);
+    });
+
+    const renderListings = (items) => {
+      listingsElement.innerHTML = '';
+
+      if (!items.length) {
+        const emptyState = document.createElement('p');
+        emptyState.className = 'storefront__empty';
+        emptyState.textContent = 'Nenhuma peça encontrada com os filtros aplicados. Tente ajustar sua busca.';
+        listingsElement.appendChild(emptyState);
+        return;
+      }
+
+      items.forEach((listing) => {
+        const card = document.createElement('article');
+        card.className = 'listing-card';
+        card.setAttribute('role', 'listitem');
+        const price = formatCurrency(listing.price);
+        const tags = (listing.tags || []).map((tag) => `<span class="chip">${tag}</span>`).join('');
+        const stats = [
+          Number.isFinite(Number(listing.offers))
+            ? `${Number(listing.offers).toLocaleString('pt-BR')} propostas`
+            : '',
+          Number.isFinite(Number(listing.inventory))
+            ? `${Number(listing.inventory).toLocaleString('pt-BR')} peças no lote`
+            : '',
+          Number.isFinite(Number(listing.watchers))
+            ? `${Number(listing.watchers).toLocaleString('pt-BR')} favoritos`
+            : '',
+        ]
+          .filter(Boolean)
+          .map((text) => `<span>${text}</span>`)
+          .join('');
+        card.innerHTML = `
+          <div class="listing-card__image" style="background-image: url('${listing.image}')">
+            ${listing.highlight ? `<span class="listing-card__tag">${listing.highlight}</span>` : ''}
+          </div>
+          <div class="listing-card__body">
+            <h3 class="listing-card__title">${listing.title}</h3>
+            <div class="listing-card__meta">
+              <span>${listing.category}</span>
+              <span>Tam. ${listing.size}</span>
+              <span>${listing.condition}</span>
+              <span>${listing.location}</span>
+            </div>
+            <strong class="listing-card__price">${price}</strong>
+            <span class="listing-card__seller">por ${listing.seller}</span>
+            ${stats ? `<div class="listing-card__meta">${stats}</div>` : ''}
+            ${tags ? `<div class="listing-card__meta">${tags}</div>` : ''}
+            <div class="listing-card__actions">
+              <a class="btn btn--primary btn--small" href="#">Fazer proposta</a>
+              <a class="btn btn--ghost btn--small" href="#">Abrir chat seguro</a>
+            </div>
+          </div>
+        `;
+        listingsElement.appendChild(card);
+      });
+    };
+
+    const updateResults = () => {
+      const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      const category = categorySelect ? categorySelect.value : '';
+      const size = sizeSelect ? sizeSelect.value : '';
+      const condition = conditionSelect ? conditionSelect.value : '';
+      const location = locationSelect ? locationSelect.value : '';
+      const maxPrice = priceInput ? Number(priceInput.value) : Number.POSITIVE_INFINITY;
+
+      const filtered = marketplaceListings.filter((listing) => {
+        const matchesSearch = !searchTerm
+          || listing.title.toLowerCase().includes(searchTerm)
+          || (listing.description || '').toLowerCase().includes(searchTerm)
+          || (listing.seller || '').toLowerCase().includes(searchTerm);
+        const matchesCategory = !category || listing.category === category;
+        const matchesSize = !size || listing.size === size;
+        const matchesCondition = !condition || listing.condition === condition;
+        const matchesLocation = !location || listing.location === location;
+        const matchesPrice = !Number.isFinite(maxPrice) ? true : Number(listing.price) <= maxPrice;
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesSize &&
+          matchesCondition &&
+          matchesLocation &&
+          matchesPrice
+        );
+      });
+
+      renderListings(filtered);
+
+      if (resultsCountElement) {
+        if (filtered.length) {
+          resultsCountElement.textContent = `Mostrando ${filtered.length} de ${marketplaceListings.length} peças disponíveis`;
+        } else {
+          resultsCountElement.textContent = 'Nenhuma peça encontrada com os filtros selecionados';
+        }
+      }
+    };
+
+    if (priceOutput && priceInput) {
+      const updatePriceOutput = () => {
+        const value = Number(priceInput.value);
+        const formatted = Number.isFinite(value) ? formatCurrency(value) : formatCurrency(priceInput.max || 0);
+        priceOutput.textContent = `Até ${formatted}`;
+      };
+      updatePriceOutput();
+      priceInput.addEventListener('input', () => {
+        updatePriceOutput();
+        updateResults();
+      });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', () => updateResults());
+    if (categorySelect) categorySelect.addEventListener('change', () => updateResults());
+    if (sizeSelect) sizeSelect.addEventListener('change', () => updateResults());
+    if (conditionSelect) conditionSelect.addEventListener('change', () => updateResults());
+    if (locationSelect) locationSelect.addEventListener('change', () => updateResults());
+
+    filtersForm.addEventListener('reset', () => {
+      window.setTimeout(() => {
+        if (priceInput && priceOutput) {
+          priceInput.value = priceInput.max || priceInput.value;
+          const formatted = formatCurrency(priceInput.value);
+          priceOutput.textContent = `Até ${formatted}`;
+        }
+        updateResults();
+      }, 0);
+    });
+
+    if (activeMetric) {
+      const totalPieces = marketplaceListings.reduce(
+        (total, listing) => total + (Number(listing.inventory) || 1),
+        0
+      );
+      activeMetric.textContent = totalPieces.toLocaleString('pt-BR');
+    }
+
+    if (offersMetric) {
+      const totalOffers = marketplaceListings.reduce((total, listing) => total + (Number(listing.offers) || 0), 0);
+      offersMetric.textContent = totalOffers.toLocaleString('pt-BR');
+    }
+
+    if (ticketMetric) {
+      const totalValue = marketplaceListings.reduce((total, listing) => total + (Number(listing.price) || 0), 0);
+      const average = marketplaceListings.length ? totalValue / marketplaceListings.length : 0;
+      ticketMetric.textContent = formatCurrency(average);
+    }
+
+    if (latestList) {
+      latestList.innerHTML = '';
+      const latestItems = [...marketplaceListings]
+        .sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt))
+        .slice(0, 3);
+      latestItems.forEach((item) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${item.title}</strong><span>${formatCurrency(item.price)} · ${item.location}</span>`;
+        latestList.appendChild(li);
+      });
+    }
+
+    updateResults();
   }
 }
 
