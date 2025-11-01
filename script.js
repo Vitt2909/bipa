@@ -6,6 +6,20 @@ const formatDate = (isoDate) =>
     new Date(isoDate)
   );
 
+const formatPhone = (value) => {
+  const digits = (value || '').toString().replace(/\D/g, '');
+  if (digits.length === 11) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  }
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+  if (digits.length > 0) {
+    return digits;
+  }
+  return value;
+};
+
 const demoCustomers = [
   {
     id: 'cli-0001',
@@ -306,52 +320,35 @@ if (page === 'pdv') {
   const subtotalElement = document.getElementById('pdv-subtotal');
   const totalDiscountElement = document.getElementById('pdv-total-discount');
   const totalElement = document.getElementById('pdv-total');
-  const discountValueInput = document.getElementById('pdv-discount-value');
-  const discountPercentInput = document.getElementById('pdv-discount-percent');
+  const discountInput = document.getElementById('pdv-discount');
+  const discountTypeButtons = Array.from(document.querySelectorAll('[data-discount-type]'));
+  const discountUnitElement = document.getElementById('pdv-discount-unit');
   const paymentButtons = Array.from(document.querySelectorAll('.payment-button'));
-  const paymentDetailsElement = document.getElementById('pdv-payment-details');
+  const paymentContextElement = document.getElementById('pdv-payment-context');
   const finishButton = document.getElementById('pdv-finish');
-  const modal = document.getElementById('pdv-modal');
-  const modalBody = document.getElementById('pdv-modal-body');
-  const modalClose = document.getElementById('pdv-modal-close');
-  const modalConfirm = document.getElementById('pdv-modal-confirm');
   const clientInput = document.getElementById('pdv-client');
-  const clientDatalist = document.getElementById('pdv-client-list');
   const clientResultsElement = document.getElementById('pdv-client-results');
-  const clientSelectedElement = document.getElementById('pdv-client-selected');
+  const clientCurrentElement = document.getElementById('pdv-client-current');
   const clientClearButton = document.getElementById('pdv-client-clear');
-  const customerPickerElement = document.querySelector('.customer-picker');
+  const clientRegisterButton = document.getElementById('pdv-client-register');
+  const customerZoneElement = document.querySelector('.customer-zone');
+  const mainShell = document.querySelector('.pdv-shell');
+  const successSection = document.getElementById('pdv-success');
+  const successTotalElement = document.getElementById('pdv-success-total');
+  const newSaleButton = document.getElementById('pdv-success-new-sale');
+  const whatsappButton = document.getElementById('pdv-success-whatsapp');
+  const registerModal = document.getElementById('pdv-register-modal');
+  const registerForm = document.getElementById('pdv-register-form');
+  const registerNameInput = document.getElementById('pdv-register-name');
+  const registerWhatsappInput = document.getElementById('pdv-register-whatsapp');
+  const registerCloseButton = document.getElementById('pdv-register-close');
+  const registerCancelButton = document.getElementById('pdv-register-cancel');
 
   const cart = new Map();
   let selectedPayment = 'PIX';
   let selectedCustomer = null;
-
-  const populateClientOptions = () => {
-    if (!clientDatalist) return;
-    clientDatalist.innerHTML = '<option value="Cliente Avulso"></option>';
-    demoCustomers.forEach((customer) => {
-      const option = document.createElement('option');
-      option.value = formatCustomerOption(customer);
-      clientDatalist.appendChild(option);
-    });
-  };
-
-  const renderSelectedCustomer = () => {
-    if (!clientSelectedElement) return;
-    if (selectedCustomer) {
-      clientSelectedElement.innerHTML = `
-        <strong>${selectedCustomer.name}</strong>
-        <span>${selectedCustomer.phoneLabel}</span>
-      `;
-      clientSelectedElement.dataset.hasCustomer = 'true';
-    } else {
-      clientSelectedElement.innerHTML = `
-        <strong>Cliente avulso</strong>
-        <span>Venda não vinculada ao CRM.</span>
-      `;
-      clientSelectedElement.dataset.hasCustomer = 'false';
-    }
-  };
+  let discountType = 'currency';
+  let lastSaleSummary = null;
 
   const clearClientSuggestions = () => {
     if (!clientResultsElement) return;
@@ -384,7 +381,7 @@ if (page === 'pdv') {
     if (matches.length === 0) {
       const emptyState = document.createElement('p');
       emptyState.className = 'customer-suggestions__empty';
-      emptyState.textContent = 'Nenhum cliente encontrado. Cadastre no módulo de gestão.';
+      emptyState.textContent = 'Nenhum cliente encontrado. Cadastre rapidamente ao lado.';
       clientResultsElement.appendChild(emptyState);
       clientResultsElement.hidden = false;
       return;
@@ -414,32 +411,50 @@ if (page === 'pdv') {
     if (clientInput) clientInput.setAttribute('aria-expanded', 'true');
   };
 
+  const renderSelectedCustomer = () => {
+    if (!clientCurrentElement) return;
+    if (selectedCustomer) {
+      clientCurrentElement.innerHTML = `Cliente: <strong>${selectedCustomer.name}</strong>`;
+      if (clientClearButton) {
+        clientClearButton.hidden = false;
+        clientClearButton.textContent = 'Alterar';
+      }
+    } else {
+      clientCurrentElement.innerHTML = 'Cliente: <strong>Avulso (Padrão)</strong>';
+      if (clientClearButton) clientClearButton.hidden = true;
+    }
+    updatePaymentContext();
+  };
+
   const selectCustomer = (customer) => {
     selectedCustomer = customer;
-    if (clientInput) clientInput.value = formatCustomerOption(customer);
-    renderSelectedCustomer();
+    if (clientInput) {
+      clientInput.value = '';
+      clientInput.setAttribute('aria-expanded', 'false');
+    }
     clearClientSuggestions();
-    setPayment(selectedPayment);
+    renderSelectedCustomer();
   };
 
   const clearCustomerSelection = (focusInput = false) => {
     selectedCustomer = null;
-    if (clientInput) clientInput.value = '';
-    renderSelectedCustomer();
+    if (clientInput) {
+      clientInput.value = '';
+      clientInput.setAttribute('aria-expanded', 'false');
+    }
     clearClientSuggestions();
-    setPayment(selectedPayment);
+    renderSelectedCustomer();
     if (focusInput && clientInput) clientInput.focus();
   };
 
   const handleCustomerInput = (value) => {
     const trimmed = value.trim();
-    if (!trimmed || trimmed.toLowerCase() === 'cliente avulso') {
-      clearCustomerSelection();
+    if (!trimmed) {
+      clearClientSuggestions();
       return;
     }
 
-    const match = demoCustomers.find((customer) => formatCustomerOption(customer) === trimmed);
-
+    const match = demoCustomers.find((customer) => formatCustomerOption(customer).toLowerCase() === trimmed.toLowerCase());
     if (match) {
       selectCustomer(match);
       return;
@@ -478,9 +493,8 @@ if (page === 'pdv') {
   };
 
   const addToCart = (product) => {
-    const item = cart.get(product.code) || { ...product, quantity: 0 };
-    item.quantity += 1;
-    cart.set(product.code, item);
+    if (cart.has(product.code)) return;
+    cart.set(product.code, { ...product });
     renderCart();
   };
 
@@ -496,26 +510,27 @@ if (page === 'pdv') {
     const items = Array.from(cart.values());
 
     if (items.length === 0) {
-      const emptyState = document.createElement('p');
+      const emptyState = document.createElement('li');
       emptyState.textContent = 'Nenhum item adicionado ainda. Busque uma peça e clique para incluir.';
       emptyState.className = 'pdv-empty';
+      emptyState.setAttribute('role', 'status');
       cartElement.appendChild(emptyState);
     } else {
       items.forEach((item) => {
-        const cartItem = document.createElement('div');
+        const cartItem = document.createElement('li');
         cartItem.className = 'cart-item';
         cartItem.innerHTML = `
           <div class="cart-item__info">
             <span class="cart-item__name">${item.name}</span>
-            <span class="cart-item__meta">${item.code} • Tam. ${item.size}</span>
+            <span class="cart-item__meta">${item.code}</span>
           </div>
-          <div>
-            <strong>${item.quantity}x</strong>
-            <div>${formatCurrency(item.quantity * item.price)}</div>
-          </div>
-          <button class="cart-item__remove" aria-label="Remover" type="button">×</button>
+          <div class="cart-item__value">${formatCurrency(item.price)}</div>
+          <button class="cart-item__remove" aria-label="Remover ${item.name}" type="button">×</button>
         `;
-        cartItem.querySelector('.cart-item__remove').addEventListener('click', () => removeFromCart(item.code));
+        const removeButton = cartItem.querySelector('.cart-item__remove');
+        if (removeButton) {
+          removeButton.addEventListener('click', () => removeFromCart(item.code));
+        }
         cartElement.appendChild(cartItem);
       });
     }
@@ -523,19 +538,88 @@ if (page === 'pdv') {
     updateTotals();
   };
 
-  const getSubtotal = () => Array.from(cart.values()).reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const getTotals = () => {
+    const subtotal = Array.from(cart.values()).reduce((sum, item) => sum + item.price, 0);
+    const rawDiscount = Math.max(Number(discountInput?.value) || 0, 0);
+    let totalDiscount = 0;
+
+    if (discountType === 'percent') {
+      const percent = Math.min(rawDiscount, 100);
+      totalDiscount = Math.min(subtotal, (subtotal * percent) / 100);
+    } else {
+      totalDiscount = Math.min(subtotal, rawDiscount);
+    }
+
+    const total = Math.max(subtotal - totalDiscount, 0);
+    return { subtotal, totalDiscount, total };
+  };
+
+  const updateFinishButton = (totalValue, hasItems) => {
+    if (!finishButton) return;
+    const isLoading = finishButton.dataset.loading === 'true';
+    if (isLoading) {
+      finishButton.textContent = 'Finalizando...';
+      finishButton.disabled = true;
+      return;
+    }
+    finishButton.disabled = !hasItems;
+    finishButton.textContent = `FINALIZAR VENDA (${formatCurrency(totalValue)})`;
+  };
 
   const updateTotals = () => {
-    const subtotal = getSubtotal();
-    const discountValue = Math.max(Number(discountValueInput?.value) || 0, 0);
-    const discountPercent = Math.min(Math.max(Number(discountPercentInput?.value) || 0, 0), 100);
-    const percentValue = (subtotal * discountPercent) / 100;
-    const totalDiscount = Math.min(subtotal, discountValue + percentValue);
-    const total = Math.max(subtotal - totalDiscount, 0);
-
+    const { subtotal, totalDiscount, total } = getTotals();
     if (subtotalElement) subtotalElement.textContent = formatCurrency(subtotal);
     if (totalDiscountElement) totalDiscountElement.textContent = formatCurrency(totalDiscount);
     if (totalElement) totalElement.textContent = formatCurrency(total);
+    updateFinishButton(total, cart.size > 0);
+  };
+
+  const updatePaymentContext = () => {
+    if (!paymentContextElement) return;
+    const lines = {
+      PIX: [
+        'Use a chave PIX <strong>pix@bipa.demo</strong> para receber o pagamento.',
+        'Confirme o recebimento antes de finalizar a venda.',
+      ],
+      Dinheiro: ['Receba o valor em espécie e informe o troco se necessário.'],
+      Cartão: ['Passe o cartão no POS e confirme a aprovação da operadora.'],
+      Fiado: selectedCustomer
+        ? [`Venda vinculada a <strong>${selectedCustomer.name}</strong>. Acompanhe em Relatórios > Fiado.`]
+        : ['Selecione um cliente para registrar o fiado desta venda.'],
+    };
+
+    const message = lines[selectedPayment] || [];
+    paymentContextElement.classList.toggle(
+      'pdv-payment__context--warning',
+      selectedPayment === 'Fiado' && !selectedCustomer
+    );
+
+    if (message.length === 0) {
+      paymentContextElement.innerHTML = '';
+      paymentContextElement.hidden = true;
+    } else {
+      paymentContextElement.innerHTML = message.map((line) => `<p>${line}</p>`).join('');
+      paymentContextElement.hidden = false;
+    }
+  };
+
+  const setDiscountType = (type) => {
+    discountType = type;
+    discountTypeButtons.forEach((button) => {
+      const isActive = button.dataset.discountType === type;
+      button.classList.toggle('is-active', isActive);
+    });
+    if (discountUnitElement) discountUnitElement.textContent = type === 'percent' ? '%' : 'R$';
+    if (discountInput) {
+      if (type === 'percent') {
+        discountInput.setAttribute('max', '100');
+        discountInput.setAttribute('step', '0.5');
+      } else {
+        discountInput.removeAttribute('max');
+        discountInput.setAttribute('step', '0.01');
+      }
+    }
+    updateTotals();
   };
 
   const setPayment = (method) => {
@@ -544,94 +628,92 @@ if (page === 'pdv') {
       const isActive = button.dataset.payment === method;
       button.classList.toggle('is-active', isActive);
     });
-
-    if (paymentDetailsElement) {
-      const messages = {
-        PIX: ['Chave da loja: pix@bipa.demo', 'Confirme a transferência antes de concluir.'],
-        Dinheiro: ['Prepare o troco necessário.', 'Registre o valor recebido para fechar o caixa.'],
-        Cartão: ['Use o POS integrado ao BIPA.', 'Confirme a aprovação da operadora.'],
-        Fiado: [
-          selectedCustomer
-            ? `Venda vinculada a ${selectedCustomer.name}. Acompanhe em Clientes > Fiado.`
-            : 'Selecione um cliente para controlar o fiado.',
-          'A venda entra no relatório de fiado.',
-        ],
-      };
-      const lines = messages[method] || [];
-      paymentDetailsElement.innerHTML = `
-        <h3>Forma selecionada: ${method}</h3>
-        ${lines.map((line) => `<p>${line}</p>`).join('')}
-      `;
-    }
+    updatePaymentContext();
   };
 
-  const openModal = () => {
-    if (!modal || !modalBody) return;
+  const openRegisterModal = () => {
+    if (!registerModal) return;
+    registerModal.classList.add('is-visible');
+    registerModal.setAttribute('aria-hidden', 'false');
+    if (registerNameInput) {
+      registerNameInput.value = '';
+      registerNameInput.focus();
+    }
+    if (registerWhatsappInput) registerWhatsappInput.value = '';
+  };
+
+  const closeRegisterModal = () => {
+    if (!registerModal) return;
+    registerModal.classList.remove('is-visible');
+    registerModal.setAttribute('aria-hidden', 'true');
+    if (registerForm) registerForm.reset();
+  };
+
+  const finalizeSale = () => {
+    if (!finishButton || cart.size === 0) return;
+    finishButton.dataset.loading = 'true';
+    updateFinishButton(0, false);
+
     const items = Array.from(cart.values());
-    if (items.length === 0) {
-      alert('Adicione ao menos um item antes de finalizar.');
-      return;
-    }
-
-    const subtotal = getSubtotal();
-    const discountValue = Math.max(Number(discountValueInput?.value) || 0, 0);
-    const discountPercent = Math.min(Math.max(Number(discountPercentInput?.value) || 0, 0), 100);
-    const percentValue = (subtotal * discountPercent) / 100;
-    const totalDiscount = Math.min(subtotal, discountValue + percentValue);
-    const total = Math.max(subtotal - totalDiscount, 0);
-
+    const totals = getTotals();
     const customerSummary = selectedCustomer
-      ? `${selectedCustomer.name} (${selectedCustomer.phoneLabel})`
-      : 'Cliente Avulso';
+      ? { id: selectedCustomer.id, name: selectedCustomer.name, phone: selectedCustomer.phoneLabel }
+      : { id: null, name: 'Cliente Avulso', phone: null };
 
-    modalBody.innerHTML = `
-      <div>
-        <h3>Resumo da venda</h3>
-        <ul>
-          ${items
-            .map(
-              (item) => `<li>${item.quantity}x ${item.name} (${item.code}) — ${formatCurrency(item.quantity * item.price)}</li>`
-            )
-            .join('')}
-        </ul>
-      </div>
-      <div>
-        <h3>Pagamentos</h3>
-        <p>Forma: <strong>${selectedPayment}</strong></p>
-        <p>Cliente: <strong>${customerSummary}</strong></p>
-        ${
-          selectedCustomer
-            ? `<p>ID do cliente: <code>${selectedCustomer.id}</code></p>`
-            : '<p>Esta venda ficará registrada como avulsa.</p>'
-        }
-        <p>Desconto aplicado: ${formatCurrency(totalDiscount)}</p>
-        <p>Total final: <strong>${formatCurrency(total)}</strong></p>
-      </div>
-    `;
+    window.setTimeout(() => {
+      console.groupCollapsed('📦 Nova venda registrada');
+      console.log('Cliente ID:', customerSummary.id || 'Avulso');
+      console.log('Cliente:', customerSummary.name);
+      if (customerSummary.phone) console.log('WhatsApp:', customerSummary.phone);
+      console.log('Forma de pagamento:', selectedPayment);
+      console.log('Subtotal:', formatCurrency(totals.subtotal));
+      console.log('Desconto aplicado:', formatCurrency(totals.totalDiscount));
+      console.log('Total final:', formatCurrency(totals.total));
+      console.table(
+        items.map((item) => ({
+          Código: item.code,
+          Produto: item.name,
+          Valor: formatCurrency(item.price),
+        }))
+      );
+      console.groupEnd();
 
-    modal.classList.add('is-visible');
-    modal.setAttribute('aria-hidden', 'false');
+      lastSaleSummary = {
+        total: totals.total,
+        customer: customerSummary.name,
+        payment: selectedPayment,
+      };
+
+      if (successTotalElement) {
+        successTotalElement.textContent = `Total da venda: ${formatCurrency(totals.total)}`;
+      }
+
+      cart.clear();
+      renderCart();
+      if (discountInput) discountInput.value = '0';
+      clearCustomerSelection();
+      setPayment('PIX');
+
+      finishButton.dataset.loading = 'false';
+      updateTotals();
+
+      if (mainShell) mainShell.hidden = true;
+      if (successSection) successSection.hidden = false;
+    }, 650);
   };
 
-  const closeModal = () => {
-    if (!modal) return;
-    modal.classList.remove('is-visible');
-    modal.setAttribute('aria-hidden', 'true');
-  };
-
-  const confirmSale = () => {
-    closeModal();
-    alert('Venda registrada com sucesso na conta demo!');
-    if (selectedCustomer) {
-      console.table({
-        'Customer ID': selectedCustomer.id,
-        Nome: selectedCustomer.name,
-        WhatsApp: selectedCustomer.phoneLabel,
-      });
+  const startNewSale = () => {
+    lastSaleSummary = null;
+    if (successSection) successSection.hidden = true;
+    if (mainShell) mainShell.hidden = false;
+    if (searchInput) searchInput.focus();
+    if (finishButton) {
+      finishButton.dataset.loading = 'false';
     }
-    cart.clear();
-    renderCart();
     clearCustomerSelection();
+    setPayment('PIX');
+    if (discountInput) discountInput.value = '0';
+    updateTotals();
   };
 
   if (searchInput) {
@@ -639,9 +721,6 @@ if (page === 'pdv') {
   }
 
   if (clientInput) {
-    clientInput.setAttribute('aria-controls', 'pdv-client-results');
-    clientInput.setAttribute('aria-haspopup', 'listbox');
-    clientInput.setAttribute('aria-expanded', 'false');
     clientInput.addEventListener('input', (event) => handleCustomerInput(event.target.value));
     clientInput.addEventListener('focus', (event) => {
       if (event.target.value.trim()) {
@@ -650,12 +729,12 @@ if (page === 'pdv') {
     });
     clientInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
-        const trimmed = clientInput.value.trim();
-        const match = demoCustomers.find((customer) => formatCustomerOption(customer) === trimmed);
-        if (match) {
-          event.preventDefault();
-          selectCustomer(match);
-        }
+        event.preventDefault();
+        const query = clientInput.value.trim().toLowerCase();
+        const match = demoCustomers.find(
+          (customer) => formatCustomerOption(customer).toLowerCase() === query
+        );
+        if (match) selectCustomer(match);
       }
       if (event.key === 'Escape') {
         clearClientSuggestions();
@@ -667,35 +746,100 @@ if (page === 'pdv') {
     clientClearButton.addEventListener('click', () => clearCustomerSelection(true));
   }
 
-  if (customerPickerElement) {
+  if (clientRegisterButton) {
+    clientRegisterButton.addEventListener('click', openRegisterModal);
+  }
+
+  if (customerZoneElement) {
     document.addEventListener('click', (event) => {
-      if (!customerPickerElement.contains(event.target)) {
+      if (!customerZoneElement.contains(event.target)) {
         clearClientSuggestions();
       }
     });
   }
 
-  populateClientOptions();
-  renderSelectedCustomer();
-  setPayment(selectedPayment);
+  if (discountInput) {
+    discountInput.addEventListener('input', updateTotals);
+  }
 
-  if (discountValueInput) discountValueInput.addEventListener('input', updateTotals);
-  if (discountPercentInput) discountPercentInput.addEventListener('input', updateTotals);
-  if (finishButton) finishButton.addEventListener('click', openModal);
-  if (modalClose) modalClose.addEventListener('click', closeModal);
-  if (modalConfirm) modalConfirm.addEventListener('click', confirmSale);
-  if (modal) {
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) closeModal();
+  discountTypeButtons.forEach((button) => {
+    button.addEventListener('click', () => setDiscountType(button.dataset.discountType || 'currency'));
+  });
+
+  paymentButtons.forEach((button) => {
+    button.addEventListener('click', () => setPayment(button.dataset.payment || 'PIX'));
+  });
+
+  if (finishButton) {
+    finishButton.addEventListener('click', finalizeSale);
+  }
+
+  if (newSaleButton) {
+    newSaleButton.addEventListener('click', startNewSale);
+  }
+
+  if (whatsappButton) {
+    whatsappButton.addEventListener('click', () => {
+      if (!lastSaleSummary) {
+        alert('Finalize uma venda para enviar o recibo pelo WhatsApp.');
+        return;
+      }
+      const message = `Oi! Aqui está o resumo da sua compra no BIPA: ${formatCurrency(
+        lastSaleSummary.total
+      )} • Pagamento: ${lastSaleSummary.payment}.`; 
+      const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank', 'noopener');
     });
   }
 
-  paymentButtons.forEach((button) =>
-    button.addEventListener('click', () => setPayment(button.dataset.payment || 'PIX'))
-  );
+  const handleRegisterSubmit = (event) => {
+    event.preventDefault();
+    if (!registerNameInput || !registerWhatsappInput) return;
+    const name = registerNameInput.value.trim();
+    const whatsapp = registerWhatsappInput.value.trim();
+    if (!name || !whatsapp) {
+      alert('Informe nome e WhatsApp para cadastrar o cliente.');
+      return;
+    }
+
+    const phoneDigits = whatsapp.replace(/\D/g, '');
+    const phoneLabel = formatPhone(whatsapp);
+    const newCustomer = {
+      id: `cli-${String(demoCustomers.length + 1).padStart(4, '0')}`,
+      name,
+      whatsapp: phoneDigits,
+      phoneLabel: phoneLabel || whatsapp,
+      email: '',
+      tag: '',
+      tagClass: '',
+      subtitle: '',
+      notes: '',
+      history: [],
+    };
+
+    demoCustomers.push(newCustomer);
+    demoCustomersMap[newCustomer.id] = newCustomer;
+    closeRegisterModal();
+    selectCustomer(newCustomer);
+  };
+
+  if (registerForm) {
+    registerForm.addEventListener('submit', handleRegisterSubmit);
+  }
+
+  if (registerCloseButton) registerCloseButton.addEventListener('click', closeRegisterModal);
+  if (registerCancelButton) registerCancelButton.addEventListener('click', closeRegisterModal);
+  if (registerModal) {
+    registerModal.addEventListener('click', (event) => {
+      if (event.target === registerModal) closeRegisterModal();
+    });
+  }
 
   renderProducts();
   renderCart();
+  renderSelectedCustomer();
+  setDiscountType('currency');
+  setPayment(selectedPayment);
 }
 
 // --------- Admin nav highlight (progressive enhancement) ---------

@@ -48,39 +48,47 @@
         </header>
 
         <div class="pdv-card">
-          <div class="customer-picker">
-            <label class="form-field customer-picker__search">
-              <span class="form-label">Cliente</span>
+          <div class="customer-zone" aria-live="polite">
+            <div class="customer-zone__header">
+              <p class="customer-zone__label" id="pdv-client-current">
+                Cliente: <strong>Avulso (Padrão)</strong>
+              </p>
+              <button class="customer-zone__change" id="pdv-client-clear" type="button" hidden>
+                Alterar
+              </button>
+            </div>
+            <label class="form-field customer-zone__search">
+              <span class="form-label">Buscar Cliente (Nome ou WhatsApp)</span>
               <input
                 id="pdv-client"
                 type="search"
-                list="pdv-client-list"
-                placeholder="Buscar por nome ou telefone"
+                placeholder="Buscar Cliente (Nome ou WhatsApp)"
                 autocomplete="off"
+                aria-controls="pdv-client-results"
+                aria-haspopup="listbox"
+                aria-expanded="false"
               />
-              <datalist id="pdv-client-list"></datalist>
             </label>
-            <div class="customer-picker__meta">
-              <div class="customer-pill" id="pdv-client-selected" aria-live="polite">
-                <strong>Cliente avulso</strong>
-                <span>Venda não vinculada ao CRM.</span>
-              </div>
-              <button class="customer-picker__clear" id="pdv-client-clear" type="button">Limpar</button>
-            </div>
             <div class="customer-suggestions" id="pdv-client-results" hidden role="listbox"></div>
+            <button class="btn btn--surface customer-zone__register" id="pdv-client-register" type="button">
+              + Cadastrar Cliente
+            </button>
           </div>
 
-          <div class="pdv-cart" id="pdv-cart" aria-live="polite"></div>
+          <ul class="pdv-cart" id="pdv-cart" aria-live="polite"></ul>
 
-          <div class="pdv-discounts">
-            <label class="form-field">
-              <span class="form-label">Desconto (R$)</span>
-              <input id="pdv-discount-value" type="number" min="0" step="0.01" value="0" />
+          <div class="discount-controls">
+            <label class="form-field discount-controls__field">
+              <span class="form-label">Desconto</span>
+              <div class="discount-input">
+                <span class="discount-input__unit" id="pdv-discount-unit">R$</span>
+                <input id="pdv-discount" type="number" min="0" step="0.01" value="0" inputmode="decimal" />
+              </div>
             </label>
-            <label class="form-field">
-              <span class="form-label">Desconto (%)</span>
-              <input id="pdv-discount-percent" type="number" min="0" max="100" step="0.5" value="0" />
-            </label>
+            <div class="discount-controls__toggle" role="group" aria-label="Tipo de desconto">
+              <button class="discount-toggle is-active" data-discount-type="currency" type="button">R$</button>
+              <button class="discount-toggle" data-discount-type="percent" type="button">%</button>
+            </div>
           </div>
 
           <dl class="pdv-summary">
@@ -89,11 +97,11 @@
               <dd id="pdv-subtotal">R$ 0,00</dd>
             </div>
             <div>
-              <dt>Descontos</dt>
+              <dt>Desconto</dt>
               <dd id="pdv-total-discount">R$ 0,00</dd>
             </div>
             <div class="pdv-summary__total">
-              <dt>Total a pagar</dt>
+              <dt>Total</dt>
               <dd id="pdv-total">R$ 0,00</dd>
             </div>
           </dl>
@@ -114,28 +122,57 @@
             <button class="payment-button" data-payment="Fiado" type="button">Fiado</button>
           </div>
 
-          <div class="pdv-payment__details" id="pdv-payment-details">
-            <h3>Forma selecionada: PIX</h3>
-            <p>Chave da loja: <strong>pix@bipa.demo</strong></p>
-            <p>Confirme o recebimento no aplicativo do banco e finalize a venda.</p>
+          <div class="pdv-payment__context" id="pdv-payment-context" aria-live="polite">
+            <p>Use a chave PIX <strong>pix@bipa.demo</strong> para receber o pagamento.</p>
           </div>
 
-          <button class="btn btn--primary btn--xl" id="pdv-finish" type="button">Finalizar venda</button>
+          <button class="btn btn--primary btn--xl" id="pdv-finish" type="button" disabled>
+            FINALIZAR VENDA (R$ 0,00)
+          </button>
         </div>
       </section>
     </main>
 
-    <div class="pdv-modal" id="pdv-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <section class="pdv-success" id="pdv-success" hidden aria-live="polite">
+      <div class="pdv-success__card">
+        <span class="pdv-success__icon" aria-hidden="true">✔</span>
+        <h2>Venda realizada com sucesso!</h2>
+        <p id="pdv-success-total">Total da venda: R$ 0,00</p>
+        <div class="pdv-success__actions">
+          <button class="btn btn--primary" id="pdv-success-new-sale" type="button">Iniciar nova venda</button>
+          <a class="btn btn--surface" href="/app/pdv/recibo/0001/" target="_blank" rel="noreferrer">Imprimir recibo</a>
+          <button class="btn btn--ghost" id="pdv-success-whatsapp" type="button">Enviar recibo por WhatsApp</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="pdv-modal" id="pdv-register-modal" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="pdv-modal__content">
         <header class="pdv-modal__header">
-          <h2>Confirmar pagamento</h2>
-          <button class="pdv-modal__close" id="pdv-modal-close" type="button" aria-label="Fechar">×</button>
+          <h2>Novo cliente rápido</h2>
+          <button class="pdv-modal__close" id="pdv-register-close" type="button" aria-label="Fechar">×</button>
         </header>
-        <div class="pdv-modal__body" id="pdv-modal-body"></div>
-        <footer class="pdv-modal__footer">
-          <a class="btn btn--surface" href="/app/pdv/recibo/0001/">Gerar recibo</a>
-          <button class="btn btn--primary" id="pdv-modal-confirm" type="button">Confirmar e registrar</button>
-        </footer>
+        <form class="pdv-modal__body pdv-register__form" id="pdv-register-form">
+          <label class="form-field">
+            <span class="form-label">Nome completo</span>
+            <input id="pdv-register-name" type="text" required autocomplete="off" />
+          </label>
+          <label class="form-field">
+            <span class="form-label">WhatsApp</span>
+            <input
+              id="pdv-register-whatsapp"
+              type="tel"
+              required
+              inputmode="tel"
+              autocomplete="off"
+              placeholder="(99) 99999-9999"
+            />
+          </label>
+          <footer class="pdv-modal__footer pdv-register__actions">
+            <button class="btn btn--surface" id="pdv-register-cancel" type="button">Cancelar</button>
+            <button class="btn btn--primary" type="submit">Salvar e usar na venda</button>
+          </footer>
+        </form>
       </div>
     </div>
 
