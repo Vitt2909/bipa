@@ -13,36 +13,206 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body data-page="login">
-    <main class="public-shell">
-      <section class="auth-card" aria-labelledby="login-title">
-        <div class="auth-card__brand">
-          <span class="brand-mark" aria-hidden="true">B</span>
-          <h1 class="auth-card__title" id="login-title">Entre no BIPA</h1>
-          <p class="auth-card__subtitle">Acesse com as credenciais fornecidas pela equipe BIPA.</p>
+    <header class="site-header" aria-label="Navegação principal">
+      <div class="site-header__brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="presentation" focusable="false">
+            <defs>
+              <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#32ffb4" />
+                <stop offset="100%" stop-color="#0fd68c" />
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="58" height="58" rx="18" fill="url(#brandGradient)" />
+            <path
+              d="M40.5 19.5H25.2c-3.9 0-7.1 3.2-7.1 7.1v10.8c0 6 4.9 10.9 10.9 10.9h8.8c6 0 10.9-4.9 10.9-10.9v-0.2c0-4.4-2.7-8.3-6.8-9.9 2-1.6 3.3-4 3.3-6.7v-0.1c0-5.8-4.7-10.5-10.5-10.5Z"
+              fill="#052216"
+              opacity="0.85"
+            />
+            <path
+              d="M26.4 26.3h12.6c2 0 3.6 1.6 3.6 3.6v0.1c0 2-1.6 3.6-3.6 3.6H30c-2 0-3.6-1.6-3.6-3.6v-3.7Z"
+              fill="#0b3b28"
+              opacity="0.7"
+            />
+            <path
+              d="M29.7 37.6h7.4c2.3 0 4.2 1.9 4.2 4.2v0.2c0 2.3-1.9 4.2-4.2 4.2h-3.2c-4.5 0-8.2-3.7-8.2-8.2v-0.4c0-0.8 0.6-1.4 1.4-1.4Z"
+              fill="#0b3b28"
+              opacity="0.85"
+            />
+          </svg>
+        </span>
+        <div class="site-header__brand-text">
+          <span class="site-header__title">BIPA</span>
+          <span class="site-header__tagline">Gestão inteligente para moda circular</span>
         </div>
+      </div>
+      <nav class="site-header__nav" aria-label="Links institucionais">
+        <a class="site-header__link" href="/">Site Principal</a>
+        <a class="site-header__link" href="https://ajuda.bipa.app" target="_blank" rel="noreferrer">Central de Ajuda</a>
+        <a class="site-header__link" href="https://status.bipa.app" target="_blank" rel="noreferrer">Status</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-pressed="false" data-theme-toggle>
+        <span class="theme-toggle__icon" aria-hidden="true">🌗</span>
+        <span class="theme-toggle__label">Alternar modo claro</span>
+      </button>
+    </header>
 
-        <form class="auth-form" aria-describedby="login-help">
-          <label class="form-field">
-            <span class="form-label">Email ou usuário</span>
-            <input type="text" name="email" placeholder="usuario@bipa.app" required />
-          </label>
+    <main class="public-shell">
+      <div class="auth-layout">
+        <section class="auth-card" aria-labelledby="login-title">
+          <div class="auth-card__brand">
+            <span class="brand-mark brand-mark--large" aria-hidden="true">
+              <svg viewBox="0 0 120 120" role="presentation" focusable="false">
+                <defs>
+                  <linearGradient id="brandGradientLarge" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#32ffb4" />
+                    <stop offset="100%" stop-color="#0fd68c" />
+                  </linearGradient>
+                </defs>
+                <rect x="6" y="6" width="108" height="108" rx="28" fill="url(#brandGradientLarge)" />
+                <path
+                  d="M75.4 33H45.3c-7.3 0-13.3 6-13.3 13.3v19.9c0 11.1 9 20.1 20.1 20.1h16.3c11.1 0 20.1-9 20.1-20.1v-0.4c0-8.2-5-15.4-12.6-18.3 3.7-2.9 6.1-7.3 6.1-12.2v-0.2c0-10.7-8.7-19.4-19.4-19.4Z"
+                  fill="#052216"
+                  opacity="0.85"
+                />
+                <path
+                  d="M47.6 45.9h23.3c3.6 0 6.5 2.9 6.5 6.5v0.1c0 3.6-2.9 6.5-6.5 6.5H54.1c-3.6 0-6.5-2.9-6.5-6.5v-6.6Z"
+                  fill="#0b3b28"
+                  opacity="0.7"
+                />
+                <path
+                  d="M53.7 66.9h13.7c4.1 0 7.4 3.3 7.4 7.4v0.3c0 4.1-3.3 7.4-7.4 7.4h-5.9c-8.4 0-15.1-6.8-15.1-15.1v-0.8c0-1.4 1.1-2.5 2.5-2.5Z"
+                  fill="#0b3b28"
+                  opacity="0.9"
+                />
+              </svg>
+            </span>
+            <div class="auth-card__heading">
+              <h1 class="auth-card__title" id="login-title">Entre no BIPA</h1>
+              <p class="auth-card__subtitle">
+                Gestão unificada de PDV, estoque e marketplace em uma só plataforma.
+              </p>
+            </div>
+            <div class="trust-badge" role="note">
+              <span class="trust-badge__icon" aria-hidden="true">✔︎</span>
+              <div>
+                <p class="trust-badge__title">Plataforma homologada pelo Sebrae</p>
+                <p class="trust-badge__text">Certificação de segurança e governança 2024</p>
+              </div>
+            </div>
+          </div>
 
-          <label class="form-field">
-            <span class="form-label">Senha</span>
-            <input type="password" name="password" placeholder="••••••••" required />
-          </label>
+          <form class="auth-form" aria-describedby="login-help login-error-summary">
+            <div class="form-errors" id="login-error-summary" role="alert" aria-live="polite" hidden>
+              <strong>Mensagem do sistema</strong>
+              <ul></ul>
+            </div>
 
-          <button class="btn btn--primary" type="submit">Entrar no sistema</button>
+            <div class="form-field" data-field="email">
+              <label class="form-label" for="login-email">Email ou usuário</label>
+              <input
+                id="login-email"
+                type="text"
+                name="email"
+                inputmode="email"
+                autocomplete="username"
+                placeholder="usuario@bipa.app"
+                required
+                aria-describedby="login-email-feedback"
+              />
+              <p class="form-field__feedback" id="login-email-feedback" hidden></p>
+            </div>
 
-          <p class="auth-form__hint" id="login-help">
-            Esqueceu a senha? Solicite a troca pelo suporte interno ou com o administrador da sua loja.
-          </p>
-        </form>
+            <div class="form-field" data-field="password">
+              <label class="form-label" for="login-password">Senha</label>
+              <input
+                id="login-password"
+                type="password"
+                name="password"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                required
+                minlength="6"
+                aria-describedby="login-password-feedback"
+              />
+              <p class="form-field__feedback" id="login-password-feedback" hidden></p>
+            </div>
 
-        <footer class="auth-card__footer">
-          <a href="criar-loja.html">Ainda não tem acesso? Crie sua loja</a>
-        </footer>
-      </section>
+            <div class="form-utilities">
+              <a class="link" href="#login-email" data-forgot-password>Esqueci minha senha</a>
+              <a class="link" href="https://ajuda.bipa.app/contato" target="_blank" rel="noreferrer"
+                >Precisa de ajuda?</a
+              >
+            </div>
+
+            <button class="btn btn--primary" type="submit">Entrar no sistema</button>
+
+            <p class="auth-form__hint" id="login-help">
+              Acesso exclusivo para lojistas BIPA. Você será redirecionado ao painel assim que as credenciais forem
+              validadas.
+            </p>
+          </form>
+
+          <footer class="auth-card__footer">
+            <a class="link-cta" href="criar-loja.html">Ainda não tem acesso? Crie sua loja</a>
+          </footer>
+
+          <section class="auth-card__meta" aria-label="Por que escolher o BIPA?">
+            <h2 class="auth-card__meta-title">Mais resultado desde o primeiro login</h2>
+            <ul class="auth-card__meta-list" role="list">
+              <li><strong>1.200+</strong> lojas ativas crescendo com dados em tempo real.</li>
+              <li>Integrações com marketplaces líderes e vitrine própria em poucos cliques.</li>
+              <li>Suporte humano em horário estendido e SLA monitorado 24h.</li>
+            </ul>
+          </section>
+        </section>
+
+        <aside class="auth-insight" aria-label="Conheça o painel BIPA">
+          <div class="auth-insight__hero">
+            <h2>Visualize o seu crescimento</h2>
+            <p>
+              Painel com indicadores de faturamento, estoque saudável e performance por canal para você decidir com
+              confiança.
+            </p>
+          </div>
+          <div class="auth-insight__glimpse" aria-hidden="true">
+            <div class="insight-preview">
+              <header class="insight-preview__header">
+                <span>Dashboard diário</span>
+                <span class="insight-chip">Atualizado agora</span>
+              </header>
+              <div class="insight-preview__body">
+                <div>
+                  <p class="insight-preview__label">Faturamento hoje</p>
+                  <p class="insight-preview__value">R$ 8.420</p>
+                </div>
+                <div>
+                  <p class="insight-preview__label">Pedidos em aprovação</p>
+                  <p class="insight-preview__value insight-preview__value--warning">3 pendentes</p>
+                </div>
+                <div>
+                  <p class="insight-preview__label">Reposição sugerida</p>
+                  <p class="insight-preview__value">12 SKUs</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="auth-insight__steps">
+            <li>
+              <span class="step-index">1</span>
+              <span>Conecte seus estoques físicos e digitais com o assistente guiado.</span>
+            </li>
+            <li>
+              <span class="step-index">2</span>
+              <span>Configure marketplaces e vitrine social com preços sincronizados.</span>
+            </li>
+            <li>
+              <span class="step-index">3</span>
+              <span>Acompanhe indicadores e receba alertas inteligentes todos os dias.</span>
+            </li>
+          </ol>
+        </aside>
+      </div>
     </main>
     <script src="script.js" defer></script>
   </body>

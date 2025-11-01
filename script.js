@@ -305,6 +305,97 @@ const marketplaceListings = [
 const body = document.body;
 const page = body.dataset.page;
 
+const APPEARANCE_STORAGE_KEY = 'bipa:appearance';
+const rootElement = document.documentElement;
+
+const applyAppearance = (mode) => {
+  const normalized = mode === 'light' ? 'light' : 'dark';
+  body.dataset.appearance = normalized;
+  if (rootElement) {
+    rootElement.style.setProperty('color-scheme', normalized);
+  }
+  const toggle = document.querySelector('[data-theme-toggle]');
+  if (toggle) {
+    toggle.setAttribute('aria-pressed', normalized === 'light' ? 'true' : 'false');
+    const label = toggle.querySelector('.theme-toggle__label');
+    if (label) {
+      label.textContent = normalized === 'light' ? 'Alternar modo escuro' : 'Alternar modo claro';
+      toggle.setAttribute('aria-label', label.textContent);
+    }
+    const icon = toggle.querySelector('.theme-toggle__icon');
+    if (icon) {
+      icon.textContent = normalized === 'light' ? '☀️' : '🌗';
+    }
+  }
+  return normalized;
+};
+
+const detectPreferredAppearance = () => {
+  try {
+    const stored = window.localStorage.getItem(APPEARANCE_STORAGE_KEY);
+    if (stored === 'light' || stored === 'dark') {
+      return stored;
+    }
+  } catch (error) {
+    // localStorage indisponível, segue fluxo padrão
+  }
+
+  const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+  if (mediaQuery && mediaQuery.matches) {
+    return 'light';
+  }
+  return 'dark';
+};
+
+const persistAppearance = (mode) => {
+  const normalized = applyAppearance(mode);
+  try {
+    window.localStorage.setItem(APPEARANCE_STORAGE_KEY, normalized);
+  } catch (error) {
+    // Ignora se não for possível persistir
+  }
+};
+
+const initializeAppearanceToggle = () => {
+  const toggle = document.querySelector('[data-theme-toggle]');
+  if (!toggle) return;
+  toggle.addEventListener('click', () => {
+    const nextMode = body.dataset.appearance === 'light' ? 'dark' : 'light';
+    persistAppearance(nextMode);
+  });
+};
+
+const initializeAppearance = () => {
+  const initial = detectPreferredAppearance();
+  applyAppearance(initial);
+  initializeAppearanceToggle();
+
+  const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+  if (mediaQuery) {
+    const handleChange = (event) => {
+      const stored = (() => {
+        try {
+          return window.localStorage.getItem(APPEARANCE_STORAGE_KEY);
+        } catch (error) {
+          return null;
+        }
+      })();
+      if (stored === 'light' || stored === 'dark') {
+        return;
+      }
+      applyAppearance(event.matches ? 'light' : 'dark');
+    };
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleChange);
+    } else if (typeof mediaQuery.addListener === 'function') {
+      mediaQuery.addListener(handleChange);
+    }
+  }
+};
+
+initializeAppearance();
+
 const formatCustomerOption = (customer) => `${customer.name} · ${customer.phoneLabel}`;
 
 // --------- Create store ---------
@@ -462,19 +553,195 @@ if (page === 'create-store') {
 // --------- Login ---------
 if (page === 'login') {
   const form = document.querySelector('.auth-form');
+  const summary = document.getElementById('login-error-summary');
+  const summaryList = summary?.querySelector('ul');
+  const summaryTitle = summary?.querySelector('strong');
+  const submitButton = form?.querySelector('[type="submit"]');
+  const forgotPasswordLink = form?.querySelector('[data-forgot-password]');
+
+  const buildFieldController = (selector) => {
+    const fieldElement = form?.querySelector(selector);
+    if (!fieldElement) return null;
+    const input = fieldElement.querySelector('input, select, textarea');
+    const label = fieldElement.querySelector('.form-label')?.textContent?.trim() || '';
+    const feedback = fieldElement.querySelector('.form-field__feedback');
+    return { fieldElement, input, label, feedback };
+  };
+
+  const emailField = buildFieldController('[data-field="email"]');
+  const passwordField = buildFieldController('[data-field="password"]');
+  const fieldControllers = [emailField, passwordField].filter(Boolean);
+
+  const showSummary = (variant, title, messages) => {
+    if (!summary || !summaryList) return;
+    const normalizedVariant = ['success', 'info'].includes(variant) ? variant : 'error';
+    summary.dataset.variant = normalizedVariant;
+    summary.classList.remove('form-errors--success', 'form-errors--info');
+    if (normalizedVariant === 'success') {
+      summary.classList.add('form-errors--success');
+    } else if (normalizedVariant === 'info') {
+      summary.classList.add('form-errors--info');
+    }
+
+    summary.setAttribute('role', normalizedVariant === 'error' ? 'alert' : 'status');
+
+    summary.hidden = false;
+    if (summaryTitle) {
+      summaryTitle.textContent = title;
+    }
+
+    summaryList.innerHTML = '';
+    (messages || []).forEach((message) => {
+      if (!message) return;
+      const item = document.createElement('li');
+      item.textContent = message;
+      summaryList.appendChild(item);
+    });
+  };
+
+  const clearSummary = () => {
+    if (!summary || !summaryList) return;
+    summary.hidden = true;
+    summary.dataset.variant = '';
+    summary.classList.remove('form-errors--success', 'form-errors--info');
+    summary.setAttribute('role', 'alert');
+    if (summaryTitle) {
+      summaryTitle.textContent = '';
+    }
+    summaryList.innerHTML = '';
+  };
+
+  const setFieldState = (controller, message) => {
+    if (!controller || !controller.fieldElement || !controller.input) return;
+    const hasMessage = Boolean(message);
+    const trimmedValue = controller.input.value.trim();
+    const hasValue = trimmedValue.length > 0;
+
+    controller.fieldElement.classList.toggle('form-field--error', hasMessage);
+    controller.fieldElement.classList.toggle('form-field--success', !hasMessage && hasValue);
+
+    if (hasMessage) {
+      controller.input.setAttribute('aria-invalid', 'true');
+    } else {
+      controller.input.removeAttribute('aria-invalid');
+    }
+
+    if (controller.feedback) {
+      if (hasMessage) {
+        controller.feedback.textContent = message;
+        controller.feedback.hidden = false;
+      } else if (hasValue) {
+        controller.feedback.textContent = 'Tudo certo.';
+        controller.feedback.hidden = false;
+      } else {
+        controller.feedback.textContent = '';
+        controller.feedback.hidden = true;
+      }
+    }
+  };
+
+  const validateEmailField = (value) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return 'Informe seu email ou usuário.';
+    }
+    if (trimmed.includes('@')) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!emailPattern.test(trimmed.toLowerCase())) {
+        return 'Informe um email válido.';
+      }
+    } else if (trimmed.length < 3) {
+      return 'O usuário deve ter pelo menos 3 caracteres.';
+    }
+    return '';
+  };
+
+  const validatePasswordField = (value) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return 'Informe sua senha.';
+    }
+    if (trimmed.length < 6) {
+      return 'A senha deve conter pelo menos 6 caracteres.';
+    }
+    return '';
+  };
+
+  const validators = new Map([
+    [emailField, validateEmailField],
+    [passwordField, validatePasswordField],
+  ]);
+
+  const validateController = (controller) => {
+    if (!controller || !controller.input) return '';
+    const validator = validators.get(controller);
+    const message = validator ? validator(controller.input.value) : '';
+    setFieldState(controller, message);
+    if (!message) {
+      return '';
+    }
+    const labelPrefix = controller.label ? `${controller.label}: ` : '';
+    return `${labelPrefix}${message}`;
+  };
+
   if (form) {
     form.setAttribute('novalidate', 'novalidate');
+    fieldControllers.forEach((controller) => {
+      if (!controller.input) return;
+      controller.input.addEventListener('blur', () => {
+        const message = validateController(controller);
+        if (message) {
+          showSummary('error', 'Revise os campos informados', [message]);
+        }
+      });
+
+      controller.input.addEventListener('input', () => {
+        validateController(controller);
+        if (summary && summary.dataset.variant === 'error') {
+          clearSummary();
+        }
+      });
+    });
+
+    if (forgotPasswordLink) {
+      forgotPasswordLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        showSummary('info', 'Precisa redefinir a senha?', [
+          'Envie uma solicitação para suporte@bipa.app ou procure o administrador da sua loja.',
+        ]);
+      });
+    }
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      const submitButton = form.querySelector('[type="submit"]');
+
+      const messages = fieldControllers
+        .map((controller) => validateController(controller))
+        .filter((message) => Boolean(message));
+
+      if (messages.length) {
+        showSummary('error', 'Corrija os campos destacados', messages);
+        const firstInvalid = fieldControllers.find((controller) => controller.fieldElement?.classList.contains('form-field--error'));
+        if (firstInvalid?.input) {
+          firstInvalid.input.focus();
+        }
+        return;
+      }
+
+      showSummary('info', 'Validando credenciais…', ['Estamos confirmando seus dados com segurança.']);
+
       if (submitButton) {
         submitButton.setAttribute('aria-busy', 'true');
         submitButton.disabled = true;
         submitButton.textContent = 'Entrando...';
       }
+
       window.setTimeout(() => {
-        window.location.href = '/app/selecionar-modulo/';
-      }, 400);
+        showSummary('success', 'Tudo certo!', ['Redirecionando você para o painel principal.']);
+        window.setTimeout(() => {
+          window.location.href = '/app/selecionar-modulo/';
+        }, 500);
+      }, 600);
     });
   }
 }
