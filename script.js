@@ -1457,6 +1457,28 @@ if (page === 'pdv') {
   const pixCopyButton = document.getElementById('pdv-pix-copy');
   const pixStatusElement = document.getElementById('pdv-pix-status');
   const pixQrElement = document.getElementById('pdv-pix-qr');
+  const cardModal = document.getElementById('pdv-card-modal');
+  const cardModalCloseButton = document.getElementById('pdv-card-close');
+  const cardTotalLabelElement = document.getElementById('pdv-card-total-label');
+  const cardTotalElement = document.getElementById('pdv-card-total');
+  const cardTransactionButtons = Array.from(document.querySelectorAll('[data-card-transaction]'));
+  const cardInstallmentsSection = document.getElementById('pdv-card-installments-section');
+  const cardInstallmentsContainer = document.getElementById('pdv-card-installments');
+  const cardPassFeesToggle = document.getElementById('pdv-card-pass-fees');
+  const cardPassFeesLabel = document.getElementById('pdv-card-pass-fees-label');
+  const cardFeeSummaryElement = document.getElementById('pdv-card-fee-summary');
+  const cardMethodButtons = Array.from(document.querySelectorAll('[data-card-method]'));
+  const cardFeedbackSection = document.getElementById('pdv-card-feedback');
+  const cardFeedbackViews = {
+    nfc: document.querySelector('[data-card-feedback="nfc"]'),
+    manual: document.querySelector('[data-card-feedback="manual"]'),
+    external: document.querySelector('[data-card-feedback="external"]'),
+  };
+  const cardNfcTotalElement = document.getElementById('pdv-card-nfc-total');
+  const cardManualForm = document.getElementById('pdv-card-manual');
+  const cardManualSubmitButton = document.getElementById('pdv-card-manual-submit');
+  const cardManualStatusElement = document.getElementById('pdv-card-manual-status');
+  const cardExternalTotalElement = document.getElementById('pdv-card-external-total');
 
   const cart = new Map();
   let selectedPayment = 'PIX';
@@ -1472,6 +1494,212 @@ if (page === 'pdv') {
   let scannerStream = null;
   let scannerActive = false;
   let barcodeDetector = null;
+
+  const cardInstallmentOptions = [
+    { id: 'credit-1', installments: 1, interestRate: 0, label: '1x (à vista)', description: 'Sem juros' },
+    { id: 'credit-2', installments: 2, interestRate: 0.0273, label: '2x', description: 'Com juros' },
+    { id: 'credit-3', installments: 3, interestRate: 0.04, label: '3x', description: 'Com juros' },
+  ];
+
+  const cardGatewayConfig = {
+    debit: { rate: 0.015 },
+    credit: cardInstallmentOptions,
+  };
+
+  const cardGatewayState = {
+    baseTotal: 0,
+    transactionType: 'debit',
+    installmentId: cardInstallmentOptions[0]?.id || 'credit-1',
+    passFees: false,
+    method: null,
+  };
+
+  const getSelectedCardOption = () =>
+    cardGatewayConfig.credit.find((option) => option.id === cardGatewayState.installmentId) ||
+    cardGatewayConfig.credit[0];
+
+  const ensureCardInstallmentSelection = () => {
+    if (cardGatewayState.transactionType !== 'credit') return;
+    if (!cardGatewayConfig.credit.some((option) => option.id === cardGatewayState.installmentId)) {
+      cardGatewayState.installmentId = cardGatewayConfig.credit[0]?.id || 'credit-1';
+    }
+  };
+
+  const calculateCardOptionTotals = (option) => {
+    const rate = option?.interestRate || 0;
+    const installments = Math.max(option?.installments || 1, 1);
+    const totalWithFees = cardGatewayState.baseTotal * (1 + rate);
+    const displayTotal = cardGatewayState.passFees ? totalWithFees : cardGatewayState.baseTotal;
+    const installmentValue = installments > 0 ? displayTotal / installments : displayTotal;
+    return { rate, installments, totalWithFees, displayTotal, installmentValue };
+  };
+
+  const getCurrentCardTotals = () => {
+    if (cardGatewayState.transactionType === 'credit') {
+      ensureCardInstallmentSelection();
+      const option = getSelectedCardOption();
+      return calculateCardOptionTotals(option);
+    }
+    const rate = cardGatewayConfig.debit.rate || 0;
+    const totalWithFees = cardGatewayState.baseTotal * (1 + rate);
+    const displayTotal = cardGatewayState.passFees ? totalWithFees : cardGatewayState.baseTotal;
+    return { rate, installments: 1, totalWithFees, displayTotal, installmentValue: displayTotal };
+  };
+
+  const resetCardGatewayMethods = () => {
+    cardGatewayState.method = null;
+    cardMethodButtons.forEach((button) => button.classList.remove('is-active'));
+    if (cardFeedbackSection) cardFeedbackSection.hidden = true;
+    Object.values(cardFeedbackViews).forEach((view) => {
+      if (view) view.hidden = true;
+    });
+    if (cardManualForm) cardManualForm.reset();
+    if (cardManualStatusElement) cardManualStatusElement.textContent = '';
+  };
+
+  const renderCardInstallments = () => {
+    if (!cardInstallmentsContainer) return;
+    if (cardGatewayState.transactionType !== 'credit') {
+      cardInstallmentsContainer.innerHTML = '';
+      return;
+    }
+    ensureCardInstallmentSelection();
+    const options = cardGatewayConfig.credit;
+    const html = options
+      .map((option) => {
+        const isActive = option.id === cardGatewayState.installmentId;
+        const totals = calculateCardOptionTotals(option);
+        const metaBits = [];
+        if ((option.description || '').trim()) {
+          metaBits.push(option.description.trim());
+        } else {
+          metaBits.push(option.interestRate > 0 ? 'Com juros' : 'Sem juros');
+        }
+        if (!cardGatewayState.passFees && option.interestRate > 0) {
+          metaBits.push('Taxas absorvidas pela loja');
+        }
+        const metaText = metaBits.join(' • ');
+        const totalLabel = cardGatewayState.passFees ? totals.totalWithFees : cardGatewayState.baseTotal;
+        return `
+          <button
+            class="card-gateway__installment${isActive ? ' is-active' : ''}"
+            type="button"
+            data-card-installment="${option.id}"
+            role="option"
+            aria-selected="${isActive}"
+          >
+            <span class="card-gateway__installment-main">
+              <strong>${option.installments}x de ${formatCurrency(totals.installmentValue)}</strong>
+              <span>${metaText}</span>
+            </span>
+            <span class="card-gateway__installment-total">${formatCurrency(totalLabel)}</span>
+          </button>
+        `;
+      })
+      .join('');
+    cardInstallmentsContainer.innerHTML = html;
+  };
+
+  const updateCardMethodViews = () => {
+    if (!cardFeedbackSection) return;
+    const totals = getCurrentCardTotals();
+    const chargeAmount = cardGatewayState.passFees ? totals.totalWithFees : cardGatewayState.baseTotal;
+    cardMethodButtons.forEach((button) => {
+      const isActive = cardGatewayState.method === button.dataset.cardMethod;
+      button.classList.toggle('is-active', Boolean(isActive));
+    });
+    if (cardNfcTotalElement) cardNfcTotalElement.textContent = formatCurrency(chargeAmount);
+    if (cardManualSubmitButton) {
+      cardManualSubmitButton.textContent = `Pagar ${formatCurrency(chargeAmount)}`;
+    }
+    if (cardExternalTotalElement) cardExternalTotalElement.textContent = formatCurrency(chargeAmount);
+    const hasMethod = Boolean(cardGatewayState.method);
+    cardFeedbackSection.hidden = !hasMethod;
+    Object.entries(cardFeedbackViews).forEach(([key, view]) => {
+      if (!view) return;
+      view.hidden = cardGatewayState.method !== key;
+    });
+  };
+
+  const updateCardGatewayUI = () => {
+    cardTransactionButtons.forEach((button) => {
+      const isActive = button.dataset.cardTransaction === cardGatewayState.transactionType;
+      button.classList.toggle('is-active', Boolean(isActive));
+      button.disabled = cardGatewayState.baseTotal <= 0;
+    });
+    if (cardPassFeesToggle) {
+      cardPassFeesToggle.checked = cardGatewayState.passFees;
+      cardPassFeesToggle.disabled = cardGatewayState.baseTotal <= 0;
+    }
+    if (cardPassFeesLabel) {
+      cardPassFeesLabel.textContent = cardGatewayState.passFees
+        ? 'Repassar taxas da transação ao cliente (ativo)'
+        : 'Repassar taxas da transação ao cliente';
+    }
+    cardMethodButtons.forEach((button) => {
+      button.disabled = cardGatewayState.baseTotal <= 0;
+    });
+
+    if (cardInstallmentsSection) {
+      cardInstallmentsSection.hidden = cardGatewayState.transactionType !== 'credit';
+    }
+
+    if (cardGatewayState.baseTotal <= 0) {
+      if (cardTotalLabelElement) cardTotalLabelElement.textContent = 'Total da venda';
+      if (cardTotalElement) cardTotalElement.textContent = formatCurrency(0);
+      if (cardFeeSummaryElement) {
+        cardFeeSummaryElement.textContent =
+          'Adicione itens ao carrinho para simular o pagamento com cartão.';
+      }
+      if (cardInstallmentsContainer) cardInstallmentsContainer.innerHTML = '';
+      resetCardGatewayMethods();
+      return;
+    }
+
+    if (cardGatewayState.transactionType === 'credit') {
+      renderCardInstallments();
+    }
+
+    const totals = getCurrentCardTotals();
+    const headerTotal = cardGatewayState.passFees ? totals.totalWithFees : cardGatewayState.baseTotal;
+    if (cardTotalLabelElement) {
+      cardTotalLabelElement.textContent = cardGatewayState.passFees ? 'Total ao cliente' : 'Total da venda';
+    }
+    if (cardTotalElement) {
+      cardTotalElement.textContent = formatCurrency(headerTotal);
+    }
+    const feeAmount = Math.max(totals.totalWithFees - cardGatewayState.baseTotal, 0);
+    const summaryLines = [];
+    if (feeAmount <= 0.004) {
+      summaryLines.push('Sem taxas adicionais nesta modalidade.');
+    } else if (cardGatewayState.passFees) {
+      summaryLines.push(`Cliente paga ${formatCurrency(feeAmount)} em taxas.`);
+      summaryLines.push(`Total ao cliente: ${formatCurrency(totals.totalWithFees)}.`);
+    } else {
+      const netAmount = Math.max(cardGatewayState.baseTotal - feeAmount, 0);
+      summaryLines.push(`Lojista absorve ${formatCurrency(feeAmount)} em taxas.`);
+      summaryLines.push(`Recebimento líquido estimado: ${formatCurrency(netAmount)}.`);
+      summaryLines.push(`Cliente verá ${formatCurrency(cardGatewayState.baseTotal)} na fatura.`);
+    }
+    if (cardFeeSummaryElement) {
+      cardFeeSummaryElement.textContent = summaryLines.join(' ');
+    }
+    updateCardMethodViews();
+  };
+
+  const syncCardGatewayTotal = (total) => {
+    cardGatewayState.baseTotal = Number(total) || 0;
+    if (cardModal && cardModal.classList.contains('is-visible')) {
+      updateCardGatewayUI();
+    }
+  };
+
+  const closeCardModal = () => {
+    if (!cardModal) return;
+    cardModal.classList.remove('is-visible');
+    cardModal.setAttribute('aria-hidden', 'true');
+    resetCardGatewayMethods();
+  };
 
   const getSaleId = () => `PDV-${String(saleCounter).padStart(4, '0')}`;
 
@@ -2083,6 +2311,24 @@ if (page === 'pdv') {
     return { subtotal, totalDiscount, total, itemDiscount: totalItemDiscount, globalDiscount };
   };
 
+  const openCardModal = () => {
+    if (!cardModal) return;
+    const totals = getTotals();
+    syncCardGatewayTotal(totals.total);
+    cardGatewayState.transactionType = 'debit';
+    cardGatewayState.installmentId = cardInstallmentOptions[0]?.id || 'credit-1';
+    cardGatewayState.passFees = false;
+    resetCardGatewayMethods();
+    if (cardPassFeesToggle) cardPassFeesToggle.checked = false;
+    updateCardGatewayUI();
+    cardModal.classList.add('is-visible');
+    cardModal.setAttribute('aria-hidden', 'false');
+    window.setTimeout(() => {
+      const focusTarget = cardTransactionButtons.find((button) => !button.disabled);
+      focusTarget?.focus();
+    }, 20);
+  };
+
   const getFinishButtonCopy = (totalValue) => {
     const formattedTotal = formatCurrency(totalValue);
     switch (selectedPayment) {
@@ -2118,6 +2364,7 @@ if (page === 'pdv') {
     if (totalElement) totalElement.textContent = formatCurrency(totals.total);
     updateFinishButton(totals.total, getCartQuantity() > 0);
     updateCheckoutToggle(totals);
+    syncCardGatewayTotal(totals.total);
     updatePixBox(totals);
   };
 
@@ -2182,6 +2429,9 @@ if (page === 'pdv') {
         window.clearTimeout(pixStatusTimeout);
         pixStatusTimeout = null;
       }
+    }
+    if (method !== 'Cartão') {
+      closeCardModal();
     }
     updatePixBox();
     updateFinishButton(getTotals().total, getCartQuantity() > 0);
@@ -2402,8 +2652,90 @@ if (page === 'pdv') {
     button.addEventListener('click', () => setDiscountType(button.dataset.discountType || 'currency'));
   });
 
+  cardTransactionButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const type = button.dataset.cardTransaction || 'debit';
+      cardGatewayState.transactionType = type;
+      if (type !== 'credit') {
+        cardGatewayState.installmentId = cardInstallmentOptions[0]?.id || 'credit-1';
+      }
+      resetCardGatewayMethods();
+      updateCardGatewayUI();
+    });
+  });
+
+  if (cardInstallmentsContainer) {
+    cardInstallmentsContainer.addEventListener('click', (event) => {
+      const target = event.target.closest('[data-card-installment]');
+      if (!target) return;
+      const installmentId = target.dataset.cardInstallment;
+      if (!installmentId || installmentId === cardGatewayState.installmentId) return;
+      cardGatewayState.installmentId = installmentId;
+      updateCardGatewayUI();
+    });
+  }
+
+  if (cardPassFeesToggle) {
+    cardPassFeesToggle.addEventListener('change', () => {
+      cardGatewayState.passFees = cardPassFeesToggle.checked;
+      updateCardGatewayUI();
+    });
+  }
+
+  cardMethodButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (button.disabled) return;
+      const method = button.dataset.cardMethod;
+      cardGatewayState.method = cardGatewayState.method === method ? null : method;
+      if (cardGatewayState.method !== 'manual' && cardManualForm) {
+        cardManualForm.reset();
+      }
+      if (cardManualStatusElement) cardManualStatusElement.textContent = '';
+      updateCardMethodViews();
+    });
+  });
+
+  if (cardManualForm) {
+    cardManualForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (cardManualStatusElement) {
+        cardManualStatusElement.textContent =
+          'Pagamento enviado para processamento (simulação). Aguarde a aprovação antes de finalizar a venda.';
+      }
+    });
+    cardManualForm.addEventListener('input', () => {
+      if (cardManualStatusElement && cardManualStatusElement.textContent) {
+        cardManualStatusElement.textContent = '';
+      }
+    });
+  }
+
+  if (cardModalCloseButton) {
+    cardModalCloseButton.addEventListener('click', closeCardModal);
+  }
+
+  if (cardModal) {
+    cardModal.addEventListener('click', (event) => {
+      if (event.target === cardModal) {
+        closeCardModal();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && cardModal?.classList.contains('is-visible')) {
+      closeCardModal();
+    }
+  });
+
   paymentButtons.forEach((button) => {
-    button.addEventListener('click', () => setPayment(button.dataset.payment || 'PIX'));
+    button.addEventListener('click', () => {
+      const method = button.dataset.payment || 'PIX';
+      setPayment(method);
+      if (method === 'Cartão') {
+        openCardModal();
+      }
+    });
   });
 
   if (pixCopyButton) {
