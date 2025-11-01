@@ -14,24 +14,97 @@
   </head>
   <body data-page="welcome">
     <main class="public-shell">
-      <section class="auth-card" aria-labelledby="welcome-title">
-        <div class="auth-card__brand">
-          <span class="brand-mark" aria-hidden="true">B</span>
-          <h1 class="auth-card__title" id="welcome-title">Bem-vindo ao BIPA</h1>
-          <p class="auth-card__subtitle">
-            A plataforma oficial para operar o PDV, gestão e marketplace da sua loja circular.
+      <div class="welcome-layout">
+        <section class="welcome-hero" aria-labelledby="hero-title">
+          <header class="welcome-hero__header">
+            <span class="welcome-hero__badge">Plataforma completa para moda circular</span>
+            <h1 class="welcome-hero__title" id="hero-title">Uma experiência BIPA pensada para qualquer tela</h1>
+            <p class="welcome-hero__subtitle">
+              Omnicanalidade real para o seu negócio: PDV inteligente, gestão de estoque e marketplace conectados em uma única plataforma.
+            </p>
+          </header>
+
+          <div class="welcome-hero__grid">
+            <ul class="welcome-hero__stats" role="list">
+              <li class="welcome-hero__stat">
+                <span class="welcome-hero__stat-value">1.200+</span>
+                <span class="welcome-hero__stat-label">lojas ativas crescendo com dados em tempo real</span>
+              </li>
+              <li class="welcome-hero__stat">
+                <span class="welcome-hero__stat-value">98%</span>
+                <span class="welcome-hero__stat-label">das operações ficam prontas para vender em menos de 24h</span>
+              </li>
+              <li class="welcome-hero__stat">
+                <span class="welcome-hero__stat-value">+38%</span>
+                <span class="welcome-hero__stat-label">de aumento médio no giro de estoque no primeiro trimestre</span>
+              </li>
+            </ul>
+
+            <div class="welcome-hero__media" aria-hidden="true">
+              <div class="welcome-hero__screen">
+                <div class="welcome-hero__screen-header">
+                  <span class="welcome-hero__screen-title">Resumo diário</span>
+                  <span class="welcome-hero__chip">Atualizado agora</span>
+                </div>
+                <dl class="welcome-hero__screen-metrics">
+                  <div>
+                    <dt>Faturamento</dt>
+                    <dd>R$ 8.420</dd>
+                  </div>
+                  <div>
+                    <dt>Pedidos em aprovação</dt>
+                    <dd class="welcome-hero__screen-warning">3 pendentes</dd>
+                  </div>
+                  <div>
+                    <dt>Reposição sugerida</dt>
+                    <dd>12 SKUs</dd>
+                  </div>
+                </dl>
+                <div class="welcome-hero__chart">
+                  <span style="--value: 80%"></span>
+                  <span style="--value: 55%"></span>
+                  <span style="--value: 92%"></span>
+                  <span style="--value: 48%"></span>
+                  <span style="--value: 70%"></span>
+                </div>
+              </div>
+              <div class="welcome-hero__floating-card">
+                <p class="welcome-hero__floating-title">Alertas inteligentes</p>
+                <ul>
+                  <li>Campanha de vitrine social pronta para publicar</li>
+                  <li>Estoque baixo: Coleção cápsula upcycling</li>
+                  <li>Novos leads vindos do marketplace BIPA</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <ul class="welcome-hero__highlights" role="list">
+            <li>Centralize PDV, estoque e marketplaces sem precisar alternar sistemas.</li>
+            <li>Automatize fluxos de consignação e reposição com inteligência BIPA.</li>
+            <li>Ofereça atendimento omnicanal com experiências fluídas em mobile e desktop.</li>
+          </ul>
+        </section>
+
+        <section class="auth-card" aria-labelledby="welcome-card-title">
+          <div class="auth-card__brand">
+            <span class="brand-mark" aria-hidden="true">B</span>
+            <h2 class="auth-card__title" id="welcome-card-title">Acesse sua operação BIPA</h2>
+            <p class="auth-card__subtitle">
+              Entrar no painel garante relatórios, catálogo e marketplace sincronizados em tempo real.
+            </p>
+          </div>
+
+          <div class="auth-card__actions" role="group" aria-label="Ações iniciais">
+            <a class="btn btn--primary" href="login.html">Entrar na minha conta</a>
+            <a class="btn btn--surface" href="criar-loja.html">Criar uma nova loja</a>
+          </div>
+
+          <p class="auth-card__hint">
+            O acesso é exclusivo para lojistas com contrato ativo. Em caso de dúvidas, acione o suporte pelo painel interno.
           </p>
-        </div>
-
-        <div class="auth-card__actions" role="group" aria-label="Ações iniciais">
-          <a class="btn btn--primary" href="login.html">Entrar na minha conta</a>
-          <a class="btn btn--surface" href="criar-loja.html">Criar uma nova loja</a>
-        </div>
-
-        <p class="auth-card__hint">
-          O acesso é exclusivo para lojistas com contrato ativo. Em caso de dúvidas, acione o suporte pelo painel interno.
-        </p>
-      </section>
+        </section>
+      </div>
     </main>
     <script src="/script.js" defer></script>
   </body>
