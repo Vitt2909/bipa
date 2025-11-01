@@ -38,6 +38,11 @@
           <input id="pdv-search" type="search" placeholder="Digite para encontrar" autocomplete="off" />
         </label>
 
+        <div class="pdv-scanner">
+          <button class="btn btn--surface" id="pdv-open-scanner" type="button">Escanear código</button>
+          <p class="pdv-scanner__hint">Use a câmera do dispositivo ou digite manualmente o código da peça.</p>
+        </div>
+
         <ul class="pdv-product-list" id="pdv-product-list" aria-label="Produtos disponíveis"></ul>
       </section>
 
@@ -126,6 +131,28 @@
             <p>Use a chave PIX <strong>pix@bipa.demo</strong> para receber o pagamento.</p>
           </div>
 
+          <section class="pix-box" id="pdv-pix-box" hidden aria-live="polite">
+            <header class="pix-box__header">
+              <h3>Pagamento PIX DEMO</h3>
+              <p>Compartilhe o QR Code ou copie o código estático gerado com o valor da venda.</p>
+            </header>
+            <div class="pix-box__content">
+              <div class="pix-box__qr" id="pdv-pix-qr" aria-label="QR Code PIX"></div>
+              <div class="pix-box__details">
+                <div class="pix-box__code" role="group" aria-label="Código PIX copia e cola">
+                  <code id="pdv-pix-code">—</code>
+                  <button class="btn btn--ghost btn--small" id="pdv-pix-copy" type="button">Copiar código</button>
+                </div>
+                <div class="pix-box__actions">
+                  <button class="btn btn--surface" id="pdv-pix-mark-paid" type="button">
+                    Marcar pagamento recebido
+                  </button>
+                </div>
+                <p class="pix-box__status" id="pdv-pix-status">Aguardando produtos no carrinho.</p>
+              </div>
+            </div>
+          </section>
+
           <button class="btn btn--primary btn--xl" id="pdv-finish" type="button" disabled>
             FINALIZAR VENDA (R$ 0,00)
           </button>
@@ -173,6 +200,34 @@
             <button class="btn btn--primary" type="submit">Salvar e usar na venda</button>
           </footer>
         </form>
+      </div>
+    </div>
+
+    <div class="pdv-modal" id="pdv-scanner-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="pdv-modal__content pdv-scanner__content">
+        <header class="pdv-modal__header">
+          <div class="pdv-scanner__header">
+            <h2>Escanear produto</h2>
+            <span class="pdv-scanner__badge" id="pdv-scanner-support">Leitor nativo</span>
+          </div>
+          <button class="pdv-modal__close" id="pdv-scanner-close" type="button" aria-label="Fechar">×</button>
+        </header>
+        <div class="pdv-scanner__body">
+          <div class="pdv-scanner__viewer">
+            <video id="pdv-scanner-video" class="pdv-scanner__video" playsinline muted></video>
+          </div>
+          <p class="pdv-scanner__status" id="pdv-scanner-status">Inicializando leitor...</p>
+          <form class="pdv-scanner__manual" id="pdv-scanner-manual">
+            <label class="form-field">
+              <span class="form-label">Código do produto</span>
+              <input id="pdv-scanner-input" type="text" autocomplete="off" placeholder="Ex.: BR-0001" />
+            </label>
+            <div class="pdv-scanner__actions">
+              <button class="btn btn--primary" type="submit">Adicionar ao carrinho</button>
+              <button class="btn btn--ghost" type="button" id="pdv-scanner-cancel">Cancelar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 

@@ -20,6 +20,8 @@ const formatPhone = (value) => {
   return value;
 };
 
+const normalizeProductCode = (code) => (code || '').toString().trim().toUpperCase();
+
 const demoCustomers = [
   {
     id: 'cli-0001',
@@ -88,6 +90,7 @@ const demoProducts = [
     price: 189.9,
     image:
       'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=60',
+    status: 'available',
   },
   {
     code: 'BR-0002',
@@ -97,6 +100,7 @@ const demoProducts = [
     price: 129.9,
     image:
       'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=60',
+    status: 'available',
   },
   {
     code: 'BR-0003',
@@ -106,6 +110,7 @@ const demoProducts = [
     price: 219.9,
     image:
       'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=400&q=60',
+    status: 'available',
   },
   {
     code: 'BR-0004',
@@ -115,6 +120,7 @@ const demoProducts = [
     price: 149.9,
     image:
       'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=400&q=60',
+    status: 'available',
   },
   {
     code: 'BR-0005',
@@ -124,6 +130,7 @@ const demoProducts = [
     price: 149.0,
     image:
       'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=400&q=60',
+    status: 'available',
   },
   {
     code: 'BR-0006',
@@ -133,8 +140,13 @@ const demoProducts = [
     price: 259.9,
     image:
       'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=60',
+    status: 'available',
   },
 ];
+
+const demoProductsMap = Object.fromEntries(
+  demoProducts.map((product) => [normalizeProductCode(product.code), product])
+);
 
 const demoStorefronts = {
   'brecho-da-ana': {
@@ -278,17 +290,26 @@ if (page === 'storefront') {
 
       galleryElement.innerHTML = '';
 
-      const filtered = products.filter((product) => {
-        const matchesCategory = selectedCategory === 'todos' || product.category === selectedCategory;
-        const matchesSize = selectedSize === 'todos' || product.size === selectedSize;
-        return matchesCategory && matchesSize;
-      });
+    const filtered = products.filter((product) => {
+      const matchesCategory = selectedCategory === 'todos' || product.category === selectedCategory;
+      const matchesSize = selectedSize === 'todos' || product.size === selectedSize;
+      const isAvailable = product.status !== 'sold';
+      return matchesCategory && matchesSize && isAvailable;
+    });
 
-      filtered.forEach((product) => {
-        const card = document.createElement('article');
-        card.className = 'product-card';
-        card.innerHTML = `
-          <img src="${product.image}" alt="${product.name}" loading="lazy" />
+    if (filtered.length === 0) {
+      const emptyState = document.createElement('p');
+      emptyState.className = 'storefront__empty';
+      emptyState.textContent = 'Nenhuma peça disponível com os filtros selecionados.';
+      galleryElement.appendChild(emptyState);
+      return;
+    }
+
+    filtered.forEach((product) => {
+      const card = document.createElement('article');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" loading="lazy" />
           <div class="product-card__body">
             <h3 class="product-card__title">${product.name}</h3>
             <div class="product-card__meta">
@@ -343,12 +364,297 @@ if (page === 'pdv') {
   const registerWhatsappInput = document.getElementById('pdv-register-whatsapp');
   const registerCloseButton = document.getElementById('pdv-register-close');
   const registerCancelButton = document.getElementById('pdv-register-cancel');
+  const scannerOpenButton = document.getElementById('pdv-open-scanner');
+  const scannerModal = document.getElementById('pdv-scanner-modal');
+  const scannerVideo = document.getElementById('pdv-scanner-video');
+  const scannerStatusElement = document.getElementById('pdv-scanner-status');
+  const scannerSupportBadge = document.getElementById('pdv-scanner-support');
+  const scannerCloseButton = document.getElementById('pdv-scanner-close');
+  const scannerCancelButton = document.getElementById('pdv-scanner-cancel');
+  const scannerManualForm = document.getElementById('pdv-scanner-manual');
+  const scannerManualInput = document.getElementById('pdv-scanner-input');
+  const pixBox = document.getElementById('pdv-pix-box');
+  const pixCodeElement = document.getElementById('pdv-pix-code');
+  const pixCopyButton = document.getElementById('pdv-pix-copy');
+  const pixMarkPaidButton = document.getElementById('pdv-pix-mark-paid');
+  const pixStatusElement = document.getElementById('pdv-pix-status');
+  const pixQrElement = document.getElementById('pdv-pix-qr');
 
   const cart = new Map();
   let selectedPayment = 'PIX';
   let selectedCustomer = null;
   let discountType = 'currency';
   let lastSaleSummary = null;
+  let pixPaymentStatus = 'pending';
+  let lastPixTotal = null;
+  let pixQrCodeInstance = null;
+  let pixStatusTimeout = null;
+  let pixQrLoaderPromise = null;
+  let saleCounter = 1;
+  let scannerStream = null;
+  let scannerActive = false;
+  let barcodeDetector = null;
+
+  const getSaleId = () => `PDV-${String(saleCounter).padStart(4, '0')}`;
+
+  const generatePixPayload = (total, saleId) => {
+    const amount = Number(total || 0).toFixed(2);
+    const numericId = saleId.replace(/\D/g, '').padStart(4, '0');
+    const amountLength = String(amount.length).padStart(2, '0');
+    return [
+      '000201',
+      '010212',
+      '26360014BR.GOV.BCB.PIX',
+      '0114pix@bipa.demo',
+      '52040000',
+      '5303986',
+      `54${amountLength}${amount}`,
+      '5802BR',
+      '5910BIPA DEMO',
+      '6009SAO PAULO',
+      `62180515SALE${numericId}`,
+      '6304BIPA',
+    ].join('');
+  };
+
+  const ensurePixQrCode = () => {
+    if (!pixQrElement) return null;
+    if (typeof QRCode === 'undefined') {
+      if (pixQrElement && pixQrElement.innerHTML.trim() === '') {
+        pixQrElement.innerHTML = '<span class="pix-box__fallback">Carregando QR Code...</span>';
+      }
+      if (!pixQrLoaderPromise) {
+        pixQrLoaderPromise = new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+          script.defer = true;
+          script.onload = () => resolve(true);
+          script.onerror = () => resolve(false);
+          document.head.appendChild(script);
+        }).then((loaded) => {
+          if (!loaded) {
+            console.warn('Biblioteca de QR Code indisponível.');
+            if (pixQrElement) {
+              pixQrElement.innerHTML = '<span class="pix-box__fallback">QR Code indisponível offline.</span>';
+            }
+            return null;
+          }
+          updatePixBox();
+          return pixQrCodeInstance;
+        });
+      }
+      return null;
+    }
+    if (!pixQrCodeInstance) {
+      pixQrElement.innerHTML = '';
+      pixQrCodeInstance = new QRCode(pixQrElement, {
+        width: 180,
+        height: 180,
+        correctLevel: QRCode.CorrectLevel.M,
+        text: '',
+      });
+    }
+    return pixQrCodeInstance;
+  };
+
+  const updatePixStatusUI = (messageOverride) => {
+    if (!pixStatusElement) return;
+    const hasItems = cart.size > 0;
+    const baseMessage = !hasItems
+      ? 'Aguardando produtos no carrinho.'
+      : pixPaymentStatus === 'paid'
+      ? 'Pagamento confirmado. Finalize a venda para registrar o recebimento.'
+      : 'Aguardando confirmação do PIX ou clique em “Marcar pagamento recebido”.';
+    const message = messageOverride || baseMessage;
+    pixStatusElement.textContent = message;
+    const shouldWarn = hasItems && selectedPayment === 'PIX' && pixPaymentStatus !== 'paid';
+    pixStatusElement.classList.toggle('pix-box__status--success', pixPaymentStatus === 'paid');
+    pixStatusElement.classList.toggle('pix-box__status--warning', shouldWarn);
+    if (pixMarkPaidButton) {
+      pixMarkPaidButton.disabled = pixPaymentStatus === 'paid';
+      pixMarkPaidButton.textContent = pixPaymentStatus === 'paid'
+        ? 'PIX confirmado'
+        : 'Marcar pagamento recebido';
+    }
+  };
+
+  const showPixTemporaryMessage = (message, duration = 3200) => {
+    updatePixStatusUI(message);
+    if (pixStatusTimeout) window.clearTimeout(pixStatusTimeout);
+    pixStatusTimeout = window.setTimeout(() => updatePixStatusUI(), duration);
+  };
+
+  const updatePixBox = (totals) => {
+    if (!pixBox) return;
+    const hasItems = cart.size > 0;
+    const { total } = totals || getTotals();
+    if (selectedPayment !== 'PIX' || !hasItems || total <= 0) {
+      pixBox.hidden = true;
+      if (!hasItems) {
+        pixPaymentStatus = 'pending';
+      }
+      updatePixStatusUI();
+      return;
+    }
+
+    const totalRounded = Number(total.toFixed(2));
+    const lastRounded = lastPixTotal == null ? null : Number(lastPixTotal.toFixed(2));
+    if (lastRounded === null || totalRounded !== lastRounded) {
+      pixPaymentStatus = 'pending';
+    }
+
+    pixBox.hidden = false;
+    const saleId = getSaleId();
+    const payload = generatePixPayload(total, saleId);
+    lastPixTotal = total;
+
+    if (pixCodeElement) pixCodeElement.textContent = payload;
+    const qr = ensurePixQrCode();
+    if (qr && typeof qr.makeCode === 'function') {
+      qr.makeCode(payload);
+    } else if (pixQrElement && !pixQrLoaderPromise) {
+      pixQrElement.innerHTML = '<span class="pix-box__fallback">Carregando QR Code...</span>';
+    }
+    updatePixStatusUI();
+  };
+
+  const markPixAsPaid = () => {
+    if (!cart.size) {
+      showPixTemporaryMessage('Adicione produtos para gerar o PIX.');
+      return;
+    }
+    pixPaymentStatus = 'paid';
+    updatePixStatusUI();
+    console.info(`✅ Pagamento PIX confirmado para ${getSaleId()}.`);
+  };
+
+  const copyPixCode = async () => {
+    if (!pixCodeElement) return;
+    const payload = (pixCodeElement.textContent || '').trim();
+    if (!payload || payload === '—') {
+      showPixTemporaryMessage('Nenhum código PIX disponível no momento.');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(payload);
+      showPixTemporaryMessage('Código PIX copiado para a área de transferência.');
+    } catch (error) {
+      console.warn('Não foi possível copiar automaticamente o PIX:', error);
+      showPixTemporaryMessage('Copie o código manualmente: seleção automática indisponível.', 4200);
+    }
+  };
+
+  const setScannerStatus = (message, tone = 'info') => {
+    if (!scannerStatusElement) return;
+    scannerStatusElement.textContent = message;
+    scannerStatusElement.classList.remove('is-success', 'is-error');
+    if (tone === 'success') scannerStatusElement.classList.add('is-success');
+    if (tone === 'error') scannerStatusElement.classList.add('is-error');
+  };
+
+  const stopScanner = () => {
+    scannerActive = false;
+    if (scannerStream) {
+      scannerStream.getTracks().forEach((track) => track.stop());
+      scannerStream = null;
+    }
+    if (scannerVideo) {
+      scannerVideo.pause();
+      scannerVideo.srcObject = null;
+    }
+  };
+
+  const closeScanner = () => {
+    if (!scannerModal) return;
+    stopScanner();
+    scannerModal.classList.remove('is-visible');
+    scannerModal.setAttribute('aria-hidden', 'true');
+  };
+
+  const handleScannedProduct = (rawCode) => {
+    const normalizedCode = normalizeProductCode(rawCode);
+    if (!normalizedCode) {
+      setScannerStatus('Código inválido. Tente novamente ou digite manualmente.', 'error');
+      return;
+    }
+    const product = demoProductsMap[normalizedCode];
+    if (!product) {
+      setScannerStatus(`Produto ${normalizedCode} não encontrado nesta vitrine.`, 'error');
+      return;
+    }
+    if (product.status === 'sold') {
+      setScannerStatus('Esta peça já foi vendida. Escolha outra peça disponível.', 'error');
+      return;
+    }
+    if (cart.has(product.code)) {
+      setScannerStatus('Este produto já está no carrinho atual.', 'error');
+      return;
+    }
+    addToCart(product);
+    setScannerStatus(`${product.name} adicionada ao carrinho.`, 'success');
+    window.setTimeout(() => closeScanner(), 650);
+  };
+
+  const detectScannerFrame = async () => {
+    if (!scannerActive || !barcodeDetector || !scannerVideo) return;
+    try {
+      const barcodes = await barcodeDetector.detect(scannerVideo);
+      if (barcodes.length > 0) {
+        const [first] = barcodes;
+        const rawValue = first.rawValue ?? '';
+        const fallbackValue = rawValue || (first.rawData ? String(first.rawData) : '');
+        stopScanner();
+        handleScannedProduct(fallbackValue);
+        return;
+      }
+    } catch (error) {
+      console.warn('Erro ao detectar código de barras:', error);
+      setScannerStatus('Erro ao ler o código. Digite manualmente ou tente novamente.', 'error');
+      stopScanner();
+      return;
+    }
+    if (scannerActive) window.requestAnimationFrame(detectScannerFrame);
+  };
+
+  const openScanner = async () => {
+    if (!scannerModal) return;
+    scannerModal.classList.add('is-visible');
+    scannerModal.setAttribute('aria-hidden', 'false');
+    if (scannerManualInput) {
+      scannerManualInput.value = '';
+    }
+
+    const supportsBarcodeDetector = 'BarcodeDetector' in window;
+    if (scannerSupportBadge) {
+      scannerSupportBadge.textContent = supportsBarcodeDetector
+        ? 'Leitor nativo ativo'
+        : 'Leitor manual';
+      scannerSupportBadge.classList.toggle('is-warning', !supportsBarcodeDetector);
+    }
+
+    if (!supportsBarcodeDetector || !navigator.mediaDevices?.getUserMedia) {
+      setScannerStatus('Leitor nativo indisponível. Utilize o campo abaixo para digitar o código.', 'error');
+      if (scannerManualInput) scannerManualInput.focus();
+      return;
+    }
+
+    try {
+      barcodeDetector = new window.BarcodeDetector({ formats: ['code_128', 'ean_13', 'qr_code', 'code_39'] });
+      scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      if (scannerVideo) {
+        scannerVideo.srcObject = scannerStream;
+        await scannerVideo.play();
+      }
+      scannerActive = true;
+      setScannerStatus('Aponte a câmera para o código de barras da peça.');
+      window.requestAnimationFrame(detectScannerFrame);
+    } catch (error) {
+      console.warn('Não foi possível iniciar o scanner nativo:', error);
+      setScannerStatus('Erro ao acessar a câmera. Digite o código manualmente.', 'error');
+      stopScanner();
+      if (scannerManualInput) scannerManualInput.focus();
+    }
+  };
 
   const clearClientSuggestions = () => {
     if (!clientResultsElement) return;
@@ -469,12 +775,22 @@ if (page === 'pdv') {
     productListElement.innerHTML = '';
 
     const filtered = demoProducts.filter((product) => {
+      if (product.status === 'sold') return false;
       if (!normalizedQuery) return true;
       return (
         product.name.toLowerCase().includes(normalizedQuery) ||
         product.code.toLowerCase().includes(normalizedQuery)
       );
     });
+
+    if (filtered.length === 0) {
+      const emptyState = document.createElement('li');
+      emptyState.className = 'pdv-empty';
+      emptyState.textContent = 'Nenhum produto disponível. Verifique o estoque ou remova filtros.';
+      emptyState.setAttribute('role', 'status');
+      productListElement.appendChild(emptyState);
+      return;
+    }
 
     filtered.forEach((product) => {
       const item = document.createElement('li');
@@ -493,6 +809,10 @@ if (page === 'pdv') {
   };
 
   const addToCart = (product) => {
+    if (product.status === 'sold') {
+      alert('Este produto já foi vendido. Atualize o estoque para disponibilizar novas peças.');
+      return;
+    }
     if (cart.has(product.code)) return;
     cart.set(product.code, { ...product });
     renderCart();
@@ -572,14 +892,15 @@ if (page === 'pdv') {
     if (totalDiscountElement) totalDiscountElement.textContent = formatCurrency(totalDiscount);
     if (totalElement) totalElement.textContent = formatCurrency(total);
     updateFinishButton(total, cart.size > 0);
+    updatePixBox({ subtotal, totalDiscount, total });
   };
 
   const updatePaymentContext = () => {
     if (!paymentContextElement) return;
     const lines = {
       PIX: [
-        'Use a chave PIX <strong>pix@bipa.demo</strong> para receber o pagamento.',
-        'Confirme o recebimento antes de finalizar a venda.',
+        'Compartilhe o QR Code ou o código copia e cola gerado abaixo.',
+        'Após a confirmação, clique em “Marcar pagamento recebido” antes de finalizar.',
       ],
       Dinheiro: ['Receba o valor em espécie e informe o troco se necessário.'],
       Cartão: ['Passe o cartão no POS e confirme a aprovação da operadora.'],
@@ -629,6 +950,14 @@ if (page === 'pdv') {
       button.classList.toggle('is-active', isActive);
     });
     updatePaymentContext();
+    if (method !== 'PIX') {
+      pixPaymentStatus = 'pending';
+      if (pixStatusTimeout) {
+        window.clearTimeout(pixStatusTimeout);
+        pixStatusTimeout = null;
+      }
+    }
+    updatePixBox();
   };
 
   const openRegisterModal = () => {
@@ -659,13 +988,25 @@ if (page === 'pdv') {
     const customerSummary = selectedCustomer
       ? { id: selectedCustomer.id, name: selectedCustomer.name, phone: selectedCustomer.phoneLabel }
       : { id: null, name: 'Cliente Avulso', phone: null };
+    const saleId = getSaleId();
+    const saleStatus = (() => {
+      if (selectedPayment === 'PIX') {
+        return pixPaymentStatus === 'paid' ? 'paid' : 'pending';
+      }
+      if (selectedPayment === 'Fiado') {
+        return 'pending';
+      }
+      return 'paid';
+    })();
 
     window.setTimeout(() => {
       console.groupCollapsed('📦 Nova venda registrada');
+      console.log('Venda ID:', saleId);
       console.log('Cliente ID:', customerSummary.id || 'Avulso');
       console.log('Cliente:', customerSummary.name);
       if (customerSummary.phone) console.log('WhatsApp:', customerSummary.phone);
       console.log('Forma de pagamento:', selectedPayment);
+      console.log('Status da venda:', saleStatus);
       console.log('Subtotal:', formatCurrency(totals.subtotal));
       console.log('Desconto aplicado:', formatCurrency(totals.totalDiscount));
       console.log('Total final:', formatCurrency(totals.total));
@@ -682,20 +1023,41 @@ if (page === 'pdv') {
         total: totals.total,
         customer: customerSummary.name,
         payment: selectedPayment,
+        status: saleStatus,
+        saleId,
       };
 
       if (successTotalElement) {
-        successTotalElement.textContent = `Total da venda: ${formatCurrency(totals.total)}`;
+        const statusLabel = saleStatus === 'paid' ? 'Pago' : 'Pendente';
+        successTotalElement.textContent = `Venda ${saleId} · Total: ${formatCurrency(totals.total)} (${statusLabel})`;
       }
+
+      items.forEach((item) => {
+        const normalized = normalizeProductCode(item.code);
+        const product = demoProductsMap[normalized];
+        if (product) {
+          product.status = 'sold';
+          console.log(`Estoque: ${product.code} marcado como sold e removido da vitrine.`);
+        }
+      });
 
       cart.clear();
       renderCart();
+      renderProducts(searchInput?.value || '');
       if (discountInput) discountInput.value = '0';
       clearCustomerSelection();
+      pixPaymentStatus = 'pending';
+      lastPixTotal = null;
+      if (pixStatusTimeout) {
+        window.clearTimeout(pixStatusTimeout);
+        pixStatusTimeout = null;
+      }
       setPayment('PIX');
+      saleCounter += 1;
 
       finishButton.dataset.loading = 'false';
       updateTotals();
+      updatePixStatusUI();
 
       if (mainShell) mainShell.hidden = true;
       if (successSection) successSection.hidden = false;
@@ -711,9 +1073,17 @@ if (page === 'pdv') {
       finishButton.dataset.loading = 'false';
     }
     clearCustomerSelection();
+    pixPaymentStatus = 'pending';
+    lastPixTotal = null;
+    if (pixStatusTimeout) {
+      window.clearTimeout(pixStatusTimeout);
+      pixStatusTimeout = null;
+    }
     setPayment('PIX');
     if (discountInput) discountInput.value = '0';
+    renderProducts(searchInput?.value || '');
     updateTotals();
+    updatePixStatusUI();
   };
 
   if (searchInput) {
@@ -770,6 +1140,43 @@ if (page === 'pdv') {
     button.addEventListener('click', () => setPayment(button.dataset.payment || 'PIX'));
   });
 
+  if (pixCopyButton) {
+    pixCopyButton.addEventListener('click', copyPixCode);
+  }
+
+  if (pixMarkPaidButton) {
+    pixMarkPaidButton.addEventListener('click', markPixAsPaid);
+  }
+
+  if (scannerOpenButton) {
+    scannerOpenButton.addEventListener('click', () => {
+      openScanner();
+    });
+  }
+
+  if (scannerCloseButton) scannerCloseButton.addEventListener('click', closeScanner);
+  if (scannerCancelButton) scannerCancelButton.addEventListener('click', closeScanner);
+
+  if (scannerManualForm) {
+    scannerManualForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = scannerManualInput?.value || '';
+      handleScannedProduct(value);
+      if (scannerManualInput) scannerManualInput.focus();
+    });
+  }
+
+  if (scannerModal) {
+    scannerModal.addEventListener('click', (event) => {
+      if (event.target === scannerModal) closeScanner();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && scannerModal.classList.contains('is-visible')) {
+        closeScanner();
+      }
+    });
+  }
+
   if (finishButton) {
     finishButton.addEventListener('click', finalizeSale);
   }
@@ -784,9 +1191,10 @@ if (page === 'pdv') {
         alert('Finalize uma venda para enviar o recibo pelo WhatsApp.');
         return;
       }
-      const message = `Oi! Aqui está o resumo da sua compra no BIPA: ${formatCurrency(
+      const statusLabel = lastSaleSummary.status === 'paid' ? 'Pago' : 'Pendente';
+      const message = `Oi! Aqui está o resumo da sua compra no BIPA: venda ${lastSaleSummary.saleId} · ${formatCurrency(
         lastSaleSummary.total
-      )} • Pagamento: ${lastSaleSummary.payment}.`; 
+      )} • Pagamento: ${lastSaleSummary.payment} (${statusLabel}).`;
       const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(url, '_blank', 'noopener');
     });
