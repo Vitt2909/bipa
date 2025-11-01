@@ -638,18 +638,22 @@ if (reportsRoleSelect) {
     ['payment', 'seller', 'channel', 'consigned'].forEach((key) => {
       const menu = reportElements.filterMenus[key];
       if (!menu) return;
+      const closeMenu = () => {
+        const details = menu.closest('details');
+        if (details) details.open = false;
+      };
       menu.addEventListener('click', (event) => {
         const target = event.target.closest('.chip-option');
         if (!target) return;
         const value = target.dataset.value;
         if (!value || reportState.filters[key] === value) {
-          menu.closest('details')?.open = false;
+          closeMenu();
           return;
         }
         reportState.filters[key] = value;
         updateFilterLabels();
         syncMenuState();
-        menu.closest('details')?.open = false;
+        closeMenu();
         renderReports();
       });
     });
