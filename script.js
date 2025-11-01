@@ -307,6 +307,158 @@ const page = body.dataset.page;
 
 const formatCustomerOption = (customer) => `${customer.name} · ${customer.phoneLabel}`;
 
+// --------- Create store ---------
+if (page === 'create-store') {
+  const form = document.querySelector('.auth-form');
+  const statusElement = document.getElementById('create-store-status');
+  const submitButton = form?.querySelector('[type="submit"]');
+  const requiredInputs = form ? Array.from(form.querySelectorAll('input[required]')) : [];
+  const phoneInput = form?.querySelector('input[name="owner-phone"]');
+
+  const statusVariants = ['auth-form__status--error', 'auth-form__status--success', 'auth-form__status--info'];
+
+  const getFieldLabel = (input) => {
+    const field = input.closest('.form-field');
+    const label = field?.querySelector('.form-label');
+    return label?.textContent?.trim() || input.name;
+  };
+
+  const setFieldError = (input, message) => {
+    const field = input.closest('.form-field');
+    const feedback = field?.querySelector('.form-field__feedback');
+    const hasError = Boolean(message);
+    field?.classList.toggle('form-field--error', hasError);
+    if (hasError) {
+      input.setAttribute('aria-invalid', 'true');
+    } else {
+      input.removeAttribute('aria-invalid');
+    }
+    if (feedback) {
+      feedback.textContent = message || '';
+      feedback.hidden = !hasError;
+    }
+  };
+
+  const showStatus = (message, variant) => {
+    if (!statusElement) return;
+    statusVariants.forEach((className) => statusElement.classList.remove(className));
+    if (!message) {
+      statusElement.hidden = true;
+      statusElement.textContent = '';
+      return;
+    }
+    statusElement.hidden = false;
+    if (variant && statusVariants.includes(`auth-form__status--${variant}`)) {
+      statusElement.classList.add(`auth-form__status--${variant}`);
+    }
+    statusElement.textContent = message;
+  };
+
+  const validateInput = (input) => {
+    const value = input.value.trim();
+    const label = getFieldLabel(input);
+    if (!value) {
+      return `Preencha o campo "${label}".`;
+    }
+    if (input.type === 'email') {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!emailPattern.test(value.toLowerCase())) {
+        return 'Informe um email válido.';
+      }
+    }
+    if (input.type === 'tel') {
+      const digits = value.replace(/\D/g, '');
+      if (digits.length < 10 || digits.length > 11) {
+        return 'Informe um telefone com DDD (10 ou 11 dígitos).';
+      }
+    }
+    return '';
+  };
+
+  const handleInputValidation = (input) => {
+    const message = validateInput(input);
+    setFieldError(input, message);
+    return message;
+  };
+
+  if (phoneInput) {
+    phoneInput.addEventListener('blur', () => {
+      const digits = phoneInput.value.replace(/\D/g, '');
+      if (digits.length >= 10 && digits.length <= 11) {
+        phoneInput.value = formatPhone(digits);
+      }
+    });
+  }
+
+  requiredInputs.forEach((input) => {
+    input.addEventListener('blur', () => handleInputValidation(input));
+    input.addEventListener('input', () => {
+      if (input.getAttribute('aria-invalid') === 'true') {
+        handleInputValidation(input);
+      }
+      if (statusElement && statusElement.classList.contains('auth-form__status--error')) {
+        showStatus('', null);
+      }
+    });
+  });
+
+  if (form) {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      let firstInvalid = null;
+      const errors = requiredInputs
+        .map((input) => {
+          const errorMessage = handleInputValidation(input);
+          if (errorMessage && !firstInvalid) firstInvalid = input;
+          return errorMessage;
+        })
+        .filter(Boolean);
+
+      if (errors.length) {
+        showStatus('Revise os campos destacados antes de enviar.', 'error');
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.dataset.loading = 'true';
+        submitButton.textContent = 'Enviando...';
+      }
+      showStatus('Enviando pedido de criação...', 'info');
+
+      const formData = new FormData(form);
+      const storeName = (formData.get('store-name') || '').toString().trim();
+      const ownerName = (formData.get('owner-name') || '').toString().trim();
+      const ownerEmail = (formData.get('owner-email') || '').toString().trim();
+      const ownerPhone = (formData.get('owner-phone') || '').toString().trim();
+      const segment = (formData.get('segment') || '').toString().trim();
+      const formattedPhone = formatPhone(ownerPhone);
+
+      window.setTimeout(() => {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.dataset.loading = 'false';
+          submitButton.textContent = 'Solicitar criação';
+        }
+        form.reset();
+        requiredInputs.forEach((input) => setFieldError(input, ''));
+        const segmentNote = segment ? ` do segmento ${segment}` : '';
+        const phoneLabel = formattedPhone || ownerPhone;
+        showStatus(
+          `Recebemos o pedido da loja ${storeName}${segmentNote}. ${ownerName}, entraremos em contato pelo ${
+            phoneLabel || 'telefone informado'
+          } e enviaremos as instruções para ${ownerEmail}.`,
+          'success'
+        );
+        if (requiredInputs[0]) {
+          requiredInputs[0].focus();
+        }
+      }, 800);
+    });
+  }
+}
+
 // --------- Login ---------
 if (page === 'login') {
   const form = document.querySelector('.auth-form');

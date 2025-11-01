@@ -23,33 +23,73 @@
           </p>
         </div>
 
-        <form class="auth-form" aria-describedby="create-store-hint">
+        <form class="auth-form" aria-describedby="create-store-hint" novalidate>
           <label class="form-field">
-            <span class="form-label">Nome da loja</span>
-            <input type="text" name="store-name" placeholder="Ex.: Brechó Verde" required />
+            <span class="form-label" id="field-store-name-label">Nome da loja</span>
+            <input
+              id="field-store-name"
+              type="text"
+              name="store-name"
+              placeholder="Ex.: Brechó Verde"
+              aria-labelledby="field-store-name-label"
+              required
+            />
+            <span class="form-field__feedback" id="field-store-name-feedback" aria-live="polite" hidden></span>
           </label>
 
           <label class="form-field">
-            <span class="form-label">Responsável</span>
-            <input type="text" name="owner-name" placeholder="Seu nome completo" required />
+            <span class="form-label" id="field-owner-name-label">Responsável</span>
+            <input
+              id="field-owner-name"
+              type="text"
+              name="owner-name"
+              placeholder="Seu nome completo"
+              aria-labelledby="field-owner-name-label"
+              required
+            />
+            <span class="form-field__feedback" id="field-owner-name-feedback" aria-live="polite" hidden></span>
           </label>
 
           <label class="form-field">
-            <span class="form-label">Email de contato</span>
-            <input type="email" name="owner-email" placeholder="contato@sualoja.com" required />
+            <span class="form-label" id="field-owner-email-label">Email de contato</span>
+            <input
+              id="field-owner-email"
+              type="email"
+              name="owner-email"
+              placeholder="contato@sualoja.com"
+              aria-labelledby="field-owner-email-label"
+              required
+            />
+            <span class="form-field__feedback" id="field-owner-email-feedback" aria-live="polite" hidden></span>
           </label>
 
           <label class="form-field">
-            <span class="form-label">Telefone ou WhatsApp</span>
-            <input type="tel" name="owner-phone" placeholder="(00) 00000-0000" required />
+            <span class="form-label" id="field-owner-phone-label">Telefone ou WhatsApp</span>
+            <input
+              id="field-owner-phone"
+              type="tel"
+              name="owner-phone"
+              placeholder="(00) 00000-0000"
+              aria-labelledby="field-owner-phone-label"
+              inputmode="tel"
+              required
+            />
+            <span class="form-field__feedback" id="field-owner-phone-feedback" aria-live="polite" hidden></span>
           </label>
 
           <label class="form-field">
-            <span class="form-label">Segmento</span>
-            <input type="text" name="segment" placeholder="Ex.: Brechó, moda autoral, acessórios" />
+            <span class="form-label" id="field-segment-label">Segmento</span>
+            <input
+              id="field-segment"
+              type="text"
+              name="segment"
+              placeholder="Ex.: Brechó, moda autoral, acessórios"
+              aria-labelledby="field-segment-label"
+            />
           </label>
 
-          <button class="btn btn--primary" type="submit">Solicitar criação</button>
+          <button class="btn btn--primary" type="submit" data-loading="false">Solicitar criação</button>
+          <div class="auth-form__status" id="create-store-status" role="status" aria-live="polite" hidden></div>
         </form>
 
         <p class="auth-card__hint" id="create-store-hint">
