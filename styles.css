@@ -330,6 +330,111 @@ body[data-appearance='light'] .site-header__link {
   }
 }
 
+@media (max-width: 540px) {
+  .site-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.9rem 1rem 1rem;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .site-header__brand {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .site-header__brand-text {
+    align-items: center;
+  }
+
+  .site-header__tagline {
+    display: none;
+  }
+
+  .site-header__nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .site-header__link {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    border-radius: 12px;
+    background: rgba(16, 35, 24, 0.55);
+    color: var(--color-heading);
+    text-align: center;
+  }
+
+  body[data-appearance='light'] .site-header__link {
+    background: rgba(230, 244, 236, 0.9);
+    color: var(--color-muted);
+  }
+
+  .theme-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .public-shell {
+    padding: 1.5rem 1rem 2.25rem;
+    gap: 1.5rem;
+  }
+
+  .auth-layout {
+    gap: 1.5rem;
+  }
+
+  .auth-card,
+  .auth-insight {
+    border-radius: 24px;
+    padding: 1.75rem 1.35rem;
+    gap: 1.5rem;
+  }
+
+  .auth-card__title {
+    font-size: 1.5rem;
+  }
+
+  .auth-card__subtitle {
+    font-size: 0.95rem;
+  }
+
+  .auth-card__hint,
+  .auth-card__meta-list {
+    font-size: 0.9rem;
+  }
+
+  .auth-insight__hero h2 {
+    font-size: 1.35rem;
+  }
+
+  .auth-insight__glimpse {
+    display: grid;
+  }
+
+  .insight-preview {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .auth-insight__steps {
+    font-size: 0.9rem;
+  }
+
+  .brand-mark {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 14px;
+  }
+
+  .brand-mark--large {
+    width: 3.75rem;
+    height: 3.75rem;
+  }
+}
+
 .brand-mark {
   display: inline-flex;
   align-items: center;
@@ -1876,6 +1981,8 @@ body[data-appearance='light'] .site-header__link {
 @media (max-width: 720px) {
   .public-shell {
     padding: 1.75rem 1.25rem 2.5rem;
+    align-items: flex-start;
+    min-height: auto;
   }
 
   .auth-card {
