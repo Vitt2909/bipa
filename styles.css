@@ -1736,6 +1736,38 @@ button {
   gap: 1rem;
 }
 
+.auth-form__status {
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+  background: rgba(9, 18, 13, 0.85);
+  border: 1px solid rgba(149, 179, 163, 0.25);
+  color: var(--color-heading);
+  transition: opacity 160ms ease;
+}
+
+.auth-form__status[hidden] {
+  opacity: 0;
+}
+
+.auth-form__status--success {
+  border-color: rgba(50, 255, 180, 0.4);
+  background: rgba(30, 243, 155, 0.12);
+  color: var(--color-success);
+}
+
+.auth-form__status--error {
+  border-color: rgba(251, 113, 133, 0.6);
+  background: rgba(251, 113, 133, 0.12);
+  color: var(--color-danger);
+}
+
+.auth-form__status--info {
+  border-color: rgba(149, 179, 163, 0.35);
+  background: rgba(9, 18, 13, 0.85);
+  color: var(--color-muted);
+}
+
 .auth-form__hint {
   font-size: 0.875rem;
   color: var(--color-muted);
@@ -1752,6 +1784,10 @@ button {
 .form-field {
   display: grid;
   gap: 0.4rem;
+}
+
+.form-field--error .form-label {
+  color: var(--color-danger);
 }
 
 .form-label {
@@ -1771,6 +1807,13 @@ button {
   background: rgba(9, 18, 13, 0.85);
   color: var(--color-heading);
   transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.form-field--error input,
+.form-field--error select,
+.form-field--error textarea {
+  border-color: rgba(251, 113, 133, 0.75);
+  box-shadow: 0 0 0 2px rgba(251, 113, 133, 0.25);
 }
 
 .form-field input::placeholder,
@@ -1796,6 +1839,16 @@ body[data-theme='workspace'] .form-field textarea {
   border: 1px solid var(--workspace-border);
   background: rgba(11, 21, 16, 0.6);
   color: var(--workspace-heading);
+}
+
+.form-field__feedback {
+  font-size: 0.8rem;
+  color: var(--color-danger);
+  min-height: 0.75rem;
+}
+
+.form-field__feedback[hidden] {
+  display: none;
 }
 
 body[data-theme='workspace'] .form-field input::placeholder,
