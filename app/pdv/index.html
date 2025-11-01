@@ -216,6 +216,112 @@
       </div>
     </section>
 
+    <div class="pdv-modal" id="pdv-card-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="pdv-modal__content pdv-card-modal">
+        <header class="pdv-modal__header pdv-card-modal__header">
+          <div>
+            <p class="pdv-card-modal__total-label" id="pdv-card-total-label">Total da venda</p>
+            <p class="pdv-card-modal__total-value" id="pdv-card-total">R$ 0,00</p>
+          </div>
+          <button class="pdv-modal__close" id="pdv-card-close" type="button" aria-label="Fechar">×</button>
+        </header>
+
+        <div class="pdv-modal__body pdv-card-modal__body">
+          <section class="card-gateway__step">
+            <h3 class="card-gateway__step-title">Tipo de transação</h3>
+            <div class="card-gateway__choices" role="group" aria-label="Tipo de transação">
+              <button class="card-gateway__choice is-active" data-card-transaction="debit" type="button">Débito</button>
+              <button class="card-gateway__choice" data-card-transaction="credit" type="button">Crédito</button>
+            </div>
+          </section>
+
+          <section class="card-gateway__step" id="pdv-card-installments-section" hidden>
+            <h3 class="card-gateway__step-title">Parcelamento</h3>
+            <div
+              class="card-gateway__installments"
+              id="pdv-card-installments"
+              role="listbox"
+              aria-label="Opções de parcelamento"
+            ></div>
+          </section>
+
+          <section class="card-gateway__step">
+            <div class="card-gateway__step-header">
+              <h3 class="card-gateway__step-title">Gestão de taxas</h3>
+              <label class="card-gateway__switch" for="pdv-card-pass-fees">
+                <input class="card-gateway__switch-input" type="checkbox" id="pdv-card-pass-fees" />
+                <span class="card-gateway__switch-slider" aria-hidden="true"></span>
+                <span class="card-gateway__switch-label" id="pdv-card-pass-fees-label"
+                  >Repassar taxas da transação ao cliente</span
+                >
+              </label>
+            </div>
+            <p class="card-gateway__summary" id="pdv-card-fee-summary">Lojista absorve as taxas desta venda.</p>
+          </section>
+
+          <section class="card-gateway__step">
+            <h3 class="card-gateway__step-title">Como receber o pagamento</h3>
+            <div class="card-gateway__methods" role="group" aria-label="Método de pagamento">
+              <button class="card-gateway__method" data-card-method="nfc" type="button">
+                <span class="card-gateway__method-icon" aria-hidden="true">📶</span>
+                <span>Aproxime o cartão (NFC)</span>
+              </button>
+              <button class="card-gateway__method" data-card-method="manual" type="button">
+                <span class="card-gateway__method-icon" aria-hidden="true">💳</span>
+                <span>Digitar dados do cartão</span>
+              </button>
+              <button class="card-gateway__method" data-card-method="external" type="button">
+                <span class="card-gateway__method-icon" aria-hidden="true">🖱️</span>
+                <span>Usar maquininha externa</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="card-gateway__feedback" id="pdv-card-feedback" hidden>
+            <div class="card-gateway__feedback-view" data-card-feedback="nfc" hidden>
+              <div class="card-gateway__nfc">
+                <div class="card-gateway__nfc-visual" aria-hidden="true"></div>
+                <p class="card-gateway__nfc-title">Aproxime o cartão, celular ou relógio</p>
+                <p class="card-gateway__nfc-status">
+                  Aguardando pagamento de <strong id="pdv-card-nfc-total">R$ 0,00</strong>...
+                </p>
+              </div>
+            </div>
+
+            <form class="card-gateway__feedback-view card-gateway__manual" data-card-feedback="manual" id="pdv-card-manual" hidden>
+              <div class="form-field">
+                <span class="form-label">Número do cartão</span>
+                <input id="pdv-card-number" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" required />
+              </div>
+              <div class="form-field">
+                <span class="form-label">Nome impresso</span>
+                <input id="pdv-card-name" type="text" autocomplete="cc-name" placeholder="Nome completo" required />
+              </div>
+              <div class="card-gateway__manual-row">
+                <label class="form-field">
+                  <span class="form-label">Validade</span>
+                  <input id="pdv-card-expiry" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" required />
+                </label>
+                <label class="form-field">
+                  <span class="form-label">CVV</span>
+                  <input id="pdv-card-cvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="000" required />
+                </label>
+              </div>
+              <button class="btn btn--primary" id="pdv-card-manual-submit" type="submit">Pagar R$ 0,00</button>
+              <p class="card-gateway__manual-status" id="pdv-card-manual-status"></p>
+            </form>
+
+            <div class="card-gateway__feedback-view card-gateway__external" data-card-feedback="external" hidden>
+              <p>Registre o pagamento na maquininha externa e confirme no PDV.</p>
+              <p>
+                Valor a registrar: <strong id="pdv-card-external-total">R$ 0,00</strong>. Informe a autorização antes de concluir a venda.
+              </p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
     <div class="pdv-modal" id="pdv-register-modal" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="pdv-modal__content">
         <header class="pdv-modal__header">

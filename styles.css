@@ -3405,6 +3405,317 @@ body[data-appearance='light'] .insight-preview {
   gap: 0.75rem;
 }
 
+.pdv-card-modal {
+  width: min(680px, 100%);
+  padding: clamp(1.5rem, 3vw, 2rem);
+  gap: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.pdv-card-modal__header {
+  align-items: flex-start;
+}
+
+.pdv-card-modal__total-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.pdv-card-modal__total-value {
+  margin: 0.15rem 0 0;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+}
+
+.pdv-card-modal__body {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.card-gateway__step {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.card-gateway__step-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.card-gateway__step-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.card-gateway__choices {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.card-gateway__choice {
+  border: 1px solid rgba(7, 17, 11, 0.12);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  font-weight: 600;
+  transition: border-color 150ms ease, box-shadow 150ms ease, color 150ms ease;
+}
+
+.card-gateway__choice:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+  color: var(--color-primary);
+}
+
+.card-gateway__choice.is-active {
+  border-color: rgba(37, 99, 235, 0.8);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+}
+
+.card-gateway__installments {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.card-gateway__installment {
+  border: 1px solid rgba(7, 17, 11, 0.12);
+  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.card-gateway__installment:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+}
+
+.card-gateway__installment.is-active {
+  border-color: rgba(37, 99, 235, 0.8);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.card-gateway__installment strong {
+  font-size: 1rem;
+}
+
+.card-gateway__installment span {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.card-gateway__installment-main {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.card-gateway__installment-total {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.card-gateway__switch {
+  display: grid;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.card-gateway__switch-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-gateway__switch-slider {
+  width: 52px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(7, 17, 11, 0.16);
+  position: relative;
+  transition: background 150ms ease;
+}
+
+.card-gateway__switch-slider::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(7, 17, 11, 0.25);
+  transition: transform 150ms ease;
+}
+
+.card-gateway__switch-input:checked + .card-gateway__switch-slider {
+  background: rgba(37, 99, 235, 0.4);
+}
+
+.card-gateway__switch-input:checked + .card-gateway__switch-slider::after {
+  transform: translateX(22px);
+}
+
+.card-gateway__switch-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.card-gateway__summary {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.card-gateway__methods {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.card-gateway__method {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(7, 17, 11, 0.12);
+  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  font-weight: 600;
+  text-align: left;
+  background: #fff;
+  transition: border-color 150ms ease, box-shadow 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.card-gateway__method:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.card-gateway__method.is-active {
+  border-color: rgba(37, 99, 235, 0.8);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+}
+
+.card-gateway__method-icon {
+  font-size: 1.25rem;
+}
+
+.card-gateway__feedback {
+  border-radius: 20px;
+  background: rgba(7, 17, 11, 0.04);
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.card-gateway__feedback-view[hidden] {
+  display: none !important;
+}
+
+.card-gateway__nfc {
+  display: grid;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.card-gateway__nfc-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.card-gateway__nfc-status {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.card-gateway__nfc-visual {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 3px solid rgba(37, 99, 235, 0.25);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.card-gateway__nfc-visual::after,
+.card-gateway__nfc-visual::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 2px dashed rgba(37, 99, 235, 0.35);
+  animation: card-nfc-pulse 1.8s linear infinite;
+}
+
+.card-gateway__nfc-visual::after {
+  inset: 18px;
+  animation-delay: 0.6s;
+}
+
+@keyframes card-nfc-pulse {
+  0% {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(0.96);
+  }
+}
+
+.card-gateway__manual {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.card-gateway__manual-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.card-gateway__manual-status {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.card-gateway__external {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--color-muted);
+}
+
+.card-gateway__external strong {
+  color: var(--color-heading);
+}
+
+.card-gateway__methods button:disabled,
+.card-gateway__choice:disabled,
+.card-gateway__installments button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .pdv-scanner__actions {
   display: flex;
   justify-content: flex-end;
@@ -3969,6 +4280,18 @@ body[data-theme='workspace'] .page-subtitle {
 
   .pdv-column {
     min-height: auto;
+  }
+
+  .card-gateway__choices {
+    grid-auto-flow: row;
+  }
+
+  .card-gateway__methods {
+    grid-auto-flow: row;
+  }
+
+  .card-gateway__feedback {
+    padding: 1rem;
   }
 
   .pix-box {
