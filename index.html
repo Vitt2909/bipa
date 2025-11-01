@@ -21,135 +21,93 @@
         </a>
         <nav class="site-nav" aria-label="Navegação principal">
           <a href="index.html" aria-current="page">Visão geral</a>
-          <a href="fluxos.html">Fluxos</a>
+          <a href="fluxos.html">Simulador de fluxos</a>
           <a href="relatorios.html">Relatórios</a>
-          <a href="github.html">Roadmap</a>
-          <a href="demo.html">Demo</a>
+          <a href="demo.html">Demo viva</a>
         </nav>
         <div class="site-actions">
-          <a class="btn btn--ghost btn--small" href="login.html">Área do cliente</a>
-          <a class="btn btn--primary btn--small" href="contato.html">Falar com vendas</a>
+          <a class="btn btn--ghost btn--small" href="login.html">Entrar no workspace</a>
         </div>
       </div>
     </header>
 
     <main class="site-main">
-      <section class="site-hero">
-        <div class="site-hero__headline">
-          <span class="site-hero__eyebrow">Experiência verde, operação ágil</span>
-          <h1 class="site-hero__title">PDV inteligente e sustentável para brechós que respiram moda circular.</h1>
-          <p class="site-hero__subtitle">
-            Centralize vendas, estoque, clientes e relatórios em um ecossistema desenhado para lojas autorais. Interface mobile-first,
-            dados fictícios para testar e integrações prontas quando quiser escalar.
+      <section class="home-intro" aria-labelledby="home-title">
+        <div class="home-intro__copy">
+          <p class="home-intro__eyebrow">MVP demonstrativo</p>
+          <h1 class="home-intro__title" id="home-title">Teste o BIPA com dados fictícios em minutos.</h1>
+          <p class="home-intro__lead">
+            Cadastre peças, finalize vendas rápidas, acompanhe indicadores principais e publique uma vitrine pública — tudo sem salvar nada de verdade.
           </p>
-          <div class="site-hero__actions" role="group" aria-label="Chamadas principais">
-            <a class="btn btn--primary" href="demo.html">Explorar demo guiada</a>
-            <a class="btn btn--surface" href="fluxos.html">Ver fluxos operacionais</a>
-            <a class="btn btn--ghost" href="contato.html">Agendar apresentação</a>
-          </div>
+          <ul class="home-intro__list" aria-label="Resumo da demonstração">
+            <li>Fluxos completos de PDV, gestão e vitrine com dados pré-carregados.</li>
+            <li>Reset automático a cada visita: nada fica gravado.</li>
+            <li>Atalhos diretos para cada módulo do MVP.</li>
+          </ul>
+          <a class="btn btn--primary home-intro__cta" href="demo.html">Abrir demo viva</a>
         </div>
-        <aside class="site-hero__media" aria-label="Destaques do produto">
-          <div class="site-hero__card">
-            <h2 class="summary-card__title">Painel vivo da operação</h2>
-            <p class="summary-card__subtitle">
-              Monitoramento em tempo real com insights sobre vendas, reservas, consignados e autoatendimento.
-            </p>
-            <div class="site-hero__stats" role="list">
-              <div class="site-hero__stat" role="listitem">
-                <span>Tempo médio de venda</span>
-                <strong>3 toques</strong>
-              </div>
-              <div class="site-hero__stat" role="listitem">
-                <span>Reservas controladas</span>
-                <strong>15/30/60 min</strong>
-              </div>
-              <div class="site-hero__stat" role="listitem">
-                <span>KPIs atualizados</span>
-                <strong>10 s</strong>
-              </div>
-            </div>
-          </div>
-        </aside>
+        <figure class="home-intro__media">
+          <img src="media/pdv-demo.svg" alt="Sequência de venda assistida mostrando busca, carrinho e confirmação." />
+          <figcaption>Venda assistida em três cliques: buscar, aplicar desconto e confirmar pagamento.</figcaption>
+        </figure>
       </section>
 
-      <section class="feature-section" aria-labelledby="feature-heading">
+      <section class="home-modules" aria-labelledby="module-heading">
         <div class="section-heading">
-          <h2 id="feature-heading">Construa a jornada completa da sua loja independente</h2>
-          <p>
-            Teste o BIPA em modo demonstrativo, valide fluxos com sua equipe e migre para a operação real com a mesma interface. Tudo isso com uma
-            estética verde + preta que dialoga com a moda circular.
-          </p>
+          <h2 id="module-heading">Escolha o que deseja explorar</h2>
+          <p>Quatro cartões direcionam direto para cada parte do MVP. Abra, navegue e volte quando quiser.</p>
         </div>
-        <div class="feature-grid">
-          <article class="feature-card">
-            <div class="feature-card__icon">01</div>
-            <h3>Vendas assistidas no tablet</h3>
-            <p>
-              Escaneie etiquetas, aplique descontos e finalize pagamentos PIX fake em segundos. O PDV foi criado para ser usado em pé, sem fricção.
-            </p>
-            <a class="feature-card__link" href="fluxos-simulacoes.html">Simular jornada de venda →</a>
+        <div class="module-grid">
+          <article class="module-card">
+            <span class="module-card__icon" aria-hidden="true">🛒</span>
+            <h3>PDV</h3>
+            <p>Venda em três cliques, cadastre clientes rápidos e finalize via PIX demonstrativo.</p>
+            <a class="btn btn--surface" href="app/pdv/">Abrir PDV demo</a>
           </article>
-          <article class="feature-card">
-            <div class="feature-card__icon">02</div>
-            <h3>Estoque vivo e vitrine online</h3>
-            <p>
-              Cadastre peças com status, tamanhos e consignados. Disponibilize vitrine instantânea para o público com filtros intuitivos.
-            </p>
-            <a class="feature-card__link" href="loja/brecho-da-ana/">Abrir vitrine demo →</a>
+          <article class="module-card">
+            <span class="module-card__icon" aria-hidden="true">📦</span>
+            <h3>Gestão</h3>
+            <p>Veja estoque, cadastre produtos completos e acompanhe clientes fictícios.</p>
+            <a class="btn btn--surface" href="app/admin/dashboard/">Abrir gestão demo</a>
           </article>
-          <article class="feature-card">
-            <div class="feature-card__icon">03</div>
-            <h3>Relatórios inteligentes</h3>
-            <p>
-              KPIs customizados por perfil, mix de pagamento, exportação CSV e filtros combináveis para entender o giro das peças.
-            </p>
-            <a class="feature-card__link" href="relatorios-dashboard.html">Ver dashboard demo →</a>
+          <article class="module-card">
+            <span class="module-card__icon" aria-hidden="true">📈</span>
+            <h3>Relatórios</h3>
+            <p>KPIs pré-preenchidos com vendas fictícias, mix de pagamento e resumo diário.</p>
+            <a class="btn btn--surface" href="relatorios.html">Ver relatórios</a>
           </article>
-          <article class="feature-card">
-            <div class="feature-card__icon">04</div>
-            <h3>Roadmap transparente</h3>
-            <p>
-              Planejamento aberto no GitHub com milestones, critérios de aceite e próximos lançamentos para evoluir com você.
-            </p>
-            <a class="feature-card__link" href="roadmap-detalhes.html">Acompanhar entregas →</a>
+          <article class="module-card">
+            <span class="module-card__icon" aria-hidden="true">🪄</span>
+            <h3>Vitrine Pública</h3>
+            <p>Filtro por categoria e tamanho para compartilhar peças do brechó demo.</p>
+            <a class="btn btn--surface" href="loja/brecho-da-ana/">Visitar vitrine</a>
           </article>
         </div>
       </section>
 
-      <section class="split-section" aria-labelledby="cta-heading">
-        <div class="split-section__card">
-          <h2 id="cta-heading">Pronto para experimentar agora?</h2>
-          <p>
-            Acesse a demo completa, converse com vendas ou mergulhe direto no módulo de gestão. Cada botão abre uma página dedicada para você navegar sem perder o fio.
-          </p>
-          <div class="site-hero__actions">
-            <a class="btn btn--primary" href="demo.html">Abrir workspace demo</a>
-            <a class="btn btn--surface" href="app/selecionar-modulo/">Entrar no app de gestão</a>
-            <a class="btn btn--ghost" href="contato.html">Falar com uma pessoa</a>
-          </div>
+      <section class="home-guidance" aria-labelledby="guidance-heading">
+        <div class="section-heading">
+          <h2 id="guidance-heading">Como navegar pelo MVP</h2>
         </div>
-        <ul class="split-section__meta" aria-label="Diferenciais">
+        <ol class="home-guidance__steps">
           <li>
-            <span class="chip">Modo demo guiado</span>
-            Interface e dados fictícios com respostas imediatas.
+            <strong>Abra um módulo.</strong> Cada botão carrega o ambiente correspondente já com dados de exemplo.
           </li>
           <li>
-            <span class="chip chip--available">Design verde + preto</span>
-            Visual moderno alinhado à moda circular independente.
+            <strong>Experimente um fluxo.</strong> Use o simulador de fluxos para vender, reservar ou testar o self-checkout.
           </li>
           <li>
-            <span class="chip chip--reserved">Roadmap aberto</span>
-            Acompanhe entregas e priorize o que importa para sua operação.
+            <strong>Reinicie quando quiser.</strong> Atualize a página para repovoar o cenário fictício instantaneamente.
           </li>
-        </ul>
+        </ol>
       </section>
     </main>
 
     <footer class="site-footer">
-      <span>BIPA © 2024 — PDV sustentável para brechós</span>
+      <span>BIPA © 2024 — demonstração sem persistência</span>
       <span>
         <a href="contato.html">Contato</a> ·
-        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="https://github.com/" target="_blank" rel="noopener">Roadmap no README</a> ·
         <a href="login.html">Entrar</a>
       </span>
     </footer>

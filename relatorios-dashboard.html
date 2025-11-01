@@ -28,73 +28,37 @@
 
           <div class="topbar__actions">
             <a class="topbar__link" href="index.html">Visão geral</a>
-            <a class="topbar__link" href="fluxos.html">Fluxos</a>
+            <a class="topbar__link" href="fluxos.html">Simulador de fluxos</a>
             <a class="topbar__link" href="relatorios.html">Relatórios</a>
-            <a class="topbar__link" href="github.html">Roadmap</a>
             <a class="topbar__link" href="demo.html">Demo</a>
-            <a class="btn btn--ghost btn--small" href="login.html">Login</a>
-            <a class="btn btn--primary btn--small" href="contato.html">Contato</a>
+            <a class="btn btn--ghost btn--small" href="login.html">Entrar</a>
           </div>
         </div>
 
         <div class="hero">
           <div class="hero__grid">
             <div class="hero__content">
-              <span class="hero__badge">KPIs ao vivo</span>
-              <h1 class="hero__title">Experimente o dashboard demo do BIPA.</h1>
+              <span class="hero__badge">Dados fictícios</span>
+              <h1 class="hero__title">Dashboard demo pronto para explorar.</h1>
               <p class="hero__subtitle">
-                Ajuste filtros, altere períodos, troque perfis e gere CSVs direto do navegador. Os dados são fictícios, mas seguem as mesmas regras da operação real.
+                Ajuste períodos, filtros e perfis para ver como o BIPA organiza KPIs reais. Nenhum dado é salvo — atualize a página para resetar a simulação.
               </p>
               <div class="hero__actions" role="group" aria-label="Ações do dashboard">
                 <div class="hero__action">
                   <a class="btn btn--primary" href="app/admin/dashboard/">Abrir painel administrativo</a>
-                  <span class="hero__action-note">Visualize KPIs, estoque e vendas com o novo visual verde.</span>
+                  <span class="hero__action-note">PDV, estoque, clientes e relatórios com dados de exemplo.</span>
                 </div>
                 <div class="hero__action">
-                  <a class="btn btn--surface" href="demo.html">Voltar para a demo completa</a>
-                  <span class="hero__action-note">Escolha outro módulo para continuar explorando.</span>
+                  <a class="btn btn--surface" href="relatorios.html">Ver resumo rápido</a>
+                  <span class="hero__action-note">Volte para os KPIs resumidos sempre que quiser.</span>
                 </div>
               </div>
-              <ul class="hero__highlights" aria-label="Destaques do dashboard">
-                <li>Comparativos de período e mix de pagamento instantâneos.</li>
-                <li>Filtros dinâmicos por vendedor, canal e consignação.</li>
-                <li>Exportação CSV respeitando todos os filtros aplicados.</li>
+              <ul class="hero__highlights" aria-label="Como navegar">
+                <li>Comece pelo período “Mês” e altere para Hoje ou Semana.</li>
+                <li>Filtre por vendedor ou método de pagamento para mudar os números.</li>
+                <li>Use “Exportar CSV” para baixar dados com a flag <code>demo=true</code>.</li>
               </ul>
             </div>
-
-            <aside class="hero__summary" aria-label="Resumo dos relatórios">
-              <div class="summary-card">
-                <header class="summary-card__header">
-                  <span class="summary-card__badge" aria-hidden="true">Perfis</span>
-                  <h2 class="summary-card__title">Owner e Clerk</h2>
-                  <p class="summary-card__subtitle">Cada perfil com visão e ações específicas.</p>
-                </header>
-                <ol class="summary-card__list">
-                  <li><strong>Owner/Manager.</strong> KPIs completos e relatórios financeiros.</li>
-                  <li><strong>Clerk.</strong> Destaques focados no dia a dia da equipe.</li>
-                  <li><strong>Exportações.</strong> CSV pronto para planilhas e BI.</li>
-                </ol>
-                <dl class="summary-card__metrics">
-                  <div class="metric">
-                    <dt>10 segundos</dt>
-                    <dd>Para ver desempenho diário</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>CSV</dt>
-                    <dd>Exportação client-side</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>Dark UI</dt>
-                    <dd>Alta legibilidade em qualquer tela</dd>
-                  </div>
-                </dl>
-                <footer class="summary-card__footer">
-                  <p>
-                    Quer relatórios personalizados? <a class="link-cta" href="contato.html">Fale com vendas</a> e receba um recorte para a sua loja.
-                  </p>
-                </footer>
-              </div>
-            </aside>
           </div>
         </div>
       </header>
@@ -103,9 +67,7 @@
         <section class="panel is-active" id="reports-panel" aria-labelledby="reports-heading">
           <div class="panel__header">
             <h2 class="panel__title" id="reports-heading">Relatórios de Vendas — DEMO MVP</h2>
-            <p class="panel__subtitle">
-              Em 10 segundos você sabe quanto entrou, quantas vendas fecharam, ticket médio, descontos e mix de pagamento. Detalhes acionáveis mostram quem vendeu, o que saiu, quando e para quem — sempre com dados fictícios respeitando o fuso <strong>America/Manaus</strong>.
-            </p>
+            <p class="panel__subtitle">KPIs, tabelas e exportações funcionam como no produto real, mas com dados pré-carregados e reiniciáveis.</p>
           </div>
 
           <div class="reports-toolbar">
@@ -241,8 +203,8 @@
       </main>
 
       <footer class="app__footer">
-        <span>BIPA © 2024</span>
-        <span><a class="link-cta" href="contato.html">Falar com vendas</a> · <a href="login.html">Entrar</a></span>
+        <span>BIPA © 2024 — dashboard demonstrativo</span>
+        <span><a href="relatorios.html">Resumo</a> · <a href="login.html">Entrar</a></span>
       </footer>
     </div>
 

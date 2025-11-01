@@ -28,73 +28,28 @@
 
           <div class="topbar__actions">
             <a class="topbar__link" href="index.html">Visão geral</a>
-            <a class="topbar__link" aria-current="page" href="fluxos.html">Fluxos</a>
+            <a class="topbar__link" aria-current="page" href="fluxos.html">Simulador de fluxos</a>
             <a class="topbar__link" href="relatorios.html">Relatórios</a>
-            <a class="topbar__link" href="github.html">Roadmap</a>
             <a class="topbar__link" href="demo.html">Demo</a>
-            <a class="btn btn--ghost btn--small" href="login.html">Login</a>
-            <a class="btn btn--primary btn--small" href="contato.html">Contato</a>
+            <a class="btn btn--ghost btn--small" href="login.html">Entrar</a>
           </div>
         </div>
 
-        <div class="hero">
+        <div class="hero hero--compact">
           <div class="hero__grid">
             <div class="hero__content">
-              <span class="hero__badge">DEMO guiada</span>
-              <h1 class="hero__title">Fluxos operacionais com simulação ao vivo.</h1>
+              <span class="hero__badge">Simulador prático</span>
+              <h1 class="hero__title">Teste fluxos de venda em minutos.</h1>
               <p class="hero__subtitle">
-                Percorra a jornada completa do PDV móvel, reservas temporárias e self-checkout com dados fictícios em tempo real.
+                Acompanhe os três cenários principais do BIPA — venda assistida, reserva temporária e self-checkout. Tudo acontece com dados fictícios e reinicia automaticamente.
               </p>
-              <div class="hero__actions" role="group" aria-label="Ações principais">
-                <div class="hero__action">
-                  <a class="btn btn--primary" href="fluxos-simulacoes.html">Ver simulações</a>
-                  <span class="hero__action-note">Execute cada etapa do fluxo com feedback imediato.</span>
-                </div>
-                <div class="hero__action">
-                  <a class="btn btn--outline" href="demo.html">Abrir workspace completo</a>
-                  <span class="hero__action-note">Cadastre peças, venda e gere recibos na demo viva.</span>
-                </div>
-              </div>
-              <ul class="hero__highlights" aria-label="Destaques dos fluxos">
-                <li>Simulação guiada de venda assistida em 3 toques.</li>
-                <li>Reservas aceleradas com contagem regressiva automática.</li>
-                <li>Self-checkout com passe temporário e validação de saída.</li>
+              <ul class="hero__highlights" aria-label="O que você encontra aqui">
+                <li>Botão único para avançar na venda assistida.</li>
+                <li>Temporizador acelerado para reservas de 15, 30 ou 60 minutos.</li>
+                <li>Self-checkout com passe visual pronto para validar.</li>
               </ul>
+              <a class="btn btn--primary" href="demo.html">Abrir demo completa</a>
             </div>
-
-            <aside class="hero__summary" aria-label="Resumo dos fluxos">
-              <div class="summary-card">
-                <header class="summary-card__header">
-                  <span class="summary-card__badge" aria-hidden="true">Demo</span>
-                  <h2 class="summary-card__title">Testes rápidos e sem risco</h2>
-                  <p class="summary-card__subtitle">Explore o que muda na operação antes de levar para o time.</p>
-                </header>
-                <ol class="summary-card__list">
-                  <li><strong>Venda assistida.</strong> Escaneie, receba via PIX fake e envie recibo.</li>
-                  <li><strong>Reserva temporária.</strong> Segure peças por minutos com liberação automática.</li>
-                  <li><strong>Self-checkout.</strong> Gere passes de saída e valide como lojista.</li>
-                </ol>
-                <dl class="summary-card__metrics">
-                  <div class="metric">
-                    <dt>3 toques</dt>
-                    <dd>Para concluir uma venda completa</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>15/30/60</dt>
-                    <dd>Minutos de reserva simulada</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>2 min</dt>
-                    <dd>Validade do passe de saída</dd>
-                  </div>
-                </dl>
-                <footer class="summary-card__footer">
-                  <p>
-                    Quer adaptar os fluxos ao seu time? <a class="link-cta" href="contato.html">Fale com vendas</a> e receba um walkthrough.
-                  </p>
-                </footer>
-              </div>
-            </aside>
           </div>
         </div>
       </header>
@@ -102,17 +57,15 @@
       <main class="app__content">
         <section class="panel is-active" id="flows-panel" aria-labelledby="flows-heading">
           <div class="panel__header">
-            <h2 class="panel__title" id="flows-heading">Fluxos operacionais com simulação</h2>
-            <p class="panel__subtitle">
-              Explore como o PDV móvel funciona na prática: venda rápida, reservas temporárias e self-checkout com passe de saída.
-            </p>
+            <h2 class="panel__title" id="flows-heading">Simulador de fluxos</h2>
+            <p class="panel__subtitle">Clique em “Iniciar” para ver cada etapa com feedback imediato.</p>
           </div>
 
           <div class="simulations-grid">
             <article class="simulation-card" aria-live="polite">
               <header class="simulation-card__header">
-                <h3>Venda em 3 toques</h3>
-                <p>Nova venda → Escanear → Receber PIX → Marcar pago → Recibo.</p>
+                <h3>Venda assistida</h3>
+                <p>Escaneie uma peça, confirme o PIX fictício e gere o recibo.</p>
               </header>
               <ol class="simulation-steps" id="sale-steps"></ol>
               <div class="simulation-actions">
@@ -125,7 +78,7 @@
             <article class="simulation-card" aria-live="polite">
               <header class="simulation-card__header">
                 <h3>Reserva temporária</h3>
-                <p>Segure uma peça por 15/30/60 minutos. Timer acelerado (1s = 1min).</p>
+                <p>Segure uma peça por minutos definidos. O tempo corre rápido para visualização.</p>
               </header>
               <div class="reservation-status" id="reservation-status">
                 <span class="chip chip--available">Disponível</span>
@@ -144,7 +97,7 @@
             <article class="simulation-card" aria-live="polite">
               <header class="simulation-card__header">
                 <h3>Self-Checkout</h3>
-                <p>Cliente lê QR da peça, paga fake e recebe Passe de Saída (1 uso).</p>
+                <p>Ative o modo autônomo, gere um passe temporário e valide a saída.</p>
               </header>
               <label class="toggle">
                 <input type="checkbox" id="self-checkout-flag" />
@@ -165,40 +118,12 @@
             </article>
           </div>
 
-          <section class="workspace-preview" aria-labelledby="workspace-preview-title">
-            <div class="workspace-preview__screen">
-              <div class="workspace-preview__phone" role="img" aria-label="Preview do app BIPA">
-                <div class="workspace-preview__camera">
-                  <div class="workspace-preview__scan-area"></div>
-                  <p>Simule uma venda real com câmera e PIX fake.</p>
-                </div>
-                <a class="btn btn--primary workspace-preview__cta" href="demo.html">
-                  Abrir BIPA interativo
-                </a>
-              </div>
-            </div>
-            <div class="workspace-preview__details">
-              <h3 id="workspace-preview-title">Experimente o app completo em segundos</h3>
-              <p>
-                Cada fluxo da DEMO agora é navegável. Escaneie produtos, finalize vendas, veja estoque e clientes — tudo alimentado por dados fictícios que reagem aos seus cliques.
-              </p>
-              <ul class="workspace-preview__list">
-                <li>PDV mobile com carrinho dinâmico e confirmação PIX simulada.</li>
-                <li>Inventário vivo: filtre peças, reserve e devolva com um toque.</li>
-                <li>CRM enxuto: procure clientes e dispare recibos instantâneos.</li>
-                <li>Self-checkout com passe temporário e validação em tempo real.</li>
-              </ul>
-              <a class="btn btn--surface workspace-preview__ghost" href="demo.html">
-                Ver jornada completa
-              </a>
-            </div>
-          </section>
         </section>
       </main>
 
       <footer class="app__footer">
-        <span>BIPA © 2024</span>
-        <span><a class="link-cta" href="contato.html">Falar com vendas</a> · <a href="login.html">Entrar</a></span>
+        <span>BIPA © 2024 — modo demonstrativo</span>
+        <span><a href="demo.html">Demo viva</a> · <a href="login.html">Entrar</a></span>
       </footer>
     </div>
 

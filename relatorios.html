@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BIPA - Relatórios demo e indicadores</title>
+    <title>BIPA - Relatórios demo com dados fictícios</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -28,327 +28,101 @@
 
           <div class="topbar__actions">
             <a class="topbar__link" href="index.html">Visão geral</a>
-            <a class="topbar__link" href="fluxos.html">Fluxos</a>
+            <a class="topbar__link" href="fluxos.html">Simulador de fluxos</a>
             <a class="topbar__link" aria-current="page" href="relatorios.html">Relatórios</a>
-            <a class="topbar__link" href="github.html">Roadmap</a>
             <a class="topbar__link" href="demo.html">Demo</a>
-            <a class="btn btn--ghost btn--small" href="login.html">Login</a>
-            <a class="btn btn--primary btn--small" href="contato.html">Contato</a>
+            <a class="btn btn--ghost btn--small" href="login.html">Entrar</a>
           </div>
         </div>
 
-        <div class="hero">
+        <div class="hero hero--compact">
           <div class="hero__grid">
             <div class="hero__content">
-              <span class="hero__badge">Indicadores em tempo real</span>
-              <h1 class="hero__title">Relatórios demo para decisões rápidas.</h1>
+              <span class="hero__badge">Indicadores fictícios</span>
+              <h1 class="hero__title">Veja o que entrou, quem vendeu e como foi pago.</h1>
               <p class="hero__subtitle">
-                Visualize KPIs, mix de pagamento e listas TOP com dados fictícios que respeitam filtros, perfis de acesso e fuso horário.
+                Este painel traz KPIs prontos com vendas de demonstração. Use-o para entender a estrutura dos relatórios antes de abrir o dashboard completo.
               </p>
-              <div class="hero__actions" role="group" aria-label="Ações principais">
-                <div class="hero__action">
-                  <a class="btn btn--primary" href="relatorios-dashboard.html">Explorar painel</a>
-                  <span class="hero__action-note">Aplique filtros e gere CSV instantaneamente.</span>
-                </div>
-                <div class="hero__action">
-                  <a class="btn btn--outline" href="demo.html">Ir para o workspace demo</a>
-                  <span class="hero__action-note">Entenda como os dados surgem na operação.</span>
-                </div>
-              </div>
-              <ul class="hero__highlights" aria-label="Destaques dos relatórios">
-                <li>Perfis Owner/Manager e Clerk com visões específicas.</li>
-                <li>Filtros combináveis por vendedor, canal, consignação e catálogo.</li>
-                <li>Exportação CSV client-side respeitando todos os filtros.</li>
-              </ul>
+              <a class="btn btn--primary" href="relatorios-dashboard.html">Abrir dashboard demo</a>
             </div>
-
-            <aside class="hero__summary" aria-label="Resumo dos relatórios">
-              <div class="summary-card">
-                <header class="summary-card__header">
-                  <span class="summary-card__badge" aria-hidden="true">KPIs</span>
-                  <h2 class="summary-card__title">Insights em segundos</h2>
-                  <p class="summary-card__subtitle">Veja o que entrou, quem vendeu e quais peças giraram mais.</p>
-                </header>
-                <ol class="summary-card__list">
-                  <li><strong>Selecione o período.</strong> Hoje, semana, mês ou personalizado.</li>
-                  <li><strong>Aplique filtros.</strong> Pagamento, vendedor, canal e catálogo.</li>
-                  <li><strong>Exporte CSV.</strong> Receba os dados filtrados para planilhas.</li>
-                </ol>
-                <dl class="summary-card__metrics">
-                  <div class="metric">
-                    <dt>10s</dt>
-                    <dd>Para entender o desempenho diário</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>3 perfis</dt>
-                    <dd>KPIs, listas e tabelas segmentadas</dd>
-                  </div>
-                  <div class="metric">
-                    <dt>CSV</dt>
-                    <dd>Exportação instantânea no navegador</dd>
-                  </div>
-                </dl>
-                <footer class="summary-card__footer">
-                  <p>
-                    Quer ver os números com sua operação? <a class="link-cta" href="contato.html">Converse com a equipe</a> e receba um recorte personalizado.
-                  </p>
-                </footer>
-              </div>
-            </aside>
           </div>
         </div>
       </header>
 
       <main class="app__content">
-        <section class="panel is-active" id="reports-panel" aria-labelledby="reports-heading">
+        <section class="panel is-active" aria-labelledby="reports-heading">
           <div class="panel__header">
-            <h2 class="panel__title" id="reports-heading">Relatórios de Vendas — DEMO MVP</h2>
-            <p class="panel__subtitle">
-              Em 10 segundos você sabe quanto entrou, quantas vendas fecharam, ticket médio, descontos e mix de pagamento. Detalhes acionáveis mostram quem vendeu, o que saiu, quando e para quem — sempre com dados fictícios respeitando o fuso <strong>America/Manaus</strong>.
-            </p>
+            <h2 class="panel__title" id="reports-heading">Resumo rápido</h2>
+            <p class="panel__subtitle">Dados fictícios do brechó demo nas últimas 4 semanas.</p>
           </div>
 
-          <div class="reports-toolbar">
-            <div class="reports-toolbar__filters">
-              <div class="toolbar-row">
-                <div class="toolbar-block">
-                  <span class="toolbar-label">Período</span>
-                  <div class="period-chips" role="group" aria-label="Período">
-                    <button type="button" class="chip chip--period" data-period="today">Hoje</button>
-                    <button type="button" class="chip chip--period" data-period="week">Semana</button>
-                    <button type="button" class="chip chip--period is-active" data-period="month">Mês</button>
-                    <button type="button" class="chip chip--period" data-period="custom">Personalizado</button>
-                  </div>
-                </div>
-                <div class="toolbar-block toolbar-block--role">
-                  <label class="role-select" for="reports-role">
-                    <span>Perfil</span>
-                    <select id="reports-role">
-                      <option value="owner">Owner/Manager</option>
-                      <option value="clerk">Clerk</option>
-                    </select>
-                  </label>
-                </div>
-              </div>
-
-              <div class="reports-custom-range" id="custom-range" hidden>
-                <label>
-                  <span>De</span>
-                  <input type="date" id="custom-start" />
-                </label>
-                <label>
-                  <span>Até</span>
-                  <input type="date" id="custom-end" />
-                </label>
-                <button type="button" class="btn btn--ghost btn--small" id="custom-apply">Aplicar</button>
-              </div>
-
-              <div class="filter-chip-row" role="group" aria-label="Filtros adicionais">
-                <details class="filter-chip" data-filter="payment">
-                  <summary>Pagamento: <span data-filter-label="payment">Todos</span></summary>
-                  <div class="filter-chip__menu" data-menu="payment" role="listbox"></div>
-                </details>
-
-                <details class="filter-chip" data-filter="seller">
-                  <summary>Vendedor: <span data-filter-label="seller">Todos</span></summary>
-                  <div class="filter-chip__menu" data-menu="seller" role="listbox"></div>
-                </details>
-
-                <details class="filter-chip" data-filter="channel">
-                  <summary>Canal: <span data-filter-label="channel">Todos</span></summary>
-                  <div class="filter-chip__menu" data-menu="channel" role="listbox"></div>
-                </details>
-
-                <details class="filter-chip filter-chip--wide" data-filter="catalog">
-                  <summary>Cat/Tam/Cor: <span data-filter-label="catalog">Todos</span></summary>
-                  <div class="filter-chip__menu filter-chip__menu--form" data-menu="catalog">
-                    <label>
-                      <span>Categoria</span>
-                      <select id="filter-category" data-catalog="category"></select>
-                    </label>
-                    <label>
-                      <span>Tamanho</span>
-                      <select id="filter-size" data-catalog="size"></select>
-                    </label>
-                    <label>
-                      <span>Cor</span>
-                      <select id="filter-color" data-catalog="color"></select>
-                    </label>
-                    <button type="button" class="chip-option chip-option--clear" data-action="clear-catalog">Limpar</button>
-                  </div>
-                </details>
-
-                <details class="filter-chip" data-filter="consigned">
-                  <summary>Consignado: <span data-filter-label="consigned">Todos</span></summary>
-                  <div class="filter-chip__menu" data-menu="consigned" role="listbox">
-                    <button type="button" class="chip-option is-active" data-value="all">Todos</button>
-                    <button type="button" class="chip-option" data-value="yes">Sim</button>
-                    <button type="button" class="chip-option" data-value="no">Não</button>
-                  </div>
-                </details>
-              </div>
-            </div>
-
-            <div class="reports-toolbar__actions">
-              <button type="button" class="btn btn--ghost btn--small" id="filters-clear-all">Limpar filtros</button>
-              <button type="button" class="btn btn--ghost btn--small" id="reports-scroll-details">Ver detalhes</button>
-            </div>
+          <div class="report-preview" aria-label="Mock do dashboard">
+            <figure class="report-preview__frame">
+              <img src="media/relatorios-preview.svg" alt="Painel fictício com KPIs e gráfico de barras." />
+              <figcaption>Mock estático para visualizar a disposição de KPIs, gráfico e tabela.</figcaption>
+            </figure>
           </div>
 
-          <section class="kpi-grid" id="kpi-primary">
+          <section class="kpi-grid" aria-label="Indicadores principais">
             <article class="stat-card">
               <header>
                 <h3>Faturamento líquido</h3>
-                <span class="stat-variation" id="kpi-net-variation">—</span>
+                <span class="stat-variation">+12% vs. semana anterior</span>
               </header>
-              <p class="stat-card__value" id="kpi-net-value">R$ 0,00</p>
+              <p class="stat-card__value">R$ 18.245,70</p>
               <footer>Somente vendas pagas</footer>
             </article>
             <article class="stat-card">
               <header>
                 <h3>Vendas pagas</h3>
-                <span class="stat-variation" id="kpi-sales-variation">—</span>
+                <span class="stat-variation">82 registros</span>
               </header>
-              <p class="stat-card__value" id="kpi-sales-count">0</p>
-              <footer id="kpi-sales-detail">—</footer>
+              <p class="stat-card__value">82</p>
+              <footer>Inclui PIX, cartão, dinheiro e fiado quitado</footer>
             </article>
             <article class="stat-card">
               <header>
                 <h3>Ticket médio</h3>
-                <span class="stat-variation" id="kpi-ticket-variation">—</span>
+                <span class="stat-variation">R$ 222,50</span>
               </header>
-              <p class="stat-card__value" id="kpi-ticket">R$ 0,00</p>
+              <p class="stat-card__value">R$ 222,50</p>
               <footer>Liquido dividido pelo nº de vendas</footer>
             </article>
             <article class="stat-card">
               <header>
-                <h3>Descontos</h3>
-                <span class="stat-variation" id="kpi-discount-variation">—</span>
-              </header>
-              <p class="stat-card__value" id="kpi-discounts">R$ 0,00</p>
-              <footer>Somatório de vouchers e abatimentos</footer>
-            </article>
-          </section>
-
-          <section class="kpi-grid kpi-grid--secondary" id="kpi-secondary">
-            <article class="stat-card">
-              <header>
-                <h3>Faturamento bruto</h3>
-              </header>
-              <p class="stat-card__value" id="kpi-gross">R$ 0,00</p>
-              <footer>∑ itens com status pago</footer>
-            </article>
-            <article class="stat-card">
-              <header>
-                <h3>Itens por venda</h3>
-              </header>
-              <p class="stat-card__value" id="kpi-items">0,0</p>
-              <footer>Média de peças por venda</footer>
-            </article>
-            <article class="stat-card" id="margin-card">
-              <header>
-                <h3>Margem bruta</h3>
-              </header>
-              <p class="stat-card__value" id="kpi-margin">—</p>
-              <footer id="kpi-margin-detail">Visível apenas para owner/manager</footer>
-            </article>
-            <article class="stat-card">
-              <header>
-                <h3>Conversão PIX</h3>
-              </header>
-              <p class="stat-card__value" id="kpi-pix-conversion">0%</p>
-              <footer id="kpi-pix-detail">Tempo médio —</footer>
-            </article>
-            <article class="stat-card">
-              <header>
-                <h3>Devoluções/Estornos</h3>
-              </header>
-              <p class="stat-card__value" id="kpi-refunds">R$ 0,00</p>
-              <footer>Impacto negativo no líquido</footer>
-            </article>
-          </section>
-
-          <div class="charts-grid">
-            <article class="chart-card chart-card--wide">
-              <header>
-                <h3>Líquido por período</h3>
-                <span id="line-chart-label">—</span>
-              </header>
-              <svg id="line-chart" role="img" aria-label="Linha de faturamento líquido" viewBox="0 0 100 60" preserveAspectRatio="none"></svg>
-            </article>
-
-            <article class="chart-card">
-              <header>
-                <h3>TOP categorias</h3>
-                <span id="category-hint">—</span>
-              </header>
-              <ol class="bar-chart" id="category-bars"></ol>
-            </article>
-
-            <article class="chart-card">
-              <header>
                 <h3>Mix de pagamento</h3>
-                <span id="payment-total">—</span>
+                <span class="stat-variation">PIX 51% · Cartão 31% · Dinheiro 12% · Fiado 6%</span>
               </header>
-              <div class="donut" id="payment-donut" aria-hidden="true"></div>
-              <ul class="donut-legend" id="payment-legend"></ul>
+              <p class="stat-card__value">PIX lidera</p>
+              <footer>Baseado no total líquido</footer>
             </article>
+          </section>
 
-            <article class="chart-card chart-card--wide">
-              <header>
-                <h3>Heatmap — hora × dia da semana</h3>
-                <span id="heatmap-hint">—</span>
-              </header>
-              <div class="heatmap" role="region" aria-live="polite">
-                <table id="sales-heatmap"></table>
-              </div>
-            </article>
+          <div class="panel__note">
+            <p>
+              Os números acima são fictícios e resetam sempre que a página é carregada. Eles servem para apresentar como o dashboard real se comporta com dados preenchidos.
+            </p>
           </div>
 
-          <div class="lists-grid">
-            <article class="list-card">
-              <header>
-                <h3>TOP produtos</h3>
-                <span id="top-product-hint">—</span>
-              </header>
-              <ol id="top-products"></ol>
-            </article>
-            <article class="list-card">
-              <header>
-                <h3>TOP clientes</h3>
-                <span id="top-customer-hint">—</span>
-              </header>
-              <ol id="top-customers"></ol>
-            </article>
-            <article class="list-card">
-              <header>
-                <h3>TOP vendedores</h3>
-                <span id="top-seller-hint">—</span>
-              </header>
-              <ol id="top-sellers"></ol>
-            </article>
-          </div>
+          <section class="report-checklist" aria-label="Como usar os relatórios">
+            <h3>Como testar</h3>
+            <ol>
+              <li>Abra o dashboard demo e troque o período entre Hoje, Semana e Mês.</li>
+              <li>Use os filtros de pagamento, vendedor e consignação para alterar os KPIs.</li>
+              <li>Exporte o CSV para ver como os dados chegam com a coluna <code>demo=true</code>.</li>
+            </ol>
+          </section>
 
-          <div class="reports-actions">
-            <div class="export-group" role="group" aria-label="Exportações CSV">
-              <button type="button" class="btn btn--primary" data-export="sales">Exportar CSV — vendas</button>
-              <button type="button" class="btn btn--primary" data-export="items">Exportar CSV — itens</button>
-              <button type="button" class="btn btn--primary" data-export="payments">Exportar CSV — pagamentos</button>
-            </div>
-            <p class="demo-hint">MODO DEMO — dados fictícios (coluna <code>demo=true</code> nos CSVs)</p>
-          </div>
-
-          <section class="table-section">
+          <section class="table-section" aria-labelledby="sales-table-heading">
             <header class="table-section__header">
               <div>
-                <h3>Vendas filtradas</h3>
-                <p id="sales-period-label">—</p>
+                <h3 class="table-section__title" id="sales-table-heading">Exemplo de vendas filtradas</h3>
+                <p>Período: 12/08/2024 a 08/09/2024</p>
               </div>
-              <span class="table-summary" id="sales-count-summary">—</span>
+              <span class="table-summary">Mostrando 5 de 82 vendas</span>
             </header>
             <div class="table-wrapper">
-              <table class="data-table" aria-live="polite">
-                <caption class="sr-only">Lista de vendas filtradas com totais e status.</caption>
+              <table class="data-table">
                 <thead>
                   <tr>
                     <th scope="col">ID</th>
@@ -359,23 +133,87 @@
                     <th scope="col">Itens</th>
                     <th scope="col">Desconto</th>
                     <th scope="col">Total</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Pagamento</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
-                <tbody id="sales-table-body"></tbody>
+                <tbody>
+                  <tr>
+                    <td>#1087</td>
+                    <td>08/09/2024</td>
+                    <td>Loja física</td>
+                    <td>Ana</td>
+                    <td>Bianca Souza</td>
+                    <td>3</td>
+                    <td>R$ 20,00</td>
+                    <td>R$ 389,70</td>
+                    <td>PIX</td>
+                    <td>Pago</td>
+                  </tr>
+                  <tr>
+                    <td>#1083</td>
+                    <td>07/09/2024</td>
+                    <td>Loja física</td>
+                    <td>Marcos</td>
+                    <td>Carlos Lima</td>
+                    <td>2</td>
+                    <td>R$ 0,00</td>
+                    <td>R$ 328,00</td>
+                    <td>Cartão</td>
+                    <td>Pago</td>
+                  </tr>
+                  <tr>
+                    <td>#1079</td>
+                    <td>06/09/2024</td>
+                    <td>Evento pop-up</td>
+                    <td>Julia</td>
+                    <td>Fernanda Prado</td>
+                    <td>1</td>
+                    <td>R$ 15,00</td>
+                    <td>R$ 174,90</td>
+                    <td>Fiado</td>
+                    <td>Pendente</td>
+                  </tr>
+                  <tr>
+                    <td>#1072</td>
+                    <td>03/09/2024</td>
+                    <td>Loja física</td>
+                    <td>Ana</td>
+                    <td>Cliente avulso</td>
+                    <td>2</td>
+                    <td>R$ 0,00</td>
+                    <td>R$ 258,90</td>
+                    <td>Dinheiro</td>
+                    <td>Pago</td>
+                  </tr>
+                  <tr>
+                    <td>#1066</td>
+                    <td>01/09/2024</td>
+                    <td>Loja física</td>
+                    <td>Marcos</td>
+                    <td>Bianca Souza</td>
+                    <td>1</td>
+                    <td>R$ 0,00</td>
+                    <td>R$ 219,90</td>
+                    <td>PIX</td>
+                    <td>Pago</td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </section>
+
+          <div class="reports-actions">
+            <a class="btn btn--surface" href="relatorios-dashboard.html">Ir para o dashboard completo</a>
+            <p class="demo-hint">CSV de exportação disponível dentro do dashboard demo.</p>
+          </div>
         </section>
       </main>
 
       <footer class="app__footer">
-        <span>BIPA © 2024</span>
-        <span><a class="link-cta" href="contato.html">Falar com vendas</a> · <a href="login.html">Entrar</a></span>
+        <span>BIPA © 2024 — relatórios demonstrativos</span>
+        <span><a href="demo.html">Demo viva</a> · <a href="login.html">Entrar</a></span>
       </footer>
     </div>
-
-    <script src="script.js"></script>
   </body>
 </html>
