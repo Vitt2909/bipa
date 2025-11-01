@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Novo Produto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin-product-create">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Gestão</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Mudar para PDV</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <div class="app-admin">
+      <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
+        <div class="sidebar__logo">BIPA</div>
+        <nav class="sidebar__nav">
+          <a class="sidebar__link" href="/app/admin/dashboard/">Dashboard</a>
+          <a class="sidebar__link is-active" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link" href="/app/admin/clientes/">Clientes</a>
+          <a class="sidebar__link" href="/app/admin/vendas/">Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="app-admin__content" aria-labelledby="product-form-title">
+        <header class="page-header">
+          <div>
+            <h1 class="page-title" id="product-form-title">Cadastrar produto</h1>
+            <p class="page-subtitle">Formulário otimizado para uso no celular com upload imediato.</p>
+          </div>
+        </header>
+
+        <form class="form-grid" aria-describedby="product-form-help">
+          <fieldset class="form-section">
+            <legend>Informações básicas</legend>
+            <label class="form-field">
+              <span class="form-label">Código</span>
+              <input type="text" placeholder="BR-0004" required />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Nome</span>
+              <input type="text" placeholder="Blusa Tricô Candy" required />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Categoria</span>
+              <select required>
+                <option value="">Selecione</option>
+                <option>Blusas</option>
+                <option>Camisas</option>
+                <option>Vestidos</option>
+                <option>Calçados</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Detalhes</legend>
+            <label class="form-field">
+              <span class="form-label">Tamanho</span>
+              <select>
+                <option>P</option>
+                <option>M</option>
+                <option>G</option>
+                <option>GG</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span class="form-label">Preço (R$)</span>
+              <input type="number" min="0" step="0.01" placeholder="0,00" required />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Custo (R$)</span>
+              <input type="number" min="0" step="0.01" placeholder="0,00" />
+            </label>
+            <label class="form-field">
+              <span class="form-label">Origem</span>
+              <select>
+                <option>Consignado</option>
+                <option>Compra direta</option>
+                <option>Doação</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Imagens e status</legend>
+            <label class="form-field">
+              <span class="form-label">Foto principal</span>
+              <input type="file" accept="image/*" capture="environment" />
+              <span class="form-hint">Compatível com upload direto da câmera no celular.</span>
+            </label>
+            <label class="form-field">
+              <span class="form-label">Status inicial</span>
+              <select>
+                <option>Disponível</option>
+                <option>Reservado</option>
+                <option>Consignado</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span class="form-label">Localização</span>
+              <input type="text" placeholder="Arara A — Look 3" />
+            </label>
+          </fieldset>
+
+          <fieldset class="form-section form-section--full">
+            <legend>Descrição</legend>
+            <label class="form-field">
+              <span class="sr-only">Descrição</span>
+              <textarea rows="4" placeholder="Detalhes da peça, medidas e dicas de styling"></textarea>
+            </label>
+          </fieldset>
+
+          <div class="form-actions">
+            <a class="btn btn--ghost" href="/app/admin/produtos/">Cancelar</a>
+            <button class="btn btn--primary" type="submit">Salvar produto</button>
+          </div>
+        </form>
+        <p class="form-footer" id="product-form-help">
+          Este é um ambiente de demonstração. Nenhum dado real é salvo.
+        </p>
+      </main>
+    </div>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA — Clientes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin-customers">
+    <header class="app-topbar">
+      <div class="app-topbar__brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <div class="app-topbar__context">
+          <span class="app-topbar__name">BIPA</span>
+          <span class="app-topbar__store">Loja Demo — Gestão</span>
+        </div>
+      </div>
+      <nav class="app-topbar__actions" aria-label="Ações rápidas">
+        <a class="btn btn--surface" href="/app/pdv/">Mudar para PDV</a>
+        <a class="btn btn--ghost" href="/">Sair</a>
+      </nav>
+    </header>
+
+    <div class="app-admin">
+      <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
+        <div class="sidebar__logo">BIPA</div>
+        <nav class="sidebar__nav">
+          <a class="sidebar__link" href="/app/admin/dashboard/">Dashboard</a>
+          <a class="sidebar__link" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link is-active" href="/app/admin/clientes/">Clientes</a>
+          <a class="sidebar__link" href="/app/admin/vendas/">Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="app-admin__content" aria-labelledby="customers-title">
+        <header class="page-header">
+          <div>
+            <h1 class="page-title" id="customers-title">Clientes</h1>
+            <p class="page-subtitle">Base fictícia para explorar segmentação.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn--primary" type="button">Adicionar novo cliente</button>
+          </div>
+        </header>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Telefone / WhatsApp</th>
+              <th scope="col">Tag</th>
+              <th scope="col">Última compra</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a class="link" href="/app/admin/clientes/cli-0001/">Bianca Souza</a>
+              </td>
+              <td>(11) 99888-1122</td>
+              <td><span class="chip chip--available">VIP</span></td>
+              <td>06/09/2024</td>
+            </tr>
+            <tr>
+              <td>
+                <a class="link" href="/app/admin/clientes/cli-0002/">Carlos Lima</a>
+              </td>
+              <td>(11) 99321-3344</td>
+              <td><span class="chip">Consignado</span></td>
+              <td>04/09/2024</td>
+            </tr>
+            <tr>
+              <td>
+                <a class="link" href="/app/admin/clientes/cli-0003/">Fernanda Prado</a>
+              </td>
+              <td>(11) 99777-5566</td>
+              <td><span class="chip chip--reserved">Fiado</span></td>
+              <td>29/08/2024</td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+    </div>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>
