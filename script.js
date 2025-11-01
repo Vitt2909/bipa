@@ -638,18 +638,22 @@ if (reportsRoleSelect) {
     ['payment', 'seller', 'channel', 'consigned'].forEach((key) => {
       const menu = reportElements.filterMenus[key];
       if (!menu) return;
+      const closeMenu = () => {
+        const details = menu.closest('details');
+        if (details) details.open = false;
+      };
       menu.addEventListener('click', (event) => {
         const target = event.target.closest('.chip-option');
         if (!target) return;
         const value = target.dataset.value;
         if (!value || reportState.filters[key] === value) {
-          menu.closest('details')?.open = false;
+          closeMenu();
           return;
         }
         reportState.filters[key] = value;
         updateFilterLabels();
         syncMenuState();
-        menu.closest('details')?.open = false;
+        closeMenu();
         renderReports();
       });
     });
@@ -1970,12 +1974,22 @@ const workspaceElements = {
   shell: document.querySelector('#demo-workspace .workspace__shell'),
   navButtons: Array.from(document.querySelectorAll('.workspace__nav-btn')),
   views: Array.from(document.querySelectorAll('.workspace-view')),
+  productForm: document.getElementById('product-form'),
+  productFormReset: document.getElementById('product-form-reset'),
+  productFormFeedback: document.getElementById('product-form-feedback'),
+  productCode: document.getElementById('product-code'),
   productList: document.getElementById('pdv-product-list'),
   cart: document.getElementById('pdv-cart'),
   ticketLabel: document.getElementById('pdv-ticket'),
   itemCount: document.getElementById('pdv-item-count'),
+  discountDisplay: document.getElementById('pdv-discount'),
   total: document.getElementById('pdv-total'),
   log: document.getElementById('pdv-log'),
+  discountPercent: document.getElementById('discount-percent'),
+  discountValue: document.getElementById('discount-value'),
+  discountClear: document.getElementById('discount-clear'),
+  paymentRadios: Array.from(document.querySelectorAll('input[name="payment-method"]')),
+  paymentSummary: document.getElementById('payment-summary'),
   inventoryCategory: document.getElementById('inventory-category'),
   inventoryStatus: document.getElementById('inventory-status'),
   inventoryList: document.getElementById('inventory-list'),
@@ -1983,6 +1997,8 @@ const workspaceElements = {
   customerSearch: document.getElementById('customers-search'),
   customerList: document.getElementById('customers-list'),
   customerDetails: document.getElementById('customer-details'),
+  customerQuickForm: document.getElementById('customer-quick-form'),
+  customerQuickFeedback: document.getElementById('customer-quick-feedback'),
   selfSession: document.getElementById('self-session'),
   selfLog: document.getElementById('self-log'),
   selfScanButton: document.querySelector('[data-action="self-scan"]'),
@@ -1990,6 +2006,7 @@ const workspaceElements = {
   selfExpireButton: document.querySelector('[data-action="self-expire"]'),
   kpis: document.getElementById('workspace-kpis'),
   highlights: document.getElementById('workspace-highlights'),
+  paymentBreakdown: document.getElementById('payment-breakdown'),
 };
 
 const contactElements = {
@@ -2008,16 +2025,19 @@ const scannerElements = {
 
 const workspaceState = {
   initialized: false,
-  view: 'pdv',
+  view: 'productForm',
   products: [],
   inventory: [],
   customers: [],
   cart: [],
-  discountRate: 0,
+  discount: { percent: 0, value: 0 },
   pdvLog: [],
+  paymentMethod: 'pix',
   inventorySelection: null,
   customerSelection: null,
   metrics: null,
+  nextProductNumber: 1,
+  nextCustomerNumber: 1,
   self: {
     stage: 'idle',
     product: null,
@@ -2040,6 +2060,28 @@ if (workspaceElements.root) {
     button.addEventListener('click', () => {
       if (!button.dataset.view) return;
       setWorkspaceView(button.dataset.view);
+    });
+  });
+  workspaceElements.productFormReset?.addEventListener('click', resetProductForm);
+  workspaceElements.discountPercent?.addEventListener('input', (event) => {
+    const value = Number(event.target.value);
+    setDiscountPercent(Number.isFinite(value) ? value : 0);
+  });
+  workspaceElements.discountValue?.addEventListener('input', (event) => {
+    const raw = (event.target.value || '').toString().replace(',', '.');
+    const value = Number(raw);
+    setDiscountValue(Number.isFinite(value) ? value : 0);
+  });
+  workspaceElements.discountClear?.addEventListener('click', () => {
+    clearDiscount();
+    syncDiscountInputs();
+    renderCart();
+  });
+  workspaceElements.paymentRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (radio.checked) {
+        setPaymentMethod(radio.value);
+      }
     });
   });
   workspaceElements.inventoryCategory?.addEventListener('change', () => renderInventoryList());
@@ -2152,6 +2194,16 @@ function handleSubmit(event) {
   if (event.target === contactElements.form) {
     event.preventDefault();
     handleContactSubmit();
+    return;
+  }
+  if (event.target === workspaceElements.productForm) {
+    event.preventDefault();
+    handleProductFormSubmit();
+    return;
+  }
+  if (event.target === workspaceElements.customerQuickForm) {
+    event.preventDefault();
+    handleQuickCustomerSubmit();
   }
 }
 
@@ -2161,7 +2213,21 @@ function openWorkspace() {
   workspaceElements.root.setAttribute('aria-hidden', 'false');
   workspaceElements.root.classList.add('is-visible');
   document.body.classList.add('is-workspace-open');
-  setWorkspaceView(workspaceState.view || 'pdv');
+  setWorkspaceView(workspaceState.view || 'productForm');
+  updateProductFormCode();
+  syncDiscountInputs();
+  updatePaymentSummary();
+  workspaceElements.paymentRadios.forEach((radio) => {
+    radio.checked = radio.value === workspaceState.paymentMethod;
+  });
+  if (workspaceElements.productFormFeedback) {
+    workspaceElements.productFormFeedback.textContent = '';
+    workspaceElements.productFormFeedback.classList.remove('workspace-success');
+  }
+  if (workspaceElements.customerQuickFeedback) {
+    workspaceElements.customerQuickFeedback.textContent = '';
+    workspaceElements.customerQuickFeedback.classList.remove('workspace-success');
+  }
   window.setTimeout(() => workspaceElements.shell?.focus(), 0);
 }
 
@@ -2171,6 +2237,148 @@ function closeWorkspace() {
   workspaceElements.root.classList.remove('is-visible');
   document.body.classList.remove('is-workspace-open');
   closeScanner();
+}
+
+function formatInternalProductCode(sequence) {
+  const number = Math.max(1, Number(sequence) || 1);
+  return `BR-${String(number).padStart(4, '0')}`;
+}
+
+function updateProductFormCode() {
+  if (!workspaceElements.productCode) return;
+  workspaceElements.productCode.textContent = formatInternalProductCode(workspaceState.nextProductNumber || 1);
+}
+
+function resetProductForm() {
+  if (!workspaceElements.productForm) return;
+  workspaceElements.productForm.reset();
+  if (workspaceElements.productFormFeedback) {
+    workspaceElements.productFormFeedback.textContent = '';
+    workspaceElements.productFormFeedback.classList.remove('workspace-success');
+  }
+  updateProductFormCode();
+}
+
+function handleProductFormSubmit() {
+  if (!workspaceElements.productForm) return;
+  const formData = new FormData(workspaceElements.productForm);
+  const name = (formData.get('name') || '').toString().trim();
+  const category = (formData.get('category') || '').toString();
+  const size = (formData.get('size') || '').toString();
+  const color = (formData.get('color') || '').toString();
+  const gender = (formData.get('gender') || '').toString();
+  const condition = (formData.get('condition') || '').toString();
+  const origin = (formData.get('origin') || '').toString();
+  const status = (formData.get('status') || 'available').toString();
+
+  const parseNumericInput = (value) => {
+    if (value === null || value === undefined) return NaN;
+    return Number(value.toString().replace(',', '.'));
+  };
+
+  const price = parseNumericInput(formData.get('price'));
+  const costPriceValue = parseNumericInput(formData.get('costPrice'));
+  const costPrice = Number.isFinite(costPriceValue) && costPriceValue > 0 ? costPriceValue : null;
+
+  if (!name || !category || !size || !color || !gender || !condition || !origin || !Number.isFinite(price) || price <= 0) {
+    if (workspaceElements.productFormFeedback) {
+      workspaceElements.productFormFeedback.textContent = 'Preencha todos os campos obrigatórios para salvar a peça.';
+      workspaceElements.productFormFeedback.classList.remove('workspace-success');
+    }
+    return;
+  }
+
+  const code = formatInternalProductCode(workspaceState.nextProductNumber || 1);
+  workspaceState.nextProductNumber += 1;
+
+  const product = {
+    id: `demo-prod-${Date.now()}`,
+    code,
+    name,
+    category,
+    size,
+    color,
+    gender,
+    condition,
+    price,
+    costPrice,
+    origin,
+    status,
+    quantity: 1,
+  };
+
+  workspaceState.inventory.unshift(product);
+  workspaceState.products = workspaceState.inventory;
+  workspaceState.inventorySelection = product.id;
+
+  if (workspaceState.metrics) {
+    workspaceState.metrics.availableCount = workspaceState.inventory.filter((item) => item.status === 'available').length;
+    workspaceState.metrics.productTotals.set(product.id, { name: product.name, qty: 0 });
+    renderWorkspaceKpis();
+    renderWorkspaceHighlights();
+    renderPaymentBreakdown();
+  }
+
+  addPdvLog(`Peça ${product.code} cadastrada no estoque.`);
+
+  if (workspaceElements.productFormFeedback) {
+    workspaceElements.productFormFeedback.classList.add('workspace-success');
+    workspaceElements.productFormFeedback.textContent = `Produto ${product.code} pronto para o catálogo e PDV.`;
+  }
+
+  workspaceElements.productForm.reset();
+  updateProductFormCode();
+  renderInventoryFilters();
+  renderInventoryList();
+  renderInventoryActions();
+  renderProductList();
+}
+
+function handleQuickCustomerSubmit() {
+  if (!workspaceElements.customerQuickForm) return;
+  const formData = new FormData(workspaceElements.customerQuickForm);
+  const name = (formData.get('quick-name') || '').toString().trim();
+  const phone = (formData.get('quick-phone') || '').toString().trim();
+  const tag = (formData.get('quick-tag') || '').toString().trim();
+  if (!name || !phone) {
+    if (workspaceElements.customerQuickFeedback) {
+      workspaceElements.customerQuickFeedback.textContent = 'Informe nome e WhatsApp para cadastrar o cliente.';
+      workspaceElements.customerQuickFeedback.classList.remove('workspace-success');
+    }
+    return;
+  }
+
+  const id = `demo-cust-${Date.now()}`;
+  const customer = {
+    id,
+    name,
+    phone,
+    tag: tag || 'Cliente',
+    total: 0,
+    orders: 0,
+  };
+
+  workspaceState.customers.unshift(customer);
+  workspaceState.customerSelection = id;
+
+  if (workspaceState.metrics) {
+    workspaceState.metrics.customerTotals.set(id, { name: customer.name, total: 0, count: 0 });
+  }
+
+  if (workspaceElements.customerSearch) {
+    workspaceElements.customerSearch.value = '';
+  }
+
+  renderCustomersList('');
+  renderCustomerDetails(customer);
+
+  if (workspaceElements.customerQuickFeedback) {
+    workspaceElements.customerQuickFeedback.classList.add('workspace-success');
+    workspaceElements.customerQuickFeedback.textContent = `${customer.name} cadastrado e selecionado.`;
+  }
+
+  workspaceElements.customerQuickForm.reset();
+  addPdvLog(`Cliente ${customer.name} entrou na base com tag ${customer.tag}.`);
 }
 
 function ensureWorkspaceInitialized() {
@@ -2183,100 +2391,274 @@ function ensureDemoDataset() {
   if (demoReportsData) return;
   demoReportsData = {
     products: [
-      { id: 'demo-prod-1', code: 'DEM-001', name: 'Vestido Demo Preto', category: 'Vestidos', size: 'M', color: 'Preto', price: 219, costPrice: 95 },
-      { id: 'demo-prod-2', code: 'DEM-002', name: 'Blusa Demo Verde', category: 'Blusas', size: 'P', color: 'Verde', price: 149, costPrice: 55 },
-      { id: 'demo-prod-3', code: 'DEM-003', name: 'Calça Demo Jeans', category: 'Calças', size: '38', color: 'Azul', price: 189, costPrice: 70 },
-      { id: 'demo-prod-4', code: 'DEM-004', name: 'Saia Demo Midi', category: 'Saias', size: 'M', color: 'Marinho', price: 169, costPrice: 60 },
-      { id: 'demo-prod-5', code: 'DEM-005', name: 'Casaco Demo Lã', category: 'Casacos', size: 'G', color: 'Cinza', price: 259, costPrice: 110 },
+      {
+        id: 'demo-prod-1',
+        code: 'BR-0001',
+        name: 'Vestido envelope floral',
+        category: 'Vestido',
+        size: 'M',
+        color: 'Floral',
+        gender: 'Feminino',
+        condition: 'Seminovo',
+        price: 219,
+        costPrice: 92,
+        origin: 'Consignado',
+        status: 'available',
+      },
+      {
+        id: 'demo-prod-2',
+        code: 'BR-0002',
+        name: 'Camisa linho areia',
+        category: 'Blusa',
+        size: 'G',
+        color: 'Areia',
+        gender: 'Unissex',
+        condition: 'Premium',
+        price: 159,
+        costPrice: 65,
+        origin: 'Estoque próprio',
+        status: 'available',
+      },
+      {
+        id: 'demo-prod-3',
+        code: 'BR-0003',
+        name: 'Calça mom jeans',
+        category: 'Calça',
+        size: '38',
+        color: 'Azul',
+        gender: 'Feminino',
+        condition: 'Seminovo',
+        price: 189,
+        costPrice: 78,
+        origin: 'Consignado',
+        status: 'reserved',
+      },
+      {
+        id: 'demo-prod-4',
+        code: 'BR-0004',
+        name: 'Saia midi plissada',
+        category: 'Saia',
+        size: 'M',
+        color: 'Vinho',
+        gender: 'Feminino',
+        condition: 'Novo',
+        price: 199,
+        costPrice: 110,
+        origin: 'Estoque próprio',
+        status: 'available',
+      },
+      {
+        id: 'demo-prod-5',
+        code: 'BR-0005',
+        name: 'Blazer alfaiataria preto',
+        category: 'Casaco',
+        size: 'M',
+        color: 'Preto',
+        gender: 'Feminino',
+        condition: 'Premium',
+        price: 289,
+        costPrice: 130,
+        origin: 'Consignado',
+        status: 'sold',
+      },
+      {
+        id: 'demo-prod-6',
+        code: 'BR-0006',
+        name: 'Body canelado manga longa',
+        category: 'Blusa',
+        size: 'P',
+        color: 'Preto',
+        gender: 'Feminino',
+        condition: 'Novo',
+        price: 129,
+        costPrice: 48,
+        origin: 'Estoque próprio',
+        status: 'available',
+      },
+      {
+        id: 'demo-prod-7',
+        code: 'BR-0007',
+        name: 'Macacão pantacourt terracota',
+        category: 'Vestido',
+        size: 'G',
+        color: 'Terracota',
+        gender: 'Feminino',
+        condition: 'Seminovo',
+        price: 239,
+        costPrice: 95,
+        origin: 'Doação',
+        status: 'available',
+      },
+      {
+        id: 'demo-prod-8',
+        code: 'BR-0008',
+        name: 'Bolsa tiracolo caramelo',
+        category: 'Acessório',
+        size: 'Único',
+        color: 'Caramelo',
+        gender: 'Feminino',
+        condition: 'Seminovo',
+        price: 149,
+        costPrice: 40,
+        origin: 'Consignado',
+        status: 'reserved',
+      },
     ],
     users: [
-      { id: 'demo-user-1', name: 'Ana (Owner)' },
-      { id: 'demo-user-2', name: 'Bea (Clerk)' },
+      { id: 'demo-user-1', name: 'Bianca Dona' },
+      { id: 'demo-user-2', name: 'Lia Caixa' },
     ],
     customers: [
       { id: 'demo-cust-1', name: 'Juliana Demo', phone: '(11) 98888-0001', tag: 'VIP' },
-      { id: 'demo-cust-2', name: 'Carlos Demo', phone: '(11) 97777-0002', tag: 'Fidelidade' },
+      { id: 'demo-cust-2', name: 'Carlos Demo', phone: '(11) 97777-0002', tag: 'Consignado' },
+      { id: 'demo-cust-3', name: 'Patrícia Luz', phone: '(11) 96666-0003', tag: 'Amiga da dona' },
     ],
-    sales: [],
-    saleItems: [],
-    payments: [],
+    sales: [
+      {
+        id: 'sale-001',
+        status: 'paid',
+        createdBy: 'demo-user-2',
+        customerId: 'demo-cust-1',
+        total: 219,
+        discountValue: 19.9,
+        paymentMethod: 'pix',
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'sale-002',
+        status: 'paid',
+        createdBy: 'demo-user-2',
+        customerId: 'demo-cust-2',
+        total: 289,
+        discountValue: 0,
+        paymentMethod: 'card',
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'sale-003',
+        status: 'paid',
+        createdBy: 'demo-user-1',
+        customerId: null,
+        total: 159,
+        discountValue: 10,
+        paymentMethod: 'cash',
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    saleItems: [
+      { id: 'sale-001-item-1', saleId: 'sale-001', productId: 'demo-prod-1', unitPrice: 219, quantity: 1 },
+      { id: 'sale-002-item-1', saleId: 'sale-002', productId: 'demo-prod-5', unitPrice: 289, quantity: 1 },
+      { id: 'sale-003-item-1', saleId: 'sale-003', productId: 'demo-prod-2', unitPrice: 159, quantity: 1 },
+    ],
+    payments: [
+      { id: 'pay-001', saleId: 'sale-001', method: 'pix', amount: 219, status: 'paid', createdAt: new Date().toISOString() },
+      { id: 'pay-002', saleId: 'sale-002', method: 'card', amount: 289, status: 'paid', createdAt: new Date().toISOString() },
+      { id: 'pay-003', saleId: 'sale-003', method: 'cash', amount: 159, status: 'paid', createdAt: new Date().toISOString() },
+    ],
   };
 }
 
 function initializeWorkspace() {
-  const baseProducts = (demoReportsData?.products || []).slice(0, 12);
-  const statusCycle = ['available', 'available', 'reserved', 'available', 'sold'];
+  const baseProducts = demoReportsData?.products || [];
 
-  workspaceState.products = (baseProducts.length > 0 ? baseProducts : demoReportsData.products || []).map((product, index) => ({
+  workspaceState.inventory = (baseProducts.length > 0
+    ? baseProducts
+    : [
+        {
+          id: 'fallback-prod',
+          code: 'BR-0001',
+          name: 'Peça Demo',
+          category: 'Acervo',
+          size: 'U',
+          color: 'Sortido',
+          gender: 'Feminino',
+          condition: 'Seminovo',
+          price: 199,
+          costPrice: 80,
+          origin: 'Consignado',
+          status: 'available',
+        },
+      ]
+  ).map((product) => ({
     id: product.id,
     code: product.code,
     name: product.name,
-    price: product.price ?? 199,
     category: product.category || 'Acervo',
     size: product.size || 'U',
     color: product.color || 'Sortido',
+    gender: product.gender || 'Feminino',
+    condition: product.condition || 'Seminovo',
+    price: product.price ?? 199,
+    costPrice: product.costPrice ?? null,
+    origin: product.origin || 'Consignado',
+    status: product.status || 'available',
+    quantity: 1,
   }));
 
-  if (workspaceState.products.length === 0) {
-    workspaceState.products = [
-      { id: 'fallback-prod', code: 'FAL-001', name: 'Peça Demo', price: 199, category: 'Acervo', size: 'U', color: 'Sortido' },
-    ];
-  }
+  workspaceState.products = workspaceState.inventory;
 
-  workspaceState.inventory = workspaceState.products.map((product, index) => ({
-    ...product,
-    status: statusCycle[index % statusCycle.length],
-    quantity: index % 3 === 0 ? 2 : 1,
-  }));
+  workspaceState.nextProductNumber = workspaceState.inventory.reduce((max, product) => {
+    const match = /BR-(\d+)/.exec(product.code || '');
+    if (!match) return max;
+    return Math.max(max, Number(match[1]));
+  }, 0);
+  workspaceState.nextProductNumber += 1;
 
   const paidSales = (demoReportsData.sales || []).filter((sale) => sale.status === 'paid');
-  const totalRevenue = paidSales.reduce((sum, sale) => sum + sale.total, 0);
-  const salesCount = paidSales.length || 1;
+  const totalRevenue = paidSales.reduce((sum, sale) => sum + (sale.total || 0), 0);
+  const salesCount = paidSales.length;
   const averageTicket = salesCount ? totalRevenue / salesCount : 0;
-  const pixPaid = (demoReportsData.payments || []).filter((payment) => payment.method === 'pix' && payment.status === 'paid');
-  const pixPending = (demoReportsData.payments || []).filter(
-    (payment) => payment.method === 'pix' && payment.status !== 'paid',
-  );
 
   const productTotals = new Map();
   (demoReportsData.saleItems || []).forEach((item) => {
-    const quantity = Math.abs(item.quantity ?? 1);
-    const product = workspaceState.products.find((entry) => entry.id === item.productId);
+    const product = workspaceState.inventory.find((entry) => entry.id === item.productId);
     if (!product) return;
-    const current = productTotals.get(product.id) || { name: product.name, qty: 0 };
-    current.qty += quantity;
-    productTotals.set(product.id, current);
+    const entry = productTotals.get(product.id) || { name: product.name, qty: 0 };
+    entry.qty += Math.abs(item.quantity ?? 1);
+    productTotals.set(product.id, entry);
   });
 
   const sellerTotals = new Map();
-  (demoReportsData.sales || []).forEach((sale) => {
-    if (sale.status !== 'paid') return;
+  paidSales.forEach((sale) => {
     const seller = (demoReportsData.users || []).find((user) => user.id === sale.createdBy);
     const name = seller ? seller.name : 'Equipe DEMO';
     const key = sale.createdBy || 'demo';
-    const current = sellerTotals.get(key) || { name, total: 0 };
-    current.total += sale.total;
-    sellerTotals.set(key, current);
+    const entry = sellerTotals.get(key) || { name, total: 0 };
+    entry.total += sale.total || 0;
+    sellerTotals.set(key, entry);
   });
 
   const customerTotals = new Map();
   paidSales.forEach((sale) => {
     const key = sale.customerId || 'walkin';
     const customer = (demoReportsData.customers || []).find((entry) => entry.id === sale.customerId);
-    const name = customer ? customer.name : 'Cliente walk-in';
-    const current = customerTotals.get(key) || { name, total: 0, count: 0 };
-    current.total += sale.total;
-    current.count += 1;
-    customerTotals.set(key, current);
+    const name = customer ? customer.name : 'Cliente avulso';
+    const entry = customerTotals.get(key) || { name, total: 0, count: 0 };
+    entry.total += sale.total || 0;
+    entry.count += 1;
+    customerTotals.set(key, entry);
   });
 
-  workspaceState.customers = (demoReportsData.customers || []).slice(0, 12).map((customer) => {
+  const paymentCounts = { pix: 0, card: 0, cash: 0, fiado: 0 };
+  const paymentTotals = { pix: 0, card: 0, cash: 0, fiado: 0 };
+  (demoReportsData.payments || []).forEach((payment) => {
+    if (payment.status !== 'paid') return;
+    const method = payment.method || 'other';
+    if (paymentCounts[method] === undefined) {
+      paymentCounts[method] = 0;
+      paymentTotals[method] = 0;
+    }
+    paymentCounts[method] += 1;
+    paymentTotals[method] += Number(payment.amount) || 0;
+  });
+
+  workspaceState.customers = (demoReportsData.customers || []).map((customer) => {
     const stats = customerTotals.get(customer.id) || { total: 0, count: 0 };
     return {
       id: customer.id,
       name: customer.name,
       phone: customer.phone || customer.whatsapp || '(00) 00000-0000',
-      tag: customer.tag || 'VIP',
+      tag: customer.tag || 'Cliente',
       total: stats.total,
       orders: stats.count,
     };
@@ -2288,20 +2670,23 @@ function initializeWorkspace() {
     ];
   }
 
+  workspaceState.nextCustomerNumber = workspaceState.customers.length + 1;
+
   workspaceState.metrics = {
     totalRevenue,
     salesCount,
     averageTicket,
-    pixPaid: pixPaid.length,
-    pixPending: pixPending.length,
     availableCount: workspaceState.inventory.filter((item) => item.status === 'available').length,
     productTotals,
     sellerTotals,
     customerTotals,
+    paymentCounts,
+    paymentTotals,
   };
 
   workspaceState.cart = [];
-  workspaceState.discountRate = 0;
+  workspaceState.discount = { percent: 0, value: 0 };
+  workspaceState.paymentMethod = 'pix';
   workspaceState.pdvLog = [];
   workspaceState.inventorySelection = null;
   workspaceState.customerSelection = null;
@@ -2317,19 +2702,26 @@ function initializeWorkspace() {
   resetSelfSession();
   renderWorkspaceKpis();
   renderWorkspaceHighlights();
+  renderPaymentBreakdown();
   updateTicketLabel();
 }
 
 function renderProductList() {
   if (!workspaceElements.productList) return;
-  workspaceElements.productList.innerHTML = workspaceState.products
+  const availableProducts = workspaceState.inventory.filter((product) => product.status === 'available');
+  if (availableProducts.length === 0) {
+    workspaceElements.productList.innerHTML = '<li class="workspace-empty">Nenhuma peça disponível. Cadastre uma nova peça para vender.</li>';
+    return;
+  }
+
+  workspaceElements.productList.innerHTML = availableProducts
     .map(
       (product) => `
         <li>
           <button type="button" class="workspace-item" data-action="pdv-add" data-product-id="${product.id}">
             <div class="workspace-item__info">
               <strong>${product.name}</strong>
-              <span>${product.code} • ${product.category}</span>
+              <span>${product.code} • ${product.category} • Tam. ${product.size}</span>
             </div>
             <span class="workspace-item__price">${formatCurrencyGlobal(product.price)}</span>
           </button>
@@ -2340,8 +2732,12 @@ function renderProductList() {
 }
 
 function addProductToCart(productId) {
-  const product = workspaceState.products.find((item) => item.id === productId);
+  const product = workspaceState.inventory.find((item) => item.id === productId);
   if (!product) return;
+  if (product.status !== 'available') {
+    addPdvLog(`Peça ${product.code} não está disponível para venda.`);
+    return;
+  }
   const existing = workspaceState.cart.find((item) => item.id === productId);
   if (existing) {
     existing.quantity += 1;
@@ -2392,12 +2788,18 @@ function renderCart() {
 
   const itemCount = workspaceState.cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = workspaceState.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal * (1 - workspaceState.discountRate);
+  const discountState = workspaceState.discount || { percent: 0, value: 0 };
+  const percentDiscount = subtotal * (Math.max(0, Math.min(100, discountState.percent)) / 100);
+  const fixedDiscount = Math.max(0, discountState.value);
+  const totalDiscount = Math.min(subtotal, percentDiscount + fixedDiscount);
+  const total = Math.max(0, subtotal - totalDiscount);
 
   if (workspaceElements.itemCount) workspaceElements.itemCount.textContent = String(itemCount);
+  if (workspaceElements.discountDisplay) {
+    workspaceElements.discountDisplay.textContent = formatCurrencyGlobal(totalDiscount);
+  }
   if (workspaceElements.total) {
-    const suffix = workspaceState.discountRate > 0 ? ' (com desconto)' : '';
-    workspaceElements.total.textContent = `${formatCurrencyGlobal(total)}${suffix}`;
+    workspaceElements.total.textContent = formatCurrencyGlobal(total);
   }
 }
 
@@ -2415,12 +2817,9 @@ function applyPdvDiscount() {
     addPdvLog('Adicione itens antes de aplicar desconto.');
     return;
   }
-  if (workspaceState.discountRate > 0) {
-    addPdvLog('Desconto de 10% já aplicado.');
-    return;
-  }
-  workspaceState.discountRate = 0.1;
+  setDiscountPercent(10);
   addPdvLog('Desconto promocional de 10% aplicado.');
+  syncDiscountInputs();
   renderCart();
 }
 
@@ -2430,32 +2829,54 @@ function completePdvCheckout() {
     return;
   }
   const subtotal = workspaceState.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal * (1 - workspaceState.discountRate);
+  const discountState = workspaceState.discount || { percent: 0, value: 0 };
+  const percentDiscount = subtotal * (Math.max(0, Math.min(100, discountState.percent)) / 100);
+  const fixedDiscount = Math.max(0, discountState.value);
+  const totalDiscount = Math.min(subtotal, percentDiscount + fixedDiscount);
+  const total = Math.max(0, subtotal - totalDiscount);
   const customer = workspaceState.customerSelection
     ? workspaceState.customers.find((item) => item.id === workspaceState.customerSelection)
     : null;
   const customerName = customer ? customer.name : 'Cliente walk-in';
+  const paymentMethod = workspaceState.paymentMethod || 'pix';
+  const paymentLabel = getPaymentLabel(paymentMethod);
 
-  addPdvLog(`PIX fake confirmado para ${customerName}. Total ${formatCurrencyGlobal(total)}.`);
-  updateMetricsAfterSale(total, workspaceState.cart, customer);
+  addPdvLog(`${paymentLabel} confirmado para ${customerName}. Total ${formatCurrencyGlobal(total)}.`);
+  updateMetricsAfterSale(total, workspaceState.cart, customer, paymentMethod);
 
   workspaceState.cart = [];
-  workspaceState.discountRate = 0;
+  clearDiscount();
+  syncDiscountInputs();
   renderCart();
 }
 
-function updateMetricsAfterSale(total, cartItems, customer) {
+function updateMetricsAfterSale(total, cartItems, customer, paymentMethod) {
   if (!workspaceState.metrics) return;
   workspaceState.metrics.totalRevenue += total;
   workspaceState.metrics.salesCount += 1;
-  workspaceState.metrics.averageTicket = workspaceState.metrics.totalRevenue / workspaceState.metrics.salesCount;
-  workspaceState.metrics.pixPaid += 1;
+  workspaceState.metrics.averageTicket = workspaceState.metrics.salesCount
+    ? workspaceState.metrics.totalRevenue / workspaceState.metrics.salesCount
+    : 0;
+
+  if (workspaceState.metrics.paymentCounts[paymentMethod] === undefined) {
+    workspaceState.metrics.paymentCounts[paymentMethod] = 0;
+    workspaceState.metrics.paymentTotals[paymentMethod] = 0;
+  }
+  workspaceState.metrics.paymentCounts[paymentMethod] += 1;
+  workspaceState.metrics.paymentTotals[paymentMethod] += total;
 
   cartItems.forEach((item) => {
     const entry = workspaceState.metrics.productTotals.get(item.id) || { name: item.name, qty: 0 };
     entry.qty += item.quantity;
     workspaceState.metrics.productTotals.set(item.id, entry);
+
+    const inventoryItem = workspaceState.inventory.find((product) => product.id === item.id);
+    if (inventoryItem) {
+      inventoryItem.status = 'sold';
+    }
   });
+
+  workspaceState.metrics.availableCount = workspaceState.inventory.filter((item) => item.status === 'available').length;
 
   if (customer) {
     const entry = workspaceState.metrics.customerTotals.get(customer.id) || { name: customer.name, total: 0, count: 0 };
@@ -2464,13 +2885,104 @@ function updateMetricsAfterSale(total, cartItems, customer) {
     workspaceState.metrics.customerTotals.set(customer.id, entry);
     customer.total = entry.total;
     customer.orders = entry.count;
+  } else {
+    const walkin = workspaceState.metrics.customerTotals.get('walkin') || { name: 'Cliente avulso', total: 0, count: 0 };
+    walkin.total += total;
+    walkin.count += 1;
+    workspaceState.metrics.customerTotals.set('walkin', walkin);
   }
 
   renderWorkspaceKpis();
   renderWorkspaceHighlights();
+  renderPaymentBreakdown();
   updateTicketLabel();
   renderCustomersList(workspaceElements.customerSearch?.value || '');
   renderCustomerDetails(customer || null);
+  renderInventoryList();
+  renderInventoryActions();
+  renderProductList();
+}
+
+function setDiscountPercent(value) {
+  const normalized = Math.min(100, Math.max(0, Number(value) || 0));
+  workspaceState.discount.percent = normalized;
+  syncDiscountInputs();
+  renderCart();
+}
+
+function setDiscountValue(value) {
+  const normalized = Math.max(0, Number(value) || 0);
+  workspaceState.discount.value = normalized;
+  syncDiscountInputs();
+  renderCart();
+}
+
+function clearDiscount() {
+  workspaceState.discount.percent = 0;
+  workspaceState.discount.value = 0;
+}
+
+function syncDiscountInputs() {
+  if (workspaceElements.discountPercent) {
+    workspaceElements.discountPercent.value = String(workspaceState.discount.percent ?? 0);
+  }
+  if (workspaceElements.discountValue) {
+    workspaceElements.discountValue.value = String(workspaceState.discount.value ?? 0);
+  }
+}
+
+function setPaymentMethod(method) {
+  workspaceState.paymentMethod = method;
+  updatePaymentSummary();
+}
+
+function getPaymentLabel(method) {
+  const map = {
+    pix: 'PIX',
+    cash: 'Pagamento em dinheiro',
+    card: 'Cartão aprovado',
+    fiado: 'Fiado registrado',
+  };
+  return map[method] || 'Pagamento';
+}
+
+function updatePaymentSummary() {
+  if (!workspaceElements.paymentSummary) return;
+  const map = {
+    pix: 'Recebe via PIX com confirmação instantânea.',
+    cash: 'Registre o recebimento em dinheiro e feche o caixa depois.',
+    card: 'Lance a venda no POS e marque como pago aqui.',
+    fiado: 'Venda fiado registrada — acompanhe depois no relatório.',
+  };
+  workspaceElements.paymentSummary.textContent = map[workspaceState.paymentMethod] || 'Defina a forma de pagamento para registrar a venda.';
+}
+
+function renderPaymentBreakdown() {
+  if (!workspaceElements.paymentBreakdown || !workspaceState.metrics) return;
+  const entries = Object.entries(workspaceState.metrics.paymentCounts);
+  if (entries.length === 0) {
+    workspaceElements.paymentBreakdown.innerHTML = '<li class="workspace-empty">Nenhum pagamento registrado hoje.</li>';
+    return;
+  }
+
+  workspaceElements.paymentBreakdown.innerHTML = entries
+    .filter(([, count]) => count > 0)
+    .map(([method, count]) => {
+      const total = workspaceState.metrics.paymentTotals[method] || 0;
+      return `
+        <li>
+          <div class="workspace-payment__summary">
+            <strong>${getPaymentLabel(method).replace('registrado', '').trim()}</strong>
+            <span>${count}× • ${formatCurrencyGlobal(total)}</span>
+          </div>
+        </li>
+      `;
+    })
+    .join('');
+
+  if (!workspaceElements.paymentBreakdown.innerHTML) {
+    workspaceElements.paymentBreakdown.innerHTML = '<li class="workspace-empty">Nenhum pagamento registrado hoje.</li>';
+  }
 }
 
 function updateTicketLabel() {
@@ -2480,7 +2992,7 @@ function updateTicketLabel() {
 
 function renderInventoryFilters() {
   if (!workspaceElements.inventoryCategory) return;
-  const categories = Array.from(new Set(workspaceState.products.map((product) => product.category))).filter(Boolean);
+  const categories = Array.from(new Set(workspaceState.inventory.map((product) => product.category))).filter(Boolean);
   workspaceElements.inventoryCategory.innerHTML = ['<option value="all">Todas</option>']
     .concat(categories.map((category) => `<option value="${category}">${category}</option>`))
     .join('');
@@ -2510,7 +3022,7 @@ function renderInventoryList() {
             <button type="button" class="workspace-item${isSelected ? ' is-selected' : ''}" data-action="inventory-select" data-product-id="${item.id}">
               <div class="workspace-item__info">
                 <strong>${item.name}</strong>
-                <span>${item.code} • ${item.category}</span>
+                <span>${item.code} • ${item.category} • Tam. ${item.size}</span>
               </div>
               <span class="workspace-status workspace-status--${item.status}">${formatInventoryStatus(item.status)}</span>
             </button>
@@ -2555,6 +3067,8 @@ function renderInventoryActions() {
   workspaceElements.inventoryActions.innerHTML = `
     <div class="workspace-actions__card">
       <h4>${item.name}</h4>
+      <p>${item.code} • Tam. ${item.size} • ${formatCurrencyGlobal(item.price)}</p>
+      <p>Origem: <strong>${item.origin}</strong> • Condição: <strong>${item.condition}</strong></p>
       <p>Status atual: <strong>${formatInventoryStatus(item.status)}</strong></p>
       <div class="workspace-actions__buttons">
         ${buttons.join('')}
@@ -2571,6 +3085,11 @@ function updateInventoryStatus(status) {
   addPdvLog(`Peça ${item.code} agora está ${formatInventoryStatus(status).toLowerCase()}.`);
   renderInventoryList();
   renderInventoryActions();
+  if (workspaceState.metrics) {
+    workspaceState.metrics.availableCount = workspaceState.inventory.filter((entry) => entry.status === 'available').length;
+    renderWorkspaceKpis();
+  }
+  renderProductList();
 }
 
 function highlightInventoryItem() {
@@ -2610,7 +3129,7 @@ function renderCustomersList(query) {
           <button type="button" class="workspace-item${isSelected ? ' is-selected' : ''}" data-action="customer-select" data-customer-id="${customer.id}">
             <div class="workspace-item__info">
               <strong>${customer.name}</strong>
-              <span>${customer.phone}</span>
+              <span>${customer.phone} • ${customer.tag || 'Cliente'}</span>
             </div>
             <span class="workspace-item__badge">${customer.orders || 0} pedidos</span>
           </button>
@@ -2639,6 +3158,7 @@ function renderCustomerDetails(customer) {
       <strong>${customer.name}</strong>
       <span>${customer.phone}</span>
     </div>
+    <p>Tag: <strong>${customer.tag || 'Cliente'}</strong></p>
     <p>Pedidos: <strong>${customer.orders || 0}</strong> • Total: <strong>${formatCurrencyGlobal(customer.total || 0)}</strong></p>
     <div class="workspace-cart__actions">
       <button type="button" class="btn btn--ghost btn--small" data-action="customer-receipt">Enviar recibo</button>
@@ -2970,8 +3490,9 @@ function setWorkspaceView(view) {
 function renderWorkspaceKpis() {
   if (!workspaceElements.kpis || !workspaceState.metrics) return;
   const metrics = workspaceState.metrics;
-  const pixTotal = metrics.pixPaid + metrics.pixPending;
-  const pixConversion = pixTotal ? Math.round((metrics.pixPaid / pixTotal) * 100) : null;
+  const paymentCounts = metrics.paymentCounts || {};
+  const totalPayments = Object.values(paymentCounts).reduce((sum, count) => sum + count, 0);
+  const pixConversion = totalPayments ? Math.round(((paymentCounts.pix || 0) / totalPayments) * 100) : null;
   workspaceElements.kpis.innerHTML = `
     <div><dt>Vendas pagas</dt><dd>${metrics.salesCount}</dd></div>
     <div><dt>Receita líquida</dt><dd>${formatCurrencyGlobal(metrics.totalRevenue)}</dd></div>
