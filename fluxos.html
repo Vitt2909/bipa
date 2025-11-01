@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIPA - Fluxos operacionais em modo demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="flows">
+    <div class="app" id="app">
+      <div class="demo-banner" role="status">MODO DEMO — dados fictícios</div>
+
+      <header class="app__shell">
+        <div class="app__topbar" role="navigation" aria-label="Acesso rápido">
+          <div class="app__identity">
+            <span class="brand-mark" aria-hidden="true">B</span>
+            <div class="identity__text">
+              <span class="identity__name">BIPA</span>
+              <span class="identity__tagline">PDV mobile para brechós</span>
+            </div>
+          </div>
+
+          <div class="topbar__actions">
+            <a class="topbar__link" href="index.html" data-nav="overview">Produto</a>
+            <a class="topbar__link" href="fluxos.html" data-nav="flows">Fluxos</a>
+            <a class="topbar__link" href="relatorios.html" data-nav="reports">Relatórios</a>
+            <a class="topbar__link" href="github.html" data-nav="github">Roadmap</a>
+            <a class="btn btn--ghost btn--small" href="#demo-workspace">Entrar na demo</a>
+            <a class="btn btn--primary btn--small" href="#contact-section">Falar com vendas</a>
+          </div>
+        </div>
+
+        <div class="hero">
+          <div class="hero__grid">
+            <div class="hero__content">
+              <span class="hero__badge">DEMO guiada</span>
+              <h1 class="hero__title">Fluxos operacionais com simulação ao vivo.</h1>
+              <p class="hero__subtitle">
+                Percorra a jornada completa do PDV móvel, reservas temporárias e self-checkout com dados fictícios em tempo real.
+              </p>
+              <div class="hero__actions" role="group" aria-label="Ações principais">
+                <div class="hero__action">
+                  <a class="btn btn--primary" href="#flows-panel">Ver simulações</a>
+                  <span class="hero__action-note">Execute cada etapa do fluxo com feedback imediato.</span>
+                </div>
+                <div class="hero__action">
+                  <a class="btn btn--outline" href="#demo-workspace">Abrir workspace completo</a>
+                  <span class="hero__action-note">Cadastre peças, venda e gere recibos na demo viva.</span>
+                </div>
+              </div>
+              <ul class="hero__highlights" aria-label="Destaques dos fluxos">
+                <li>Simulação guiada de venda assistida em 3 toques.</li>
+                <li>Reservas aceleradas com contagem regressiva automática.</li>
+                <li>Self-checkout com passe temporário e validação de saída.</li>
+              </ul>
+            </div>
+
+            <aside class="hero__summary" aria-label="Resumo dos fluxos">
+              <div class="summary-card">
+                <header class="summary-card__header">
+                  <span class="summary-card__badge" aria-hidden="true">Demo</span>
+                  <h2 class="summary-card__title">Testes rápidos e sem risco</h2>
+                  <p class="summary-card__subtitle">Explore o que muda na operação antes de levar para o time.</p>
+                </header>
+                <ol class="summary-card__list">
+                  <li><strong>Venda assistida.</strong> Escaneie, receba via PIX fake e envie recibo.</li>
+                  <li><strong>Reserva temporária.</strong> Segure peças por minutos com liberação automática.</li>
+                  <li><strong>Self-checkout.</strong> Gere passes de saída e valide como lojista.</li>
+                </ol>
+                <dl class="summary-card__metrics">
+                  <div class="metric">
+                    <dt>3 toques</dt>
+                    <dd>Para concluir uma venda completa</dd>
+                  </div>
+                  <div class="metric">
+                    <dt>15/30/60</dt>
+                    <dd>Minutos de reserva simulada</dd>
+                  </div>
+                  <div class="metric">
+                    <dt>2 min</dt>
+                    <dd>Validade do passe de saída</dd>
+                  </div>
+                </dl>
+                <footer class="summary-card__footer">
+                  <p>
+                    Quer adaptar os fluxos ao seu time? <a class="link-cta" href="#contact-section">Fale com vendas</a> e receba um walkthrough.
+                  </p>
+                </footer>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </header>
+
+      <main class="app__content">
+        <section class="panel is-active" id="flows-panel" aria-labelledby="flows-heading">
+          <div class="panel__header">
+            <h2 class="panel__title" id="flows-heading">Fluxos operacionais com simulação</h2>
+            <p class="panel__subtitle">
+              Explore como o PDV móvel funciona na prática: venda rápida, reservas temporárias e self-checkout com passe de saída.
+            </p>
+          </div>
+
+          <div class="simulations-grid">
+            <article class="simulation-card" aria-live="polite">
+              <header class="simulation-card__header">
+                <h3>Venda em 3 toques</h3>
+                <p>Nova venda → Escanear → Receber PIX → Marcar pago → Recibo.</p>
+              </header>
+              <ol class="simulation-steps" id="sale-steps"></ol>
+              <div class="simulation-actions">
+                <button class="btn btn--primary" id="sale-next">Iniciar fluxo</button>
+                <button class="btn btn--ghost" id="sale-reset" disabled>Reiniciar</button>
+              </div>
+              <div class="simulation-log" id="sale-log" aria-live="polite"></div>
+            </article>
+
+            <article class="simulation-card" aria-live="polite">
+              <header class="simulation-card__header">
+                <h3>Reserva temporária</h3>
+                <p>Segure uma peça por 15/30/60 minutos. Timer acelerado (1s = 1min).</p>
+              </header>
+              <div class="reservation-status" id="reservation-status">
+                <span class="chip chip--available">Disponível</span>
+                <span class="reservation-timer" id="reservation-timer">—</span>
+              </div>
+              <div class="reservation-actions" role="group" aria-label="Duração da reserva">
+                <button class="btn btn--ghost" data-reservation="15">Reservar 15 min</button>
+                <button class="btn btn--ghost" data-reservation="30">Reservar 30 min</button>
+                <button class="btn btn--ghost" data-reservation="60">Reservar 60 min</button>
+              </div>
+              <p class="reservation-note">
+                Ao expirar, a peça volta automaticamente para <strong>available</strong>.
+              </p>
+            </article>
+
+            <article class="simulation-card" aria-live="polite">
+              <header class="simulation-card__header">
+                <h3>Self-Checkout</h3>
+                <p>Cliente lê QR da peça, paga fake e recebe Passe de Saída (1 uso).</p>
+              </header>
+              <label class="toggle">
+                <input type="checkbox" id="self-checkout-flag" />
+                <span class="toggle__decor" aria-hidden="true"></span>
+                <span class="toggle__label">Habilitar self-checkout</span>
+              </label>
+              <div class="self-checkout-flow" id="self-checkout-flow" hidden>
+                <div class="self-checkout-status" id="self-checkout-status" aria-live="polite">
+                  Fluxo aguardando escaneamento.
+                </div>
+                <div class="self-checkout-actions">
+                  <button class="btn btn--ghost" id="checkout-scan" disabled>Escanear peça</button>
+                  <button class="btn btn--ghost" id="checkout-pay" disabled>Simular pagamento PIX</button>
+                  <button class="btn btn--primary" id="checkout-validate" disabled>Validar saída</button>
+                </div>
+                <div class="self-checkout-pass" id="checkout-pass" hidden aria-live="polite"></div>
+              </div>
+            </article>
+          </div>
+
+          <section class="workspace-preview" aria-labelledby="workspace-preview-title">
+            <div class="workspace-preview__screen">
+              <div class="workspace-preview__phone" role="img" aria-label="Preview do app BIPA">
+                <div class="workspace-preview__camera">
+                  <div class="workspace-preview__scan-area"></div>
+                  <p>Simule uma venda real com câmera e PIX fake.</p>
+                </div>
+                <a class="btn btn--primary workspace-preview__cta" href="#demo-workspace">
+                  Abrir BIPA interativo
+                </a>
+              </div>
+            </div>
+            <div class="workspace-preview__details">
+              <h3 id="workspace-preview-title">Experimente o app completo em segundos</h3>
+              <p>
+                Cada fluxo da DEMO agora é navegável. Escaneie produtos, finalize vendas, veja estoque e clientes — tudo alimentado por dados fictícios que reagem aos seus cliques.
+              </p>
+              <ul class="workspace-preview__list">
+                <li>PDV mobile com carrinho dinâmico e confirmação PIX simulada.</li>
+                <li>Inventário vivo: filtre peças, reserve e devolva com um toque.</li>
+                <li>CRM enxuto: procure clientes e dispare recibos instantâneos.</li>
+                <li>Self-checkout com passe temporário e validação em tempo real.</li>
+              </ul>
+              <a class="btn btn--surface workspace-preview__ghost" href="#demo-workspace">
+                Ver jornada completa
+              </a>
+            </div>
+          </section>
+        </section>
+      </main>
+
+      <footer class="app__footer">
+        <span>BIPA © 2024</span>
+        <span>Termos · Privacidade</span>
+      </footer>
+    </div>
+
+    <section class="workspace" id="demo-workspace" aria-labelledby="workspace-title">
+      <div class="workspace__shell">
+        <header class="workspace__header">
+          <div>
+            <p class="workspace__badge">Demo viva</p>
+            <h2 class="workspace__title" id="workspace-title">BIPA em modo operando</h2>
+            <p class="workspace__lead">Fluxos completos do cadastro ao passe de saída para testar no seu tempo.</p>
+          </div>
+          <a class="workspace__back-link" href="#app">Voltar para o início</a>
+        </header>
+
+        <nav class="workspace__nav" role="tablist" aria-label="Seções do app demo">
+          <button
+            type="button"
+            class="workspace__nav-btn is-active"
+            data-view="productForm"
+            role="tab"
+            aria-selected="true"
+          >
+            Cadastro de produto
+          </button>
+          <button type="button" class="workspace__nav-btn" data-view="catalog" role="tab" aria-selected="false">
+            Catálogo de produtos
+          </button>
+          <button type="button" class="workspace__nav-btn" data-view="sell" role="tab" aria-selected="false">
+            Vender
+          </button>
+          <button type="button" class="workspace__nav-btn" data-view="analysis" role="tab" aria-selected="false">
+            Análise do dia
+          </button>
+        </nav>
+
+        <div class="workspace__content">
+          <section class="workspace-view is-active" data-view="productForm" role="tabpanel">
+            <div class="workspace-pane workspace-pane--form">
+              <header class="workspace-pane__header">
+                <h3>Cadastrar peça única</h3>
+                <span class="workspace-pane__meta">Código gerado automaticamente</span>
+              </header>
+              <form class="workspace-form" id="product-form">
+                <div class="workspace-form__grid">
+                  <label>
+                    <span>Nome da peça</span>
+                    <input type="text" name="name" id="product-name" placeholder="Vestido floral midi" required />
+                  </label>
+                  <label>
+                    <span>Categoria</span>
+                    <select name="category" id="product-category" required>
+                      <option value="">Selecione</option>
+                      <option value="Vestido">Vestido</option>
+                      <option value="Blusa">Blusa</option>
+                      <option value="Calça">Calça</option>
+                      <option value="Saia">Saia</option>
+                      <option value="Casaco">Casaco</option>
+                      <option value="Acessório">Acessório</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Tamanho</span>
+                    <input type="text" name="size" id="product-size" placeholder="P, M, G ou numérico" required />
+                  </label>
+                  <label>
+                    <span>Cor</span>
+                    <input type="text" name="color" id="product-color" placeholder="Azul marinho" required />
+                  </label>
+                  <label>
+                    <span>Gênero</span>
+                    <select name="gender" id="product-gender" required>
+                      <option value="Feminino">Feminino</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Unissex">Unissex</option>
+                      <option value="Infantil">Infantil</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Condição</span>
+                    <select name="condition" id="product-condition" required>
+                      <option value="Novo">Novo</option>
+                      <option value="Seminovo">Seminovo</option>
+                      <option value="Usado">Usado</option>
+                      <option value="Premium">Premium</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Preço de venda</span>
+                    <input type="number" name="price" id="product-price" min="0" step="0.01" required placeholder="199,90" />
+                  </label>
+                  <label>
+                    <span>Preço de custo (opcional)</span>
+                    <input type="number" name="costPrice" id="product-cost" min="0" step="0.01" placeholder="89,90" />
+                  </label>
+                  <label>
+                    <span>Origem</span>
+                    <select name="origin" id="product-origin" required>
+                      <option value="Consignado">Consignado</option>
+                      <option value="Doação">Doação</option>
+                      <option value="Estoque próprio">Estoque próprio</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Status inicial</span>
+                    <select name="status" id="product-status" required>
+                      <option value="available">Disponível</option>
+                      <option value="reserved">Reservado</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Foto</span>
+                    <input type="file" name="photo" id="product-photo" accept="image/*" />
+                  </label>
+                </div>
+                <div class="workspace-form__footer">
+                  <div>
+                    <p class="workspace-note">Próximo código: <strong id="product-code">BR-0001</strong></p>
+                    <p class="workspace-note">Ao salvar, a peça entra no estoque com quantidade = 1.</p>
+                  </div>
+                  <div class="workspace-form__actions">
+                    <button type="button" class="btn btn--ghost" id="product-form-reset">Limpar</button>
+                    <button type="submit" class="btn btn--primary">Salvar produto</button>
+                  </div>
+                </div>
+                <p class="workspace-note" id="product-form-feedback" role="status" aria-live="polite"></p>
+              </form>
+            </div>
+          </section>
+
+          <section class="workspace-view" data-view="catalog" role="tabpanel" aria-hidden="true">
+            <div class="workspace-split">
+              <div class="workspace-pane">
+                <header class="workspace-pane__header">
+                  <h3>Catálogo interno</h3>
+                  <div class="workspace-filter">
+                    <label>
+                      <span>Categoria</span>
+                      <select id="inventory-category"></select>
+                    </label>
+                    <label>
+                      <span>Status</span>
+                      <select id="inventory-status">
+                        <option value="all">Todas</option>
+                        <option value="available">Disponível</option>
+                        <option value="reserved">Reservada</option>
+                        <option value="sold">Vendida</option>
+                      </select>
+                    </label>
+                  </div>
+                </header>
+                <p class="workspace-note">Mostrando apenas peças cadastradas nesta demo.</p>
+                <ul class="workspace-list" id="inventory-list" aria-live="polite"></ul>
+              </div>
+              <div class="workspace-pane">
+                <header class="workspace-pane__header">
+                  <h3>Ações rápidas</h3>
+                </header>
+                <div class="workspace-actions" id="inventory-actions">
+                  <p>Selecione uma peça para reservar, devolver ou destacar no catálogo.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="workspace-view" data-view="sell" role="tabpanel" aria-hidden="true">
+            <div class="workspace-split">
+              <div class="workspace-pane">
+                <header class="workspace-pane__header">
+                  <h3>Escolha o produto</h3>
+                  <button type="button" class="btn btn--ghost btn--small" data-action="pdv-scan">Escanear QR</button>
+                </header>
+                <p class="workspace-note">Peças reservadas ou vendidas não aparecem aqui.</p>
+                <ul class="workspace-list" id="pdv-product-list" aria-live="polite"></ul>
+              </div>
+              <div class="workspace-pane workspace-pane--stacked">
+                <header class="workspace-pane__header">
+                  <h3>Resumo da venda</h3>
+                  <span class="workspace-pane__meta" id="pdv-ticket">Ticket médio: —</span>
+                </header>
+                <div class="workspace-cart" id="pdv-cart" aria-live="polite"></div>
+                <div class="workspace-cart__totals">
+                  <div>
+                    <span>Itens</span>
+                    <strong id="pdv-item-count">0</strong>
+                  </div>
+                  <div>
+                    <span>Desconto</span>
+                    <strong id="pdv-discount">R$ 0,00</strong>
+                  </div>
+                  <div>
+                    <span>Total</span>
+                    <strong id="pdv-total">R$ 0,00</strong>
+                  </div>
+                </div>
+                <div class="workspace-section">
+                  <h4>Descontos</h4>
+                  <div class="workspace-discount">
+                    <label>
+                      <span>Desconto (%)</span>
+                      <input type="number" id="discount-percent" min="0" max="100" step="1" value="0" />
+                    </label>
+                    <label>
+                      <span>Desconto (R$)</span>
+                      <input type="number" id="discount-value" min="0" step="0.01" value="0" />
+                    </label>
+                    <button type="button" class="btn btn--ghost btn--small" id="discount-clear">Limpar</button>
+                  </div>
+                </div>
+                <div class="workspace-section">
+                  <h4>Pagamento</h4>
+                  <div class="workspace-payment" role="radiogroup" aria-label="Formas de pagamento">
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="pix" checked />
+                      <span>PIX</span>
+                    </label>
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="cash" />
+                      <span>Dinheiro</span>
+                    </label>
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="card" />
+                      <span>Cartão</span>
+                    </label>
+                    <label class="workspace-payment__option">
+                      <input type="radio" name="payment-method" value="fiado" />
+                      <span>Fiado</span>
+                    </label>
+                  </div>
+                  <p class="workspace-note" id="payment-summary">Recebe via PIX com confirmação instantânea.</p>
+                </div>
+                <div class="workspace-section">
+                  <h4>Cliente</h4>
+                  <input type="search" id="customers-search" placeholder="Nome ou telefone" aria-label="Buscar clientes" />
+                  <ul class="workspace-list workspace-list--compact" id="customers-list" aria-live="polite"></ul>
+                  <div class="workspace-customer" id="customer-details">
+                    <p>Escolha um cliente para disparar recibo ou reservar peças.</p>
+                  </div>
+                  <form class="workspace-form workspace-form--inline" id="customer-quick-form" aria-label="Cadastro rápido de cliente">
+                    <div class="workspace-form__row">
+                      <label>
+                        <span>Nome</span>
+                        <input type="text" name="quick-name" placeholder="Nome completo" required />
+                      </label>
+                      <label>
+                        <span>WhatsApp</span>
+                        <input type="tel" name="quick-phone" placeholder="(00) 90000-0000" required />
+                      </label>
+                    </div>
+                    <label>
+                      <span>Tag</span>
+                      <input type="text" name="quick-tag" placeholder="VIP, consignado, amiga..." />
+                    </label>
+                    <button type="submit" class="btn btn--surface btn--small">Cadastrar rápido</button>
+                    <p class="workspace-note" id="customer-quick-feedback" role="status" aria-live="polite"></p>
+                  </form>
+                </div>
+                <div class="workspace-cart__actions">
+                  <button type="button" class="btn btn--primary" data-action="pdv-checkout">Finalizar venda</button>
+                </div>
+                <div class="workspace-log" id="pdv-log" aria-live="polite"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="workspace-view" data-view="analysis" role="tabpanel" aria-hidden="true">
+            <div class="workspace-reports workspace-reports--analysis">
+              <div>
+                <h3>Indicadores do dia</h3>
+                <dl class="workspace-kpis" id="workspace-kpis"></dl>
+              </div>
+              <div>
+                <h3>Destaques e pagamentos</h3>
+                <ul class="workspace-list" id="workspace-highlights"></ul>
+                <ul class="workspace-list workspace-list--compact" id="payment-breakdown"></ul>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="workspace-scanner" id="scanner-panel" hidden aria-labelledby="scanner-title">
+          <header class="workspace-scanner__header">
+            <div>
+              <h3 id="scanner-title">Simulador de câmera</h3>
+              <p>Use o leitor para testar fluxos de PDV e self-checkout sem sair do painel.</p>
+            </div>
+            <button type="button" class="btn btn--ghost btn--small" data-action="scanner-hide">Fechar painel</button>
+          </header>
+          <div class="workspace-scanner__body">
+            <div class="scanner__viewport">
+              <video id="scanner-video" autoplay playsinline muted></video>
+              <div class="scanner__overlay">
+                <span class="scanner__corner"></span>
+                <span class="scanner__corner"></span>
+                <span class="scanner__corner"></span>
+                <span class="scanner__corner"></span>
+              </div>
+              <div class="scanner__fallback" id="scanner-fallback" hidden>
+                <p>Não conseguimos acessar a câmera. Você pode simular a leitura manualmente.</p>
+              </div>
+            </div>
+            <div class="workspace-scanner__status" id="scanner-status" aria-live="polite">Aponte para um QR Code.</div>
+            <div class="workspace-scanner__actions">
+              <button type="button" class="btn btn--ghost" data-action="scanner-trigger">Simular leitura agora</button>
+              <button type="button" class="btn btn--primary" data-action="scanner-confirm" disabled>Adicionar ao carrinho</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="contact" id="contact-section" aria-labelledby="contact-title">
+      <div class="contact__shell">
+        <header class="contact__header">
+          <h2 id="contact-title">Vamos montar sua operação?</h2>
+          <p>Conte rapidamente sobre a sua operação e retornamos em até 1 dia útil.</p>
+        </header>
+        <form class="contact__form" id="contact-form">
+          <label>
+            <span>Nome</span>
+            <input type="text" name="name" required placeholder="Como podemos te chamar?" />
+          </label>
+          <label>
+            <span>E-mail</span>
+            <input type="email" name="email" required placeholder="nome@brecho.com" />
+          </label>
+          <label>
+            <span>WhatsApp</span>
+            <input type="tel" name="phone" required placeholder="(00) 90000-0000" />
+          </label>
+          <label>
+            <span>Principal objetivo</span>
+            <select name="goal" required>
+              <option value="checkout">Self-checkout</option>
+              <option value="pix">Receber via PIX</option>
+              <option value="catalog">Catalogar acervo</option>
+              <option value="consignacao">Consignação organizada</option>
+            </select>
+          </label>
+          <label>
+            <span>Mensagem</span>
+            <textarea name="message" rows="3" placeholder="Conte rapidamente sobre a sua operação"></textarea>
+          </label>
+          <button type="submit" class="btn btn--primary">Enviar interesse</button>
+          <p class="contact__note" id="contact-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <script src="script.js"></script>
+  </body>
+</html>
