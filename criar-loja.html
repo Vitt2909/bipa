@@ -23,72 +23,95 @@
           </p>
         </div>
 
-        <form class="auth-form" aria-describedby="create-store-hint" novalidate>
-          <label class="form-field">
-            <span class="form-label" id="field-store-name-label">Nome da loja</span>
-            <input
-              id="field-store-name"
-              type="text"
-              name="store-name"
-              placeholder="Ex.: Brechó Verde"
-              aria-labelledby="field-store-name-label"
-              required
-            />
-            <span class="form-field__feedback" id="field-store-name-feedback" aria-live="polite" hidden></span>
-          </label>
+        <form class="auth-form step-form" aria-describedby="create-store-hint" novalidate data-step-form>
+          <ol class="step-indicator" data-step-progress role="list">
+            <li data-step-progress-item>Dados da loja</li>
+            <li data-step-progress-item>Contato principal</li>
+            <li data-step-progress-item>Segmento</li>
+          </ol>
 
-          <label class="form-field">
-            <span class="form-label" id="field-owner-name-label">Responsável</span>
-            <input
-              id="field-owner-name"
-              type="text"
-              name="owner-name"
-              placeholder="Seu nome completo"
-              aria-labelledby="field-owner-name-label"
-              required
-            />
-            <span class="form-field__feedback" id="field-owner-name-feedback" aria-live="polite" hidden></span>
-          </label>
+          <section class="step-form__step" data-step-index="0" data-step-label="Dados da loja">
+            <label class="form-field">
+              <span class="form-label" id="field-store-name-label">Nome da loja</span>
+              <input
+                id="field-store-name"
+                type="text"
+                name="store-name"
+                placeholder="Ex.: Brechó Verde"
+                aria-labelledby="field-store-name-label"
+                required
+                data-autofocus
+              />
+              <span class="form-field__feedback" id="field-store-name-feedback" aria-live="polite" hidden></span>
+            </label>
 
-          <label class="form-field">
-            <span class="form-label" id="field-owner-email-label">Email de contato</span>
-            <input
-              id="field-owner-email"
-              type="email"
-              name="owner-email"
-              placeholder="contato@sualoja.com"
-              aria-labelledby="field-owner-email-label"
-              required
-            />
-            <span class="form-field__feedback" id="field-owner-email-feedback" aria-live="polite" hidden></span>
-          </label>
+            <label class="form-field">
+              <span class="form-label" id="field-owner-name-label">Responsável</span>
+              <input
+                id="field-owner-name"
+                type="text"
+                name="owner-name"
+                placeholder="Seu nome completo"
+                aria-labelledby="field-owner-name-label"
+                required
+              />
+              <span class="form-field__feedback" id="field-owner-name-feedback" aria-live="polite" hidden></span>
+            </label>
+          </section>
 
-          <label class="form-field">
-            <span class="form-label" id="field-owner-phone-label">Telefone ou WhatsApp</span>
-            <input
-              id="field-owner-phone"
-              type="tel"
-              name="owner-phone"
-              placeholder="(00) 00000-0000"
-              aria-labelledby="field-owner-phone-label"
-              inputmode="tel"
-              required
-            />
-            <span class="form-field__feedback" id="field-owner-phone-feedback" aria-live="polite" hidden></span>
-          </label>
+          <section class="step-form__step" data-step-index="1" data-step-label="Contato principal" hidden aria-hidden="true">
+            <label class="form-field">
+              <span class="form-label" id="field-owner-email-label">Email de contato</span>
+              <input
+                id="field-owner-email"
+                type="email"
+                name="owner-email"
+                placeholder="contato@sualoja.com"
+                aria-labelledby="field-owner-email-label"
+                required
+              />
+              <span class="form-field__feedback" id="field-owner-email-feedback" aria-live="polite" hidden></span>
+            </label>
 
-          <label class="form-field">
-            <span class="form-label" id="field-segment-label">Segmento</span>
-            <input
-              id="field-segment"
-              type="text"
-              name="segment"
-              placeholder="Ex.: Brechó, moda autoral, acessórios"
-              aria-labelledby="field-segment-label"
-            />
-          </label>
+            <label class="form-field">
+              <span class="form-label" id="field-owner-phone-label">Telefone ou WhatsApp</span>
+              <input
+                id="field-owner-phone"
+                type="tel"
+                name="owner-phone"
+                placeholder="(00) 00000-0000"
+                aria-labelledby="field-owner-phone-label"
+                inputmode="tel"
+                required
+              />
+              <span class="form-field__feedback" id="field-owner-phone-feedback" aria-live="polite" hidden></span>
+            </label>
+          </section>
 
-          <button class="btn btn--primary" type="submit" data-loading="false">Solicitar criação</button>
+          <section class="step-form__step" data-step-index="2" data-step-label="Segmento" hidden aria-hidden="true">
+            <label class="form-field">
+              <span class="form-label" id="field-segment-label">Segmento</span>
+              <input
+                id="field-segment"
+                type="text"
+                name="segment"
+                placeholder="Ex.: Brechó, moda autoral, acessórios"
+                aria-labelledby="field-segment-label"
+              />
+              <span class="form-hint">Conte um pouco sobre sua operação para personalizarmos o onboarding.</span>
+            </label>
+          </section>
+
+          <div class="step-form__controls">
+            <button class="btn btn--ghost" type="button" data-step-prev hidden>Voltar</button>
+            <div class="step-form__nav">
+              <button class="btn btn--primary" type="button" data-step-next>Continuar</button>
+              <button class="btn btn--primary" type="submit" data-step-submit data-loading="false" hidden>
+                Solicitar criação
+              </button>
+            </div>
+          </div>
+
           <div class="auth-form__status" id="create-store-status" role="status" aria-live="polite" hidden></div>
         </form>
 

@@ -47,12 +47,19 @@
           </div>
         </header>
 
-        <form class="form-grid" aria-describedby="product-edit-help">
-          <fieldset class="form-section">
+        <form class="form-grid step-form" aria-describedby="product-edit-help" data-step-form>
+          <ol class="step-indicator" data-step-progress role="list">
+            <li data-step-progress-item>Informações básicas</li>
+            <li data-step-progress-item>Detalhes</li>
+            <li data-step-progress-item>Imagens</li>
+            <li data-step-progress-item>Descrição</li>
+          </ol>
+
+          <fieldset class="form-section" data-step-index="0" data-step-label="Informações básicas">
             <legend>Informações básicas</legend>
             <label class="form-field">
               <span class="form-label">Código</span>
-              <input type="text" value="BR-0002" readonly />
+              <input type="text" value="BR-0002" readonly data-autofocus />
             </label>
             <label class="form-field">
               <span class="form-label">Nome</span>
@@ -69,7 +76,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section">
+          <fieldset class="form-section" data-step-index="1" data-step-label="Detalhes" hidden aria-hidden="true">
             <legend>Detalhes</legend>
             <label class="form-field">
               <span class="form-label">Tamanho</span>
@@ -97,7 +104,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section">
+          <fieldset class="form-section" data-step-index="2" data-step-label="Imagens" hidden aria-hidden="true">
             <legend>Imagens e status</legend>
             <div class="photo-preview">
               <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=320&q=60" alt="Vestido floral" />
@@ -121,7 +128,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section form-section--full">
+          <fieldset class="form-section form-section--full" data-step-index="3" data-step-label="Descrição" hidden aria-hidden="true">
             <legend>Descrição</legend>
             <label class="form-field">
               <span class="sr-only">Descrição</span>
@@ -129,9 +136,13 @@
             </label>
           </fieldset>
 
-          <div class="form-actions">
+          <div class="step-form__controls">
             <a class="btn btn--ghost" href="/app/admin/produtos/">Cancelar</a>
-            <button class="btn btn--primary" type="submit">Salvar alterações</button>
+            <div class="step-form__nav">
+              <button class="btn btn--ghost" type="button" data-step-prev hidden>Voltar etapa</button>
+              <button class="btn btn--primary" type="button" data-step-next>Avançar</button>
+              <button class="btn btn--primary" type="submit" data-step-submit hidden>Salvar alterações</button>
+            </div>
           </div>
         </form>
         <p class="form-footer" id="product-edit-help">

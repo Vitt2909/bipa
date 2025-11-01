@@ -396,6 +396,210 @@ const initializeAppearance = () => {
 
 initializeAppearance();
 
+const initializeStepForms = () => {
+  const forms = Array.from(document.querySelectorAll('[data-step-form]'));
+
+  forms.forEach((form) => {
+    const rawSteps = Array.from(form.querySelectorAll('[data-step-index]'));
+    if (!rawSteps.length) {
+      return;
+    }
+
+    const steps = rawSteps
+      .map((step) => ({ step, index: Number(step.dataset.stepIndex) || 0 }))
+      .sort((a, b) => a.index - b.index)
+      .map((entry, sortedIndex) => {
+        entry.step.dataset.stepIndex = String(sortedIndex);
+        return entry.step;
+      });
+
+    const totalSteps = steps.length;
+    let currentIndex = 0;
+
+    const progressItems = Array.from(form.querySelectorAll('[data-step-progress-item]'));
+    progressItems.forEach((item, index) => {
+      if (index >= totalSteps) {
+        item.hidden = true;
+        return;
+      }
+      item.hidden = false;
+      item.dataset.stepIndex = String(index);
+      item.setAttribute('role', 'listitem');
+    });
+
+    const prevButton = form.querySelector('[data-step-prev]');
+    const nextButton = form.querySelector('[data-step-next]');
+    const submitButton = form.querySelector('[data-step-submit]');
+
+    const focusStep = (step) => {
+      if (!step) return;
+      const focusable =
+        step.querySelector('[data-autofocus]') ||
+        step.querySelector(
+          'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled])'
+        );
+      if (focusable && typeof focusable.focus === 'function') {
+        window.setTimeout(() => {
+          try {
+            focusable.focus({ preventScroll: false });
+          } catch (error) {
+            focusable.focus();
+          }
+        }, 80);
+      }
+    };
+
+    const dispatchChange = () => {
+      const step = steps[currentIndex];
+      form.dataset.stepCurrent = String(currentIndex);
+      form.dataset.stepTotal = String(totalSteps);
+      form.dispatchEvent(
+        new CustomEvent('step:change', {
+          detail: { index: currentIndex, step, totalSteps },
+        })
+      );
+    };
+
+    const syncControls = () => {
+      if (prevButton) {
+        const hidden = currentIndex === 0;
+        prevButton.hidden = hidden;
+        prevButton.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+      }
+      if (nextButton) {
+        const hidden = currentIndex >= totalSteps - 1;
+        nextButton.hidden = hidden;
+        nextButton.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+      }
+      if (submitButton) {
+        const hidden = currentIndex < totalSteps - 1;
+        submitButton.hidden = hidden;
+        submitButton.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+      }
+    };
+
+    const syncProgress = () => {
+      progressItems.forEach((item, index) => {
+        if (index >= totalSteps) {
+          return;
+        }
+        const isActive = index === currentIndex;
+        const isComplete = index < currentIndex;
+        item.classList.toggle('is-active', isActive);
+        item.classList.toggle('is-complete', isComplete);
+        item.setAttribute('aria-current', isActive ? 'step' : 'false');
+        const step = steps[index];
+        const label = step?.dataset.stepLabel;
+        if (label) {
+          item.setAttribute('aria-label', `Etapa ${index + 1}: ${label}`);
+        }
+      });
+    };
+
+    const showStep = (targetIndex, { focus = true } = {}) => {
+      const clamped = Math.max(0, Math.min(targetIndex, totalSteps - 1));
+      currentIndex = clamped;
+
+      steps.forEach((step, index) => {
+        const isActive = index === currentIndex;
+        if (isActive) {
+          step.hidden = false;
+          step.setAttribute('aria-hidden', 'false');
+        } else {
+          step.hidden = true;
+          step.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      syncControls();
+      syncProgress();
+      dispatchChange();
+
+      if (focus) {
+        focusStep(steps[currentIndex]);
+      }
+    };
+
+    const validateStep = (index) => {
+      const step = steps[index];
+      if (!step) {
+        return true;
+      }
+
+      const validationEvent = new CustomEvent('step:validate', {
+        detail: { index, step, form },
+        cancelable: true,
+      });
+
+      if (!form.dispatchEvent(validationEvent)) {
+        return false;
+      }
+
+      const inputs = Array.from(
+        step.querySelectorAll('input, select, textarea')
+      ).filter((element) => !element.disabled && element.type !== 'hidden');
+
+      let firstInvalid = null;
+
+      inputs.forEach((input) => {
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('blur', { bubbles: true }));
+        const ariaInvalid = input.getAttribute('aria-invalid') === 'true';
+        const nativeInvalid = typeof input.checkValidity === 'function' ? !input.checkValidity() : false;
+        if ((ariaInvalid || nativeInvalid) && !firstInvalid) {
+          firstInvalid = input;
+        }
+      });
+
+      if (firstInvalid && typeof firstInvalid.focus === 'function') {
+        try {
+          firstInvalid.focus({ preventScroll: false });
+        } catch (error) {
+          firstInvalid.focus();
+        }
+        return false;
+      }
+
+      return true;
+    };
+
+    if (nextButton) {
+      nextButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (!validateStep(currentIndex)) {
+          return;
+        }
+        showStep(currentIndex + 1);
+      });
+    }
+
+    if (prevButton) {
+      prevButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        showStep(currentIndex - 1);
+      });
+    }
+
+    progressItems.forEach((item) => {
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
+        const index = Number(item.dataset.stepIndex);
+        if (Number.isNaN(index) || index === currentIndex) {
+          return;
+        }
+        if (index > currentIndex && !validateStep(currentIndex)) {
+          return;
+        }
+        showStep(index);
+      });
+    });
+
+    showStep(0, { focus: false });
+  });
+};
+
+initializeStepForms();
+
 const formatCustomerOption = (customer) => `${customer.name} · ${customer.phoneLabel}`;
 
 // --------- Create store ---------
@@ -494,6 +698,42 @@ if (page === 'create-store') {
   });
 
   if (form) {
+    form.addEventListener('step:change', () => {
+      if (statusElement && statusElement.classList.contains('auth-form__status--error')) {
+        showStatus('', null);
+      }
+    });
+
+    form.addEventListener('step:validate', (event) => {
+      const stepElement = event.detail?.step;
+      if (!stepElement) {
+        return;
+      }
+      const stepInputs = requiredInputs.filter((input) => stepElement.contains(input));
+      if (!stepInputs.length) {
+        return;
+      }
+
+      let firstInvalid = null;
+      const errors = stepInputs
+        .map((input) => {
+          const message = handleInputValidation(input);
+          if (message && !firstInvalid) {
+            firstInvalid = input;
+          }
+          return message;
+        })
+        .filter(Boolean);
+
+      if (errors.length) {
+        event.preventDefault();
+        showStatus('Revise os campos destacados antes de continuar.', 'error');
+        if (firstInvalid) {
+          window.setTimeout(() => firstInvalid.focus(), 50);
+        }
+      }
+    });
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       let firstInvalid = null;
@@ -534,6 +774,10 @@ if (page === 'create-store') {
         }
         form.reset();
         requiredInputs.forEach((input) => setFieldError(input, ''));
+        const firstProgress = form.querySelector('[data-step-progress-item]');
+        if (firstProgress) {
+          firstProgress.click();
+        }
         const segmentNote = segment ? ` do segmento ${segment}` : '';
         const phoneLabel = formattedPhone || ownerPhone;
         showStatus(
@@ -701,6 +945,36 @@ if (page === 'login') {
           clearSummary();
         }
       });
+    });
+
+    form.addEventListener('step:change', () => {
+      if (summary && summary.dataset.variant === 'error') {
+        clearSummary();
+      }
+    });
+
+    form.addEventListener('step:validate', (event) => {
+      const stepElement = event.detail?.step;
+      if (!stepElement) {
+        return;
+      }
+      const stepControllers = fieldControllers.filter((controller) =>
+        controller?.fieldElement ? stepElement.contains(controller.fieldElement) : false
+      );
+      if (!stepControllers.length) {
+        return;
+      }
+
+      const messages = stepControllers.map((controller) => validateController(controller)).filter(Boolean);
+
+      if (messages.length) {
+        event.preventDefault();
+        showSummary('error', 'Revise os campos informados', messages);
+        const firstInvalid = stepControllers.find((controller) => controller.fieldElement?.classList.contains('form-field--error'));
+        if (firstInvalid?.input) {
+          window.setTimeout(() => firstInvalid.input.focus(), 50);
+        }
+      }
     });
 
     if (forgotPasswordLink) {
@@ -1159,6 +1433,8 @@ if (page === 'pdv') {
   const registerWhatsappInput = document.getElementById('pdv-register-whatsapp');
   const registerCloseButton = document.getElementById('pdv-register-close');
   const registerCancelButton = document.getElementById('pdv-register-cancel');
+  const registerNameFeedback = document.getElementById('pdv-register-name-feedback');
+  const registerWhatsappFeedback = document.getElementById('pdv-register-whatsapp-feedback');
   const scannerOpenButton = document.getElementById('pdv-open-scanner');
   const scannerModal = document.getElementById('pdv-scanner-modal');
   const scannerVideo = document.getElementById('pdv-scanner-video');
@@ -1995,15 +2271,112 @@ if (page === 'pdv') {
     });
   }
 
+  const setRegisterFeedback = (input, feedback, message) => {
+    if (!input || !feedback) return;
+    const hasMessage = Boolean(message);
+    if (hasMessage) {
+      feedback.textContent = message;
+      feedback.hidden = false;
+      input.setAttribute('aria-invalid', 'true');
+    } else {
+      feedback.textContent = '';
+      feedback.hidden = true;
+      input.removeAttribute('aria-invalid');
+    }
+  };
+
+  const validateRegisterName = () => {
+    if (!registerNameInput) return true;
+    const value = registerNameInput.value.trim();
+    registerNameInput.value = value;
+    const message = value ? '' : 'Informe o nome do cliente.';
+    setRegisterFeedback(registerNameInput, registerNameFeedback, message);
+    return !message;
+  };
+
+  const validateRegisterWhatsapp = () => {
+    if (!registerWhatsappInput) return true;
+    const raw = registerWhatsappInput.value.trim();
+    const digits = raw.replace(/\D/g, '');
+    let message = '';
+    if (!digits) {
+      message = 'Informe o WhatsApp do cliente.';
+    } else if (digits.length < 10 || digits.length > 11) {
+      message = 'Inclua o DDD com 10 ou 11 dígitos.';
+    }
+
+    if (!message) {
+      registerWhatsappInput.value = formatPhone(digits);
+    }
+
+    setRegisterFeedback(registerWhatsappInput, registerWhatsappFeedback, message);
+    return !message;
+  };
+
+  if (registerNameInput) {
+    registerNameInput.addEventListener('blur', validateRegisterName);
+    registerNameInput.addEventListener('input', () => {
+      if (registerNameInput.getAttribute('aria-invalid') === 'true') {
+        validateRegisterName();
+      }
+    });
+  }
+
+  if (registerWhatsappInput) {
+    registerWhatsappInput.addEventListener('blur', validateRegisterWhatsapp);
+    registerWhatsappInput.addEventListener('input', () => {
+      if (registerWhatsappInput.getAttribute('aria-invalid') === 'true') {
+        validateRegisterWhatsapp();
+      }
+    });
+  }
+
+  if (registerForm) {
+    registerForm.addEventListener('reset', () => {
+      setRegisterFeedback(registerNameInput, registerNameFeedback, '');
+      setRegisterFeedback(registerWhatsappInput, registerWhatsappFeedback, '');
+      const firstProgress = registerForm.querySelector('[data-step-progress-item]');
+      if (firstProgress) {
+        firstProgress.click();
+      }
+    });
+
+    registerForm.addEventListener('step:validate', (event) => {
+      const stepElement = event.detail?.step;
+      if (!stepElement) return;
+      let isValid = true;
+      if (registerNameInput && stepElement.contains(registerNameInput)) {
+        isValid = validateRegisterName();
+      }
+      if (registerWhatsappInput && stepElement.contains(registerWhatsappInput)) {
+        isValid = validateRegisterWhatsapp() && isValid;
+      }
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+  }
+
   const handleRegisterSubmit = (event) => {
     event.preventDefault();
     if (!registerNameInput || !registerWhatsappInput) return;
-    const name = registerNameInput.value.trim();
-    const whatsapp = registerWhatsappInput.value.trim();
-    if (!name || !whatsapp) {
-      alert('Informe nome e WhatsApp para cadastrar o cliente.');
+    const isNameValid = validateRegisterName();
+    const isWhatsappValid = validateRegisterWhatsapp();
+    if (!isNameValid) {
+      const prevButton = registerForm.querySelector('[data-step-prev]');
+      if (prevButton && !prevButton.hidden) {
+        prevButton.click();
+      }
+      registerNameInput.focus();
       return;
     }
+    if (!isWhatsappValid) {
+      registerWhatsappInput.focus();
+      return;
+    }
+
+    const name = registerNameInput.value.trim();
+    const whatsapp = registerWhatsappInput.value.trim();
 
     const phoneDigits = whatsapp.replace(/\D/g, '');
     const phoneLabel = formatPhone(whatsapp);

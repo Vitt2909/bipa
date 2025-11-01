@@ -47,12 +47,19 @@
           </div>
         </header>
 
-        <form class="form-grid" aria-describedby="customer-form-help">
-          <fieldset class="form-section">
+        <form class="form-grid step-form" aria-describedby="customer-form-help" data-step-form>
+          <ol class="step-indicator" data-step-progress role="list">
+            <li data-step-progress-item>Informações básicas</li>
+            <li data-step-progress-item>Segmentação</li>
+            <li data-step-progress-item>Endereço</li>
+            <li data-step-progress-item>Observações</li>
+          </ol>
+
+          <fieldset class="form-section" data-step-index="0" data-step-label="Informações básicas">
             <legend>Informações básicas</legend>
             <label class="form-field">
               <span class="form-label">Nome completo</span>
-              <input type="text" placeholder="Maria Silva" required />
+              <input type="text" placeholder="Maria Silva" required data-autofocus />
             </label>
             <label class="form-field">
               <span class="form-label">WhatsApp</span>
@@ -64,7 +71,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section">
+          <fieldset class="form-section" data-step-index="1" data-step-label="Segmentação" hidden aria-hidden="true">
             <legend>Segmentação</legend>
             <label class="form-field">
               <span class="form-label">Tag principal</span>
@@ -86,7 +93,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section">
+          <fieldset class="form-section" data-step-index="2" data-step-label="Endereço" hidden aria-hidden="true">
             <legend>Endereço (opcional)</legend>
             <label class="form-field">
               <span class="form-label">Cidade</span>
@@ -102,7 +109,7 @@
             </label>
           </fieldset>
 
-          <fieldset class="form-section form-section--full">
+          <fieldset class="form-section form-section--full" data-step-index="3" data-step-label="Observações" hidden aria-hidden="true">
             <legend>Observações internas</legend>
             <label class="form-field">
               <span class="sr-only">Observações</span>
@@ -110,9 +117,13 @@
             </label>
           </fieldset>
 
-          <div class="form-actions">
+          <div class="step-form__controls">
             <a class="btn btn--ghost" href="/app/admin/clientes/">Cancelar</a>
-            <button class="btn btn--primary" type="submit">Salvar cliente</button>
+            <div class="step-form__nav">
+              <button class="btn btn--ghost" type="button" data-step-prev hidden>Voltar etapa</button>
+              <button class="btn btn--primary" type="button" data-step-next>Avançar</button>
+              <button class="btn btn--primary" type="submit" data-step-submit hidden>Salvar cliente</button>
+            </div>
           </div>
         </form>
         <p class="form-footer" id="customer-form-help">
