@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="title desc">
+  <title id="title">Simulação de venda no PDV BIPA</title>
+  <desc id="desc">Três quadros mostram busca por produto, carrinho preenchido e confirmação de pagamento.</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10251a" />
+      <stop offset="100%" stop-color="#07130c" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1ef39b" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#18d886" stop-opacity="0.75" />
+    </linearGradient>
+    <style>
+      text{font-family:'Inter',system-ui,sans-serif;fill:#e8fff4}
+      .caption{font-size:18px;opacity:.7}
+      .title{font-size:24px;font-weight:600}
+      .value{font-size:20px;font-weight:600;fill:#1ef39b}
+    </style>
+  </defs>
+  <rect width="640" height="400" rx="28" fill="rgba(4,11,8,0.88)" stroke="rgba(149,179,163,0.24)" />
+  <g transform="translate(24 24)">
+    <rect width="184" height="260" rx="22" fill="url(#panel)" stroke="rgba(149,179,163,0.18)" />
+    <rect x="20" y="32" width="144" height="32" rx="10" fill="rgba(30,243,155,0.1)" stroke="rgba(30,243,155,0.25)" />
+    <text x="32" y="55" font-size="16">Buscar peça...</text>
+    <rect x="20" y="90" width="144" height="44" rx="12" fill="rgba(232,255,244,0.05)" />
+    <text x="32" y="116">Jaqueta Oversized</text>
+    <rect x="20" y="150" width="144" height="44" rx="12" fill="rgba(232,255,244,0.05)" />
+    <text x="32" y="176">Vestido Midi</text>
+    <rect x="20" y="210" width="144" height="44" rx="12" fill="rgba(232,255,244,0.05)" />
+    <text x="32" y="236">Calça Alfaiataria</text>
+    <text x="20" y="18" class="caption">1. Buscar produto</text>
+  </g>
+  <g transform="translate(228 24)">
+    <rect width="184" height="260" rx="22" fill="url(#panel)" stroke="rgba(149,179,163,0.18)" />
+    <text x="16" y="28" class="caption">2. Carrinho</text>
+    <rect x="16" y="48" width="152" height="52" rx="16" fill="rgba(232,255,244,0.05)" />
+    <text x="28" y="76">Jaqueta Oversized</text>
+    <text x="28" y="100" font-size="14" fill="rgba(232,255,244,0.6)">R$ 189,90</text>
+    <rect x="16" y="114" width="152" height="52" rx="16" fill="rgba(232,255,244,0.05)" />
+    <text x="28" y="142">Vestido Midi</text>
+    <text x="28" y="166" font-size="14" fill="rgba(232,255,244,0.6)">R$ 129,90</text>
+    <rect x="16" y="190" width="152" height="32" rx="12" fill="rgba(30,243,155,0.12)" />
+    <text x="28" y="212" class="value">Subtotal R$ 319,80</text>
+  </g>
+  <g transform="translate(432 24)">
+    <rect width="184" height="260" rx="22" fill="url(#panel)" stroke="rgba(149,179,163,0.18)" />
+    <text x="16" y="28" class="caption">3. Pagamento</text>
+    <rect x="16" y="52" width="152" height="40" rx="14" fill="rgba(30,243,155,0.18)" />
+    <text x="32" y="78" font-size="18" font-weight="600" fill="#04130b">PIX confirmado</text>
+    <rect x="16" y="110" width="152" height="48" rx="16" fill="rgba(232,255,244,0.06)" />
+    <text x="28" y="138">Total pago</text>
+    <text x="28" y="162" class="value">R$ 319,80</text>
+    <rect x="16" y="180" width="152" height="44" rx="14" fill="url(#accent)" />
+    <text x="32" y="206" font-size="18" font-weight="600" fill="#04130b">Enviar recibo</text>
+  </g>
+  <g transform="translate(24 306)">
+    <text class="title">Demonstração do PDV</text>
+    <text class="caption" y="36">Cenário fictício com estoque, clientes e pagamentos simulados.</text>
+  </g>
+</svg>
