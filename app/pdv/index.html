@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body data-page="pdv">
+  <body data-page="pdv" data-theme="workspace">
     <header class="app-topbar">
       <div class="app-topbar__brand">
         <span class="brand-mark" aria-hidden="true">B</span>
@@ -230,6 +230,71 @@
         </div>
       </div>
     </div>
+
+    <nav class="app-bottom-nav" aria-label="Navegação principal">
+      <ul class="app-bottom-nav__list">
+        <li>
+          <a class="app-bottom-nav__link is-active" aria-current="page" href="/app/pdv/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M7 8h10l-1 11H8L7 8Z" stroke-linejoin="round" />
+                <path d="M9 9V6a3 3 0 0 1 6 0v3" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Vender</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link" href="/app/admin/produtos/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="4" y="4" width="16" height="16" rx="3" />
+                <path d="M4 10h16M10 4v16" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Estoque</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link" href="/app/admin/clientes/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" />
+                <path d="M5 20.5a7 7 0 0 1 14 0" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Clientes</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link" href="/app/admin/dashboard/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M6 16v-4" stroke-linecap="round" />
+                <path d="M12 16V8" stroke-linecap="round" />
+                <path d="M18 16v-7" stroke-linecap="round" />
+                <path d="M5 16h14" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Relatórios</span>
+          </a>
+        </li>
+        <li>
+          <a class="app-bottom-nav__link" href="/app/admin/configuracoes/">
+            <span class="app-bottom-nav__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path
+                  d="m12 7.5 1.2-2.1a1 1 0 0 1 1.74 0l1.2 2.1 2.3.4a1 1 0 0 1 .8 1.2l-.6 2.2.6 2.2a1 1 0 0 1-.8 1.2l-2.3.4-1.2 2.1a1 1 0 0 1-1.74 0L12 16.5l-2.3-.4a1 1 0 0 1-.8-1.2l.6-2.2-.6-2.2a1 1 0 0 1 .8-1.2Z"
+                  stroke-linejoin="round"
+                />
+                <circle cx="12" cy="12" r="2" />
+              </svg>
+            </span>
+            <span>Config</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
     <script src="/script.js" defer></script>
   </body>
