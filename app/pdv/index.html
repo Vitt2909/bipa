@@ -27,141 +27,184 @@
       </nav>
     </header>
 
-    <main class="pdv-shell">
-      <section class="pdv-column pdv-column--search" aria-labelledby="pdv-search-title">
-        <header class="pdv-column__header">
-          <h2 class="pdv-column__title" id="pdv-search-title">Buscar produto</h2>
-          <p class="pdv-column__subtitle">Pesquise por nome ou código. Dados fictícios.</p>
-        </header>
-        <label class="form-field pdv-search">
-          <span class="sr-only">Buscar produto</span>
-          <input id="pdv-search" type="search" placeholder="Digite para encontrar" autocomplete="off" />
-        </label>
+    <main class="pdv-shell" data-panel="catalog">
+      <div class="pdv-shell__viewport">
+        <section class="pdv-panel pdv-panel--catalog" aria-labelledby="pdv-search-title">
+          <header class="pdv-panel__header">
+            <h2 class="pdv-panel__title" id="pdv-search-title">Buscar produto</h2>
+            <p class="pdv-panel__subtitle">Pesquise por nome ou código. Dados fictícios.</p>
+          </header>
+          <label class="form-field pdv-search">
+            <span class="sr-only">Buscar produto</span>
+            <input id="pdv-search" type="search" placeholder="Digite para encontrar" autocomplete="off" />
+          </label>
 
-        <div class="pdv-scanner">
-          <button class="btn btn--surface" id="pdv-open-scanner" type="button">Escanear código</button>
-          <p class="pdv-scanner__hint">Use a câmera do dispositivo ou digite manualmente o código da peça.</p>
-        </div>
+          <div class="pdv-scanner">
+            <button class="btn btn--surface" id="pdv-open-scanner" type="button">Escanear código</button>
+            <p class="pdv-scanner__hint">Use a câmera do dispositivo ou digite manualmente o código da peça.</p>
+          </div>
 
-        <ul class="pdv-product-list" id="pdv-product-list" aria-label="Produtos disponíveis"></ul>
-      </section>
+          <ul class="pdv-product-list" id="pdv-product-list" aria-label="Produtos disponíveis"></ul>
+        </section>
 
-      <section class="pdv-column pdv-column--cart" aria-labelledby="pdv-cart-title">
-        <header class="pdv-column__header">
-          <h2 class="pdv-column__title" id="pdv-cart-title">Venda atual</h2>
-          <p class="pdv-column__subtitle">Selecione um cliente e aplique descontos.</p>
-        </header>
-
-        <div class="pdv-card">
-          <div class="customer-zone" aria-live="polite">
-            <div class="customer-zone__header">
-              <p class="customer-zone__label" id="pdv-client-current">
-                Cliente: <strong>Avulso (Padrão)</strong>
-              </p>
-              <button class="customer-zone__change" id="pdv-client-clear" type="button" hidden>
-                Alterar
-              </button>
-            </div>
-            <label class="form-field customer-zone__search">
-              <span class="form-label">Buscar Cliente (Nome ou WhatsApp)</span>
-              <input
-                id="pdv-client"
-                type="search"
-                placeholder="Buscar Cliente (Nome ou WhatsApp)"
-                autocomplete="off"
-                aria-controls="pdv-client-results"
-                aria-haspopup="listbox"
-                aria-expanded="false"
-              />
-            </label>
-            <div class="customer-suggestions" id="pdv-client-results" hidden role="listbox"></div>
-            <button class="btn btn--surface customer-zone__register" id="pdv-client-register" type="button">
-              + Cadastrar Cliente
+        <section class="pdv-panel pdv-panel--checkout" aria-labelledby="pdv-checkout-title">
+          <header class="pdv-panel__header pdv-panel__header--checkout">
+            <button class="pdv-panel__back" id="pdv-checkout-back" type="button" aria-label="Voltar para o catálogo">
+              ← Voltar ao catálogo
             </button>
-          </div>
-
-          <ul class="pdv-cart" id="pdv-cart" aria-live="polite"></ul>
-
-          <div class="discount-controls">
-            <label class="form-field discount-controls__field">
-              <span class="form-label">Desconto</span>
-              <div class="discount-input">
-                <span class="discount-input__unit" id="pdv-discount-unit">R$</span>
-                <input id="pdv-discount" type="number" min="0" step="0.01" value="0" inputmode="decimal" />
-              </div>
-            </label>
-            <div class="discount-controls__toggle" role="group" aria-label="Tipo de desconto">
-              <button class="discount-toggle is-active" data-discount-type="currency" type="button">R$</button>
-              <button class="discount-toggle" data-discount-type="percent" type="button">%</button>
-            </div>
-          </div>
-
-          <dl class="pdv-summary">
             <div>
-              <dt>Subtotal</dt>
-              <dd id="pdv-subtotal">R$ 0,00</dd>
+              <h2 class="pdv-panel__title" id="pdv-checkout-title">Checkout</h2>
+              <p class="pdv-panel__subtitle">Revise itens, descontos e pagamentos.</p>
             </div>
-            <div>
-              <dt>Desconto</dt>
-              <dd id="pdv-total-discount">R$ 0,00</dd>
-            </div>
-            <div class="pdv-summary__total">
-              <dt>Total</dt>
-              <dd id="pdv-total">R$ 0,00</dd>
-            </div>
-          </dl>
-        </div>
-      </section>
+          </header>
 
-      <section class="pdv-column pdv-column--payment" aria-labelledby="pdv-payment-title">
-        <header class="pdv-column__header">
-          <h2 class="pdv-column__title" id="pdv-payment-title">Pagamento</h2>
-          <p class="pdv-column__subtitle">Selecione a forma de pagamento e finalize.</p>
-        </header>
-
-        <div class="pdv-card pdv-payment" id="pdv-payment">
-          <div class="pdv-payment__methods" role="group" aria-label="Formas de pagamento">
-            <button class="payment-button is-active" data-payment="PIX" type="button">PIX</button>
-            <button class="payment-button" data-payment="Dinheiro" type="button">Dinheiro</button>
-            <button class="payment-button" data-payment="Cartão" type="button">Cartão</button>
-            <button class="payment-button" data-payment="Fiado" type="button">Fiado</button>
-          </div>
-
-          <div class="pdv-payment__context" id="pdv-payment-context" aria-live="polite">
-            <p>Use a chave PIX <strong>pix@bipa.demo</strong> para receber o pagamento.</p>
-          </div>
-
-          <section class="pix-box" id="pdv-pix-box" hidden aria-live="polite">
-            <header class="pix-box__header">
-              <h3>Pagamento PIX DEMO</h3>
-              <p>Compartilhe o QR Code ou copie o código estático gerado com o valor da venda.</p>
-            </header>
-            <div class="pix-box__content">
-              <div class="pix-box__qr" id="pdv-pix-qr" aria-label="QR Code PIX"></div>
-              <div class="pix-box__details">
-                <div class="pix-box__code" role="group" aria-label="Código PIX copia e cola">
-                  <code id="pdv-pix-code">—</code>
-                  <button class="btn btn--ghost btn--small" id="pdv-pix-copy" type="button">Copiar código</button>
-                </div>
-                <div class="pix-box__actions">
-                  <button class="btn btn--surface" id="pdv-pix-mark-paid" type="button">
-                    Marcar pagamento recebido
+          <div class="checkout-flow">
+            <section class="checkout-section checkout-section--customer" aria-labelledby="pdv-customer-title">
+              <header class="checkout-section__header">
+                <h3 class="checkout-section__title" id="pdv-customer-title">Cliente</h3>
+              </header>
+              <div class="customer-zone" aria-live="polite">
+                <div class="customer-zone__header">
+                  <p class="customer-zone__label" id="pdv-client-current">
+                    Cliente: <strong>Avulso (Padrão)</strong>
+                  </p>
+                  <button class="customer-zone__change" id="pdv-client-clear" type="button" hidden>
+                    Alterar
                   </button>
                 </div>
-                <p class="pix-box__status" id="pdv-pix-status">Aguardando produtos no carrinho.</p>
+                <label class="form-field customer-zone__search">
+                  <span class="form-label">Buscar Cliente (Nome ou WhatsApp)</span>
+                  <input
+                    id="pdv-client"
+                    type="search"
+                    placeholder="Buscar Cliente (Nome ou WhatsApp)"
+                    autocomplete="off"
+                    aria-controls="pdv-client-results"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                  />
+                </label>
+                <div class="customer-suggestions" id="pdv-client-results" hidden role="listbox"></div>
+                <button class="btn btn--surface customer-zone__register" id="pdv-client-register" type="button">
+                  + Cadastrar Cliente
+                </button>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <button class="btn btn--primary btn--xl" id="pdv-finish" type="button" disabled>
-            FINALIZAR VENDA (R$ 0,00)
-          </button>
-        </div>
-      </section>
+            <section class="checkout-section checkout-section--items" aria-labelledby="pdv-cart-title">
+              <header class="checkout-section__header">
+                <h3 class="checkout-section__title" id="pdv-cart-title">Itens no carrinho</h3>
+              </header>
+              <ul class="checkout-cart" id="pdv-cart" aria-live="polite"></ul>
+            </section>
+
+            <section class="checkout-section checkout-section--summary" aria-labelledby="pdv-summary-title">
+              <header class="checkout-section__header">
+                <h3 class="checkout-section__title" id="pdv-summary-title">Resumo da venda</h3>
+              </header>
+              <div class="checkout-summary">
+                <dl class="checkout-summary__totals">
+                  <div>
+                    <dt>Subtotal</dt>
+                    <dd id="pdv-subtotal">R$ 0,00</dd>
+                  </div>
+                  <div>
+                    <dt>Desconto</dt>
+                    <dd id="pdv-total-discount">R$ 0,00</dd>
+                  </div>
+                  <div class="checkout-summary__total">
+                    <dt>Total</dt>
+                    <dd id="pdv-total">R$ 0,00</dd>
+                  </div>
+                </dl>
+                <div class="checkout-summary__discount">
+                  <button
+                    class="checkout-summary__discount-toggle"
+                    id="pdv-discount-toggle"
+                    type="button"
+                    aria-expanded="false"
+                  >
+                    Adicionar desconto
+                  </button>
+                  <div class="checkout-summary__discount-panel" id="pdv-discount-panel" hidden>
+                    <label class="form-field discount-controls__field">
+                      <span class="form-label">Valor do desconto</span>
+                      <div class="discount-input">
+                        <span class="discount-input__unit" id="pdv-discount-unit">R$</span>
+                        <input
+                          id="pdv-discount"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value="0"
+                          inputmode="decimal"
+                        />
+                      </div>
+                    </label>
+                    <div class="discount-controls__toggle" role="group" aria-label="Tipo de desconto">
+                      <button class="discount-toggle is-active" data-discount-type="currency" type="button">R$</button>
+                      <button class="discount-toggle" data-discount-type="percent" type="button">%</button>
+                    </div>
+                    <div class="checkout-summary__discount-actions">
+                      <button class="btn btn--ghost btn--small" id="pdv-discount-clear" type="button">Remover desconto</button>
+                      <button class="btn btn--surface btn--small" id="pdv-discount-close" type="button">Concluir</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="checkout-section checkout-section--payment" aria-labelledby="pdv-payment-title">
+              <header class="checkout-section__header">
+                <h3 class="checkout-section__title" id="pdv-payment-title">Pagamento</h3>
+              </header>
+              <div class="pdv-payment" id="pdv-payment">
+                <div class="pdv-payment__methods" role="group" aria-label="Formas de pagamento">
+                  <button class="payment-button is-active" data-payment="PIX" type="button">PIX</button>
+                  <button class="payment-button" data-payment="Dinheiro" type="button">Dinheiro</button>
+                  <button class="payment-button" data-payment="Cartão" type="button">Cartão</button>
+                  <button class="payment-button" data-payment="Fiado" type="button">Fiado</button>
+                </div>
+
+                <div class="pdv-payment__context" id="pdv-payment-context" aria-live="polite">
+                  <p>Use a chave PIX <strong>pix@bipa.demo</strong> para receber o pagamento.</p>
+                </div>
+
+                <section class="pix-box" id="pdv-pix-box" hidden aria-live="polite">
+                  <header class="pix-box__header">
+                    <h3>Pagamento PIX DEMO</h3>
+                    <p>Compartilhe o QR Code ou copie o código estático gerado com o valor da venda.</p>
+                  </header>
+                  <div class="pix-box__content">
+                    <div class="pix-box__qr" id="pdv-pix-qr" aria-label="QR Code PIX"></div>
+                    <div class="pix-box__details">
+                      <div class="pix-box__code" role="group" aria-label="Código PIX copia e cola">
+                        <code id="pdv-pix-code">—</code>
+                        <button class="btn btn--ghost btn--small" id="pdv-pix-copy" type="button">Copiar código</button>
+                      </div>
+                      <p class="pix-box__status" id="pdv-pix-status">Aguardando produtos no carrinho.</p>
+                    </div>
+                  </div>
+                </section>
+
+                <button class="btn btn--primary btn--xl" id="pdv-finish" type="button" disabled>
+                  Finalizar venda
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+
+      <button class="pdv-cart-toggle" id="pdv-cart-toggle" type="button" hidden>
+        <span class="pdv-cart-toggle__label" id="pdv-cart-toggle-label">Ver carrinho</span>
+        <span class="pdv-cart-toggle__meta" id="pdv-cart-toggle-meta">0 itens • R$ 0,00</span>
+      </button>
     </main>
 
     <section class="pdv-success" id="pdv-success" hidden aria-live="polite">
       <div class="pdv-success__card">
+        <button class="pdv-success__close" id="pdv-success-close" type="button" aria-label="Fechar">×</button>
         <span class="pdv-success__icon" aria-hidden="true">✔</span>
         <h2>Venda realizada com sucesso!</h2>
         <p id="pdv-success-total">Total da venda: R$ 0,00</p>

@@ -1413,6 +1413,10 @@ if (page === 'pdv') {
   const discountInput = document.getElementById('pdv-discount');
   const discountTypeButtons = Array.from(document.querySelectorAll('[data-discount-type]'));
   const discountUnitElement = document.getElementById('pdv-discount-unit');
+  const discountToggleButton = document.getElementById('pdv-discount-toggle');
+  const discountPanel = document.getElementById('pdv-discount-panel');
+  const discountCloseButton = document.getElementById('pdv-discount-close');
+  const discountClearButton = document.getElementById('pdv-discount-clear');
   const paymentButtons = Array.from(document.querySelectorAll('.payment-button'));
   const paymentContextElement = document.getElementById('pdv-payment-context');
   const finishButton = document.getElementById('pdv-finish');
@@ -1423,10 +1427,14 @@ if (page === 'pdv') {
   const clientRegisterButton = document.getElementById('pdv-client-register');
   const customerZoneElement = document.querySelector('.customer-zone');
   const mainShell = document.querySelector('.pdv-shell');
+  const checkoutToggleButton = document.getElementById('pdv-cart-toggle');
+  const checkoutToggleMeta = document.getElementById('pdv-cart-toggle-meta');
+  const checkoutBackButton = document.getElementById('pdv-checkout-back');
   const successSection = document.getElementById('pdv-success');
   const successTotalElement = document.getElementById('pdv-success-total');
   const newSaleButton = document.getElementById('pdv-success-new-sale');
   const whatsappButton = document.getElementById('pdv-success-whatsapp');
+  const successCloseButton = document.getElementById('pdv-success-close');
   const registerModal = document.getElementById('pdv-register-modal');
   const registerForm = document.getElementById('pdv-register-form');
   const registerNameInput = document.getElementById('pdv-register-name');
@@ -1447,7 +1455,6 @@ if (page === 'pdv') {
   const pixBox = document.getElementById('pdv-pix-box');
   const pixCodeElement = document.getElementById('pdv-pix-code');
   const pixCopyButton = document.getElementById('pdv-pix-copy');
-  const pixMarkPaidButton = document.getElementById('pdv-pix-mark-paid');
   const pixStatusElement = document.getElementById('pdv-pix-status');
   const pixQrElement = document.getElementById('pdv-pix-qr');
 
@@ -1467,6 +1474,60 @@ if (page === 'pdv') {
   let barcodeDetector = null;
 
   const getSaleId = () => `PDV-${String(saleCounter).padStart(4, '0')}`;
+
+  const getCartQuantity = () =>
+    Array.from(cart.values()).reduce((sum, item) => sum + Math.max(item.quantity || 0, 0), 0);
+
+  const getCurrentPanel = () => mainShell?.getAttribute('data-panel') || 'catalog';
+
+  const showCheckoutPanel = () => {
+    if (!mainShell) return;
+    mainShell.setAttribute('data-panel', 'checkout');
+    if (checkoutToggleButton) {
+      checkoutToggleButton.hidden = true;
+    }
+  };
+
+  const showCatalogPanel = () => {
+    if (!mainShell) return;
+    mainShell.setAttribute('data-panel', 'catalog');
+    updateCheckoutToggle();
+  };
+
+  const updateCheckoutToggle = (totals) => {
+    if (!checkoutToggleButton) return;
+    const itemCount = getCartQuantity();
+    if (itemCount === 0) {
+      checkoutToggleButton.hidden = true;
+      return;
+    }
+    const totalValue = totals?.total ?? getTotals().total;
+    const metaLabel = `${itemCount} ${itemCount === 1 ? 'item' : 'itens'} • ${formatCurrency(totalValue)}`;
+    if (checkoutToggleMeta) checkoutToggleMeta.textContent = metaLabel;
+    const panel = getCurrentPanel();
+    checkoutToggleButton.hidden = panel === 'checkout';
+  };
+
+  const updateDiscountToggleLabel = () => {
+    if (!discountToggleButton || !discountInput) return;
+    const hasDiscount = Number(discountInput.value || 0) > 0;
+    discountToggleButton.textContent = hasDiscount ? 'Editar desconto' : 'Adicionar desconto';
+  };
+
+  const setDiscountPanelVisibility = (isOpen) => {
+    if (!discountPanel || !discountToggleButton) return;
+    discountPanel.hidden = !isOpen;
+    discountToggleButton.setAttribute('aria-expanded', String(Boolean(isOpen)));
+    if (isOpen) {
+      discountToggleButton.textContent = 'Ocultar desconto';
+      const firstInput = discountPanel.querySelector('input');
+      if (firstInput) {
+        window.setTimeout(() => firstInput.focus(), 10);
+      }
+    } else {
+      updateDiscountToggleLabel();
+    }
+  };
 
   const generatePixPayload = (total, saleId) => {
     const amount = Number(total || 0).toFixed(2);
@@ -1531,22 +1592,17 @@ if (page === 'pdv') {
   const updatePixStatusUI = (messageOverride) => {
     if (!pixStatusElement) return;
     const hasItems = cart.size > 0;
+    const awaitingMessage = 'Compartilhe o QR Code e finalize após confirmar o recebimento.';
     const baseMessage = !hasItems
       ? 'Aguardando produtos no carrinho.'
       : pixPaymentStatus === 'paid'
       ? 'Pagamento confirmado. Finalize a venda para registrar o recebimento.'
-      : 'Aguardando confirmação do PIX ou clique em “Marcar pagamento recebido”.';
+      : awaitingMessage;
     const message = messageOverride || baseMessage;
     pixStatusElement.textContent = message;
     const shouldWarn = hasItems && selectedPayment === 'PIX' && pixPaymentStatus !== 'paid';
     pixStatusElement.classList.toggle('pix-box__status--success', pixPaymentStatus === 'paid');
     pixStatusElement.classList.toggle('pix-box__status--warning', shouldWarn);
-    if (pixMarkPaidButton) {
-      pixMarkPaidButton.disabled = pixPaymentStatus === 'paid';
-      pixMarkPaidButton.textContent = pixPaymentStatus === 'paid'
-        ? 'PIX confirmado'
-        : 'Marcar pagamento recebido';
-    }
   };
 
   const showPixTemporaryMessage = (message, duration = 3200) => {
@@ -1587,16 +1643,6 @@ if (page === 'pdv') {
       pixQrElement.innerHTML = '<span class="pix-box__fallback">Carregando QR Code...</span>';
     }
     updatePixStatusUI();
-  };
-
-  const markPixAsPaid = () => {
-    if (!cart.size) {
-      showPixTemporaryMessage('Adicione produtos para gerar o PIX.');
-      return;
-    }
-    pixPaymentStatus = 'paid';
-    updatePixStatusUI();
-    console.info(`✅ Pagamento PIX confirmado para ${getSaleId()}.`);
   };
 
   const copyPixCode = async () => {
@@ -1884,13 +1930,62 @@ if (page === 'pdv') {
       alert('Este produto já foi vendido. Atualize o estoque para disponibilizar novas peças.');
       return;
     }
-    if (cart.has(product.code)) return;
-    cart.set(product.code, { ...product });
+    const wasEmpty = cart.size === 0;
+    const existing = cart.get(product.code);
+    if (existing) {
+      existing.quantity = Math.max((existing.quantity || 0) + 1, 1);
+    } else {
+      cart.set(product.code, { ...product, quantity: 1, itemDiscount: 0 });
+    }
     renderCart();
+    if (wasEmpty) {
+      showCheckoutPanel();
+    }
   };
 
   const removeFromCart = (productCode) => {
     cart.delete(productCode);
+    renderCart();
+    if (cart.size === 0) {
+      if (discountInput) discountInput.value = '0';
+      updateDiscountToggleLabel();
+      setDiscountPanelVisibility(false);
+      showCatalogPanel();
+      updateTotals();
+    }
+  };
+
+  const changeCartQuantity = (productCode, delta) => {
+    const entry = cart.get(productCode);
+    if (!entry) return;
+    const nextQuantity = (entry.quantity || 0) + delta;
+    if (nextQuantity <= 0) {
+      removeFromCart(productCode);
+      return;
+    }
+    entry.quantity = nextQuantity;
+    if (entry.itemDiscount) {
+      entry.itemDiscount = Math.min(entry.itemDiscount, entry.price * entry.quantity);
+    }
+    renderCart();
+  };
+
+  const handleItemDiscount = (productCode) => {
+    const entry = cart.get(productCode);
+    if (!entry) return;
+    const current = Number(entry.itemDiscount || 0);
+    const maxDiscount = entry.price * entry.quantity;
+    const response = window.prompt(
+      `Informe o desconto em reais para ${entry.name} (máximo ${formatCurrency(maxDiscount)})`,
+      current > 0 ? current.toFixed(2).replace('.', ',') : ''
+    );
+    if (response === null) return;
+    const normalized = Number(response.replace(',', '.'));
+    if (Number.isNaN(normalized) || normalized < 0) {
+      alert('Valor de desconto inválido. Utilize apenas números positivos.');
+      return;
+    }
+    entry.itemDiscount = Math.min(normalized, maxDiscount);
     renderCart();
   };
 
@@ -1903,24 +1998,60 @@ if (page === 'pdv') {
     if (items.length === 0) {
       const emptyState = document.createElement('li');
       emptyState.textContent = 'Nenhum item adicionado ainda. Busque uma peça e clique para incluir.';
-      emptyState.className = 'pdv-empty';
+      emptyState.className = 'checkout-cart__empty';
       emptyState.setAttribute('role', 'status');
       cartElement.appendChild(emptyState);
     } else {
       items.forEach((item) => {
+        const imageSrc =
+          item.image || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+        const lineTotal = Math.max(item.price * item.quantity - (item.itemDiscount || 0), 0);
+        const hasItemDiscount = Number(item.itemDiscount || 0) > 0;
         const cartItem = document.createElement('li');
-        cartItem.className = 'cart-item';
+        cartItem.className = 'checkout-cart__item';
+        cartItem.dataset.productCode = item.code;
         cartItem.innerHTML = `
-          <div class="cart-item__info">
-            <span class="cart-item__name">${item.name}</span>
-            <span class="cart-item__meta">${item.code}</span>
+          <div class="checkout-cart__main">
+            <div class="checkout-cart__media" aria-hidden="true">
+              <img src="${imageSrc}" alt="" loading="lazy" />
+            </div>
+            <div class="checkout-cart__details">
+              <span class="checkout-cart__name">${item.name}</span>
+              <span class="checkout-cart__meta">${item.code} • Tam. ${item.size}</span>
+              <button class="checkout-cart__discount" type="button">
+                ${hasItemDiscount ? 'Editar desconto' : 'Aplicar desconto'}
+              </button>
+            </div>
           </div>
-          <div class="cart-item__value">${formatCurrency(item.price)}</div>
-          <button class="cart-item__remove" aria-label="Remover ${item.name}" type="button">×</button>
+          <div class="checkout-cart__side">
+            <div class="quantity-control" role="group" aria-label="Quantidade de ${item.name}">
+              <button class="quantity-control__btn" data-action="decrease" type="button" aria-label="Remover uma unidade">−</button>
+              <span class="quantity-control__value" aria-live="polite">${item.quantity}</span>
+              <button class="quantity-control__btn" data-action="increase" type="button" aria-label="Adicionar uma unidade">+</button>
+            </div>
+            <div class="checkout-cart__pricing">
+              <span class="checkout-cart__price">${formatCurrency(lineTotal)}</span>
+              <span class="checkout-cart__unit">${formatCurrency(item.price)} / un.</span>
+              ${hasItemDiscount ? `<span class="checkout-cart__discount-tag">-${formatCurrency(item.itemDiscount)}</span>` : ''}
+            </div>
+            <button class="checkout-cart__remove" aria-label="Remover ${item.name}" type="button">×</button>
+          </div>
         `;
-        const removeButton = cartItem.querySelector('.cart-item__remove');
+
+        const [decreaseButton, increaseButton] = cartItem.querySelectorAll('.quantity-control__btn');
+        if (decreaseButton) {
+          decreaseButton.addEventListener('click', () => changeCartQuantity(item.code, -1));
+        }
+        if (increaseButton) {
+          increaseButton.addEventListener('click', () => changeCartQuantity(item.code, 1));
+        }
+        const removeButton = cartItem.querySelector('.checkout-cart__remove');
         if (removeButton) {
           removeButton.addEventListener('click', () => removeFromCart(item.code));
+        }
+        const discountButton = cartItem.querySelector('.checkout-cart__discount');
+        if (discountButton) {
+          discountButton.addEventListener('click', () => handleItemDiscount(item.code));
         }
         cartElement.appendChild(cartItem);
       });
@@ -1930,19 +2061,42 @@ if (page === 'pdv') {
   };
 
   const getTotals = () => {
-    const subtotal = Array.from(cart.values()).reduce((sum, item) => sum + item.price, 0);
+    const items = Array.from(cart.values());
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalItemDiscount = items.reduce(
+      (sum, item) => sum + Math.min(item.itemDiscount || 0, item.price * item.quantity),
+      0
+    );
+    const baseForGlobalDiscount = Math.max(subtotal - totalItemDiscount, 0);
     const rawDiscount = Math.max(Number(discountInput?.value) || 0, 0);
-    let totalDiscount = 0;
+    let globalDiscount = 0;
 
     if (discountType === 'percent') {
       const percent = Math.min(rawDiscount, 100);
-      totalDiscount = Math.min(subtotal, (subtotal * percent) / 100);
+      globalDiscount = Math.min(baseForGlobalDiscount, (baseForGlobalDiscount * percent) / 100);
     } else {
-      totalDiscount = Math.min(subtotal, rawDiscount);
+      globalDiscount = Math.min(baseForGlobalDiscount, rawDiscount);
     }
 
+    const totalDiscount = Math.min(subtotal, totalItemDiscount + globalDiscount);
     const total = Math.max(subtotal - totalDiscount, 0);
-    return { subtotal, totalDiscount, total };
+    return { subtotal, totalDiscount, total, itemDiscount: totalItemDiscount, globalDiscount };
+  };
+
+  const getFinishButtonCopy = (totalValue) => {
+    const formattedTotal = formatCurrency(totalValue);
+    switch (selectedPayment) {
+      case 'PIX':
+        return `Confirmar recebimento (PIX) • ${formattedTotal}`;
+      case 'Dinheiro':
+        return `Finalizar venda (Dinheiro) • ${formattedTotal}`;
+      case 'Cartão':
+        return `Pagamento aprovado (Cartão)? • ${formattedTotal}`;
+      case 'Fiado':
+        return `Salvar venda (Fiado) • ${formattedTotal}`;
+      default:
+        return `Finalizar venda • ${formattedTotal}`;
+    }
   };
 
   const updateFinishButton = (totalValue, hasItems) => {
@@ -1954,16 +2108,17 @@ if (page === 'pdv') {
       return;
     }
     finishButton.disabled = !hasItems;
-    finishButton.textContent = `FINALIZAR VENDA (${formatCurrency(totalValue)})`;
+    finishButton.textContent = hasItems ? getFinishButtonCopy(totalValue) : 'Finalizar venda';
   };
 
   const updateTotals = () => {
-    const { subtotal, totalDiscount, total } = getTotals();
-    if (subtotalElement) subtotalElement.textContent = formatCurrency(subtotal);
-    if (totalDiscountElement) totalDiscountElement.textContent = formatCurrency(totalDiscount);
-    if (totalElement) totalElement.textContent = formatCurrency(total);
-    updateFinishButton(total, cart.size > 0);
-    updatePixBox({ subtotal, totalDiscount, total });
+    const totals = getTotals();
+    if (subtotalElement) subtotalElement.textContent = formatCurrency(totals.subtotal);
+    if (totalDiscountElement) totalDiscountElement.textContent = formatCurrency(totals.totalDiscount);
+    if (totalElement) totalElement.textContent = formatCurrency(totals.total);
+    updateFinishButton(totals.total, getCartQuantity() > 0);
+    updateCheckoutToggle(totals);
+    updatePixBox(totals);
   };
 
   const updatePaymentContext = () => {
@@ -1971,10 +2126,10 @@ if (page === 'pdv') {
     const lines = {
       PIX: [
         'Compartilhe o QR Code ou o código copia e cola gerado abaixo.',
-        'Após a confirmação, clique em “Marcar pagamento recebido” antes de finalizar.',
+        'Finalize a venda somente após confirmar o pagamento no app do banco.',
       ],
       Dinheiro: ['Receba o valor em espécie e informe o troco se necessário.'],
-      Cartão: ['Passe o cartão no POS e confirme a aprovação da operadora.'],
+      Cartão: ['Passe o cartão no POS e finalize quando a operadora confirmar a aprovação.'],
       Fiado: selectedCustomer
         ? [`Venda vinculada a <strong>${selectedCustomer.name}</strong>. Acompanhe em Relatórios > Fiado.`]
         : ['Selecione um cliente para registrar o fiado desta venda.'],
@@ -2029,6 +2184,7 @@ if (page === 'pdv') {
       }
     }
     updatePixBox();
+    updateFinishButton(getTotals().total, getCartQuantity() > 0);
   };
 
   const openRegisterModal = () => {
@@ -2054,16 +2210,16 @@ if (page === 'pdv') {
     finishButton.dataset.loading = 'true';
     updateFinishButton(0, false);
 
-    const items = Array.from(cart.values());
+    const items = Array.from(cart.values()).map((item) => ({ ...item }));
     const totals = getTotals();
+    if (selectedPayment === 'PIX') {
+      pixPaymentStatus = 'paid';
+    }
     const customerSummary = selectedCustomer
       ? { id: selectedCustomer.id, name: selectedCustomer.name, phone: selectedCustomer.phoneLabel }
       : { id: null, name: 'Cliente Avulso', phone: null };
     const saleId = getSaleId();
     const saleStatus = (() => {
-      if (selectedPayment === 'PIX') {
-        return pixPaymentStatus === 'paid' ? 'paid' : 'pending';
-      }
       if (selectedPayment === 'Fiado') {
         return 'pending';
       }
@@ -2085,7 +2241,10 @@ if (page === 'pdv') {
         items.map((item) => ({
           Código: item.code,
           Produto: item.name,
-          Valor: formatCurrency(item.price),
+          Quantidade: item.quantity,
+          'Valor unitário': formatCurrency(item.price),
+          'Desconto item': formatCurrency(item.itemDiscount || 0),
+          'Total linha': formatCurrency(item.price * item.quantity - (item.itemDiscount || 0)),
         }))
       );
       console.groupEnd();
@@ -2116,6 +2275,7 @@ if (page === 'pdv') {
       renderCart();
       renderProducts(searchInput?.value || '');
       if (discountInput) discountInput.value = '0';
+      updateDiscountToggleLabel();
       clearCustomerSelection();
       pixPaymentStatus = 'pending';
       lastPixTotal = null;
@@ -2130,6 +2290,9 @@ if (page === 'pdv') {
       updateTotals();
       updatePixStatusUI();
 
+      showCatalogPanel();
+      setDiscountPanelVisibility(false);
+
       if (mainShell) mainShell.hidden = true;
       if (successSection) successSection.hidden = false;
     }, 650);
@@ -2139,6 +2302,8 @@ if (page === 'pdv') {
     lastSaleSummary = null;
     if (successSection) successSection.hidden = true;
     if (mainShell) mainShell.hidden = false;
+    showCatalogPanel();
+    setDiscountPanelVisibility(false);
     if (searchInput) searchInput.focus();
     if (finishButton) {
       finishButton.dataset.loading = 'false';
@@ -2152,10 +2317,15 @@ if (page === 'pdv') {
     }
     setPayment('PIX');
     if (discountInput) discountInput.value = '0';
+    updateDiscountToggleLabel();
     renderProducts(searchInput?.value || '');
     updateTotals();
     updatePixStatusUI();
   };
+
+  setDiscountPanelVisibility(false);
+  updateDiscountToggleLabel();
+  updateCheckoutToggle();
 
   if (searchInput) {
     searchInput.addEventListener('input', (event) => renderProducts(event.target.value));
@@ -2200,7 +2370,32 @@ if (page === 'pdv') {
   }
 
   if (discountInput) {
-    discountInput.addEventListener('input', updateTotals);
+    discountInput.addEventListener('input', () => {
+      updateTotals();
+      updateDiscountToggleLabel();
+    });
+  }
+
+  if (discountToggleButton) {
+    discountToggleButton.addEventListener('click', () => {
+      const isOpen = discountPanel && !discountPanel.hidden;
+      setDiscountPanelVisibility(!isOpen);
+    });
+  }
+
+  if (discountCloseButton) {
+    discountCloseButton.addEventListener('click', () => setDiscountPanelVisibility(false));
+  }
+
+  if (discountClearButton) {
+    discountClearButton.addEventListener('click', () => {
+      if (discountInput) {
+        discountInput.value = '0';
+      }
+      updateDiscountToggleLabel();
+      updateTotals();
+      setDiscountPanelVisibility(false);
+    });
   }
 
   discountTypeButtons.forEach((button) => {
@@ -2215,8 +2410,15 @@ if (page === 'pdv') {
     pixCopyButton.addEventListener('click', copyPixCode);
   }
 
-  if (pixMarkPaidButton) {
-    pixMarkPaidButton.addEventListener('click', markPixAsPaid);
+  if (checkoutToggleButton) {
+    checkoutToggleButton.addEventListener('click', () => {
+      if (cart.size === 0) return;
+      showCheckoutPanel();
+    });
+  }
+
+  if (checkoutBackButton) {
+    checkoutBackButton.addEventListener('click', showCatalogPanel);
   }
 
   if (scannerOpenButton) {
@@ -2254,6 +2456,10 @@ if (page === 'pdv') {
 
   if (newSaleButton) {
     newSaleButton.addEventListener('click', startNewSale);
+  }
+
+  if (successCloseButton) {
+    successCloseButton.addEventListener('click', startNewSale);
   }
 
   if (whatsappButton) {
