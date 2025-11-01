@@ -14,24 +14,167 @@
   </head>
   <body data-page="welcome">
     <main class="public-shell">
-      <section class="auth-card" aria-labelledby="welcome-title">
-        <div class="auth-card__brand">
-          <span class="brand-mark" aria-hidden="true">B</span>
-          <h1 class="auth-card__title" id="welcome-title">Bem-vindo ao BIPA</h1>
-          <p class="auth-card__subtitle">
-            A plataforma oficial para operar o PDV, gestão e marketplace da sua loja circular.
-          </p>
-        </div>
+      <div class="welcome-shell">
+        <header class="welcome-topbar" role="banner">
+          <a class="welcome-brand" href="#">
+            <span class="welcome-brand__mark" aria-hidden="true">B</span>
+            <span class="welcome-brand__text">BIPA Plataforma</span>
+          </a>
+          <nav class="welcome-nav" aria-label="Navegação principal">
+            <a href="#tour">Recursos</a>
+            <a href="#inteligencia">Inteligência</a>
+            <a href="#integracoes">Integrações</a>
+          </nav>
+          <div class="welcome-topbar__actions">
+            <a class="welcome-topbar__link" href="login.html">Já sou cliente</a>
+            <a class="btn btn--surface btn--small" href="criar-loja.html">Criar loja</a>
+          </div>
+        </header>
 
-        <div class="auth-card__actions" role="group" aria-label="Ações iniciais">
-          <a class="btn btn--primary" href="login.html">Entrar na minha conta</a>
-          <a class="btn btn--surface" href="criar-loja.html">Criar uma nova loja</a>
-        </div>
+        <div class="welcome-grid">
+          <section class="welcome-hero" aria-labelledby="hero-title">
+            <div class="welcome-hero__content">
+              <span class="welcome-hero__badge">Solução omnicanal para moda circular</span>
+              <h1 class="welcome-hero__title" id="hero-title">
+                Uma experiência poderosa de gestão em cada tela
+              </h1>
+              <p class="welcome-hero__subtitle">
+                Centralize operações físicas e digitais com dados em tempo real, fluxos automatizados e insights acionáveis. A BIPA foi desenhada para equipes que precisam de profundidade analítica sem abrir mão da velocidade.
+              </p>
+              <div class="welcome-hero__actions" role="group" aria-label="Principais ações">
+                <a class="btn btn--primary" href="criar-loja.html">Começar agora</a>
+                <a class="btn btn--ghost" href="#tour">Ver tour guiado</a>
+              </div>
 
-        <p class="auth-card__hint">
-          O acesso é exclusivo para lojistas com contrato ativo. Em caso de dúvidas, acione o suporte pelo painel interno.
-        </p>
-      </section>
+              <dl class="welcome-hero__metrics" id="inteligencia">
+                <div class="welcome-hero__metric">
+                  <dt>Decisões orientadas por dados</dt>
+                  <dd>1.200+ varejistas usam painéis diários personalizados.</dd>
+                </div>
+                <div class="welcome-hero__metric">
+                  <dt>Setup mais rápido</dt>
+                  <dd>Operações ativas em até 24h com integrações assistidas.</dd>
+                </div>
+                <div class="welcome-hero__metric">
+                  <dt>Resultados comprovados</dt>
+                  <dd>+38% de giro médio no primeiro trimestre com algoritmos BIPA.</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="welcome-hero__preview" aria-hidden="true">
+              <div class="welcome-preview welcome-preview--board">
+                <header class="welcome-preview__header">
+                  <div>
+                    <p class="welcome-preview__title">Painel de performance</p>
+                    <p class="welcome-preview__caption">Atualizado agora mesmo</p>
+                  </div>
+                  <span class="welcome-preview__chip">Modo live</span>
+                </header>
+                <div class="welcome-preview__stats">
+                  <div>
+                    <span class="welcome-preview__label">Faturamento diário</span>
+                    <strong class="welcome-preview__value">R$ 8.420</strong>
+                  </div>
+                  <div>
+                    <span class="welcome-preview__label">Pedidos em aprovação</span>
+                    <strong class="welcome-preview__value welcome-preview__value--warning">3 pendentes</strong>
+                  </div>
+                  <div>
+                    <span class="welcome-preview__label">Reposição sugerida</span>
+                    <strong class="welcome-preview__value">12 SKUs</strong>
+                  </div>
+                </div>
+                <div class="welcome-preview__chart">
+                  <span style="--value: 75%"></span>
+                  <span style="--value: 52%"></span>
+                  <span style="--value: 90%"></span>
+                  <span style="--value: 64%"></span>
+                  <span style="--value: 82%"></span>
+                </div>
+              </div>
+
+              <div class="welcome-preview welcome-preview--timeline" id="integracoes">
+                <p class="welcome-preview__title">Fluxos inteligentes</p>
+                <ul class="welcome-preview__timeline">
+                  <li>
+                    <span class="welcome-preview__bullet">∙</span>
+                    <div>
+                      <p>Integração marketplace concluída</p>
+                      <small>Catálogo sincronizado com BIPA Connect</small>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="welcome-preview__bullet">∙</span>
+                    <div>
+                      <p>Campanha social pronta</p>
+                      <small>Templates com estoque real e preços dinâmicos</small>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="welcome-preview__bullet">∙</span>
+                    <div>
+                      <p>Alerta: Coleção cápsula</p>
+                      <small>Reposição ideal em 2 dias</small>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="welcome-preview welcome-preview--score" aria-label="NPS BIPA">
+                <p class="welcome-preview__title">Satisfação das lojas</p>
+                <strong class="welcome-preview__score">91 NPS</strong>
+                <p class="welcome-preview__caption">Top 1 plataforma de moda circular</p>
+              </div>
+            </div>
+          </section>
+
+          <aside class="welcome-sidebar">
+            <section class="auth-card" aria-labelledby="welcome-card-title">
+              <div class="auth-card__brand">
+                <span class="brand-mark" aria-hidden="true">B</span>
+                <h2 class="auth-card__title" id="welcome-card-title">Acesse sua operação BIPA</h2>
+                <p class="auth-card__subtitle">
+                  Entrar no painel garante relatórios, catálogo e marketplace sincronizados em tempo real.
+                </p>
+              </div>
+
+              <div class="auth-card__actions" role="group" aria-label="Ações iniciais">
+                <a class="btn btn--primary" href="login.html">Entrar na minha conta</a>
+                <a class="btn btn--surface" href="criar-loja.html">Criar uma nova loja</a>
+              </div>
+
+              <p class="auth-card__hint">
+                O acesso é exclusivo para lojistas com contrato ativo. Em caso de dúvidas, acione o suporte pelo painel interno.
+              </p>
+            </section>
+
+            <section class="welcome-insights" id="tour" aria-labelledby="tour-title">
+              <h3 class="welcome-insights__title" id="tour-title">Por que operar com a BIPA</h3>
+              <ul class="welcome-insights__grid" role="list">
+                <li>
+                  <h4>Operação inteligente</h4>
+                  <p>Fluxos automatizados de consignação, recompras e logística reversa.</p>
+                </li>
+                <li>
+                  <h4>Equipe alinhada</h4>
+                  <p>Workflows colaborativos com tarefas, metas e chat integrados.</p>
+                </li>
+                <li>
+                  <h4>Experiência premium</h4>
+                  <p>PDV moderno, apps mobile e marketplace unificado para vender em todo lugar.</p>
+                </li>
+              </ul>
+
+              <div class="welcome-insights__footer">
+                <p>
+                  Precisa ver na prática? <a class="link" href="mailto:contato@bipa.com">Fale com especialistas</a> e personalize um plano para sua rede.
+                </p>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
     </main>
     <script src="/script.js" defer></script>
   </body>
