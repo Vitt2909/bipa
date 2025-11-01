@@ -14,6 +14,7 @@ function setActiveTab(tabName) {
   });
 
   Object.entries(panels).forEach(([key, panel]) => {
+    if (!panel) return;
     panel.classList.toggle('is-active', key === tabName);
   });
 }
