@@ -1,0 +1,14 @@
+{
+  "name": "bipa-pwa",
+  "version": "1.0.0",
+  "description": "BIPA Retail System",
+  "main": "index.html",
+  "scripts": {
+    "dev": "serve -l 3456",
+    "start": "serve -l 3456"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

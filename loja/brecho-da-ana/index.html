@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brechó da Ana — Moda Circular com Curadoria</title>
+    <meta name="description" content="Peças únicas de moda circular com curadoria impecável. Brechó da Ana no BIPA." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <style>
+      body[data-page="storefront"] {
+        background: #fafbf9;
+        color: #1a1a1a;
+      }
+      .storefront-header {
+        text-align: center;
+        padding: 3.5rem 1.5rem 2rem;
+        background: linear-gradient(180deg, rgba(230,244,236,0.6) 0%, transparent 100%);
+      }
+      .storefront-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-weight: 600;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        color: #0f3622;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      .storefront-header p {
+        color: #6b7c73;
+        margin-top: 0.75rem;
+        font-size: 1.05rem;
+      }
+      .storefront-nav {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+      .storefront-nav select {
+        padding: 0.6rem 1.25rem;
+        border: 1px solid #dce6df;
+        border-radius: 999px;
+        background: #fff;
+        font-family: inherit;
+        font-size: 0.9rem;
+        color: #2d4038;
+        cursor: pointer;
+        transition: border-color 200ms ease;
+      }
+      .storefront-nav select:focus {
+        outline: none;
+        border-color: #1ef39b;
+        box-shadow: 0 0 0 3px rgba(30, 243, 155, 0.12);
+      }
+      .storefront-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .product-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #f0f0ee;
+        transition: transform 200ms ease, box-shadow 200ms ease;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 40px rgba(15, 54, 34, 0.08);
+      }
+      .product-card img {
+        width: 100%;
+        height: 340px;
+        object-fit: cover;
+        display: block;
+      }
+      .product-card__body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .product-card__title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        color: #1a1a1a;
+      }
+      .product-card__meta {
+        font-size: 0.85rem;
+        color: #7a8a82;
+        display: flex;
+        justify-content: space-between;
+      }
+      .product-card__price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0f3622;
+      }
+      .product-card .btn {
+        margin-top: 0.5rem;
+        text-align: center;
+        background: linear-gradient(135deg, #1ef39b, #0fd68c);
+        color: #052216;
+        border: none;
+        font-weight: 600;
+        border-radius: 12px;
+        padding: 0.7rem 1rem;
+        transition: transform 150ms ease, box-shadow 150ms ease;
+      }
+      .product-card .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(30, 243, 155, 0.3);
+      }
+      .storefront-footer {
+        text-align: center;
+        padding: 4rem 1rem;
+        color: #9db8ac;
+        font-size: 0.85rem;
+        border-top: 1px solid #eef2f0;
+      }
+      .storefront__empty {
+        text-align: center;
+        color: #7a8a82;
+        padding: 3rem 1rem;
+        font-size: 1rem;
+      }
+      @media (max-width: 540px) {
+        .storefront-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+        .product-card img {
+          height: 260px;
+        }
+      }
+    </style>
+  </head>
+  <body data-page="storefront" data-store="brecho-da-ana">
+    <header class="storefront-header">
+      <h1>Brechó da Ana</h1>
+      <p>Moda circular com curadoria impecável</p>
+      
+      <div class="storefront-nav">
+        <select id="filter-category"><option value="todos">Todas Categorias</option></select>
+        <select id="filter-size"><option value="todos">Todos Tamanhos</option></select>
+      </div>
+    </header>
+
+    <main>
+      <div id="storefront-gallery" class="storefront-grid">
+        <!-- JS Renders -->
+      </div>
+    </main>
+    
+    <footer class="storefront-footer">
+      &copy; 2024 Brechó da Ana · Powered by <strong>BIPA</strong>
+    </footer>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>

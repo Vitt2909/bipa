@@ -11,11 +11,12 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css" />
+      <link rel="manifest" href="/manifest.json" />
   </head>
   <body data-page="pdv-receipt" data-theme="workspace">
     <header class="app-topbar">
       <div class="app-topbar__brand">
-        <span class="brand-mark" aria-hidden="true">B</span>
+        <span class="brand-mark brand-mark--svg" aria-hidden="true"><svg viewBox="0 0 64 64" role="presentation" focusable="false"><defs><linearGradient id="bGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#32ffb4"/><stop offset="100%" stop-color="#0fd68c"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="18" fill="url(#bGrad)"/><path d="M40.5 19.5H25.2c-3.9 0-7.1 3.2-7.1 7.1v10.8c0 6 4.9 10.9 10.9 10.9h8.8c6 0 10.9-4.9 10.9-10.9v-0.2c0-4.4-2.7-8.3-6.8-9.9 2-1.6 3.3-4 3.3-6.7v-0.1c0-5.8-4.7-10.5-10.5-10.5Z" fill="#052216" opacity="0.85"/></svg></span>
         <div class="app-topbar__context">
           <span class="app-topbar__name">BIPA</span>
           <span class="app-topbar__store">Loja Demo — Recibo</span>
@@ -30,8 +31,8 @@
     <main class="receipt-shell" aria-labelledby="receipt-title">
       <section class="receipt-card">
         <header class="receipt-card__header">
-          <h1 class="receipt-card__title" id="receipt-title">Venda concluída #0001</h1>
-          <p class="receipt-card__meta">Emitido em 12/09/2024 às 15:42</p>
+          <h1 class="receipt-card__title" id="receipt-title">Carregando recibo...</h1>
+          <p class="receipt-card__meta" id="receipt-meta"></p>
         </header>
 
         <section class="receipt-section" aria-labelledby="receipt-items-title">
@@ -45,19 +46,8 @@
                 <th scope="col">Subtotal</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>Jaqueta Jeans Oversized</td>
-                <td>1</td>
-                <td>R$ 189,90</td>
-                <td>R$ 189,90</td>
-              </tr>
-              <tr>
-                <td>Vestido Midi Floral</td>
-                <td>1</td>
-                <td>R$ 129,90</td>
-                <td>R$ 129,90</td>
-              </tr>
+            <tbody id="receipt-tbody">
+              <!-- Rendered by JS -->
             </tbody>
           </table>
         </section>
@@ -67,19 +57,19 @@
           <dl class="key-value">
             <div>
               <dt>Cliente</dt>
-              <dd>Bianca Souza</dd>
+              <dd id="receipt-customer"></dd>
             </div>
             <div>
               <dt>Forma</dt>
-              <dd>PIX</dd>
+              <dd id="receipt-method"></dd>
             </div>
             <div>
               <dt>Desconto aplicado</dt>
-              <dd>R$ 20,00</dd>
+              <dd id="receipt-discount"></dd>
             </div>
             <div>
               <dt>Total pago</dt>
-              <dd>R$ 299,80</dd>
+              <dd id="receipt-total"></dd>
             </div>
           </dl>
         </section>

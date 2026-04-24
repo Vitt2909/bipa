@@ -11,11 +11,12 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css" />
+      <link rel="manifest" href="/manifest.json" />
   </head>
   <body data-page="admin-customers" data-theme="workspace">
     <header class="app-topbar">
       <div class="app-topbar__brand">
-        <span class="brand-mark" aria-hidden="true">B</span>
+        <span class="brand-mark brand-mark--svg" aria-hidden="true"><svg viewBox="0 0 64 64" role="presentation" focusable="false"><defs><linearGradient id="bGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#32ffb4"/><stop offset="100%" stop-color="#0fd68c"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="18" fill="url(#bGrad)"/><path d="M40.5 19.5H25.2c-3.9 0-7.1 3.2-7.1 7.1v10.8c0 6 4.9 10.9 10.9 10.9h8.8c6 0 10.9-4.9 10.9-10.9v-0.2c0-4.4-2.7-8.3-6.8-9.9 2-1.6 3.3-4 3.3-6.7v-0.1c0-5.8-4.7-10.5-10.5-10.5Z" fill="#052216" opacity="0.85"/></svg></span>
         <div class="app-topbar__context">
           <span class="app-topbar__name">BIPA</span>
           <span class="app-topbar__store">Loja Demo — Gestão</span>
@@ -31,11 +32,11 @@
       <aside class="app-admin__sidebar" aria-label="Navegação do módulo de gestão">
         <div class="sidebar__logo">BIPA</div>
         <nav class="sidebar__nav">
-          <a class="sidebar__link" href="/app/admin/dashboard/">Dashboard</a>
-          <a class="sidebar__link" href="/app/admin/produtos/">Produtos</a>
+          <a class="sidebar__link" href="/app/admin/dashboard/"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg> Dashboard</a>
+          <a class="sidebar__link" href="/app/admin/produtos/"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><line x1="4" y1="10" x2="20" y2="10"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg> Produtos</a>
           <a class="sidebar__link is-active" href="/app/admin/clientes/">Clientes</a>
-          <a class="sidebar__link" href="/app/admin/vendas/">Vendas</a>
-          <a class="sidebar__link" href="/app/admin/configuracoes/">Configurações</a>
+          <a class="sidebar__link" href="/app/admin/vendas/"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Vendas</a>
+          <a class="sidebar__link" href="/app/admin/configuracoes/"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Configurações</a>
         </nav>
       </aside>
 

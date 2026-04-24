@@ -1235,10 +1235,10 @@ if (page === 'marketplace') {
           || listing.title.toLowerCase().includes(searchTerm)
           || (listing.description || '').toLowerCase().includes(searchTerm)
           || (listing.seller || '').toLowerCase().includes(searchTerm);
-        const matchesCategory = !category || listing.category === category;
-        const matchesSize = !size || listing.size === size;
-        const matchesCondition = !condition || listing.condition === condition;
-        const matchesLocation = !location || listing.location === location;
+        const matchesCategory = !category || category === 'todos' || listing.category === category;
+        const matchesSize = !size || size === 'todos' || listing.size === size;
+        const matchesCondition = !condition || condition === 'todos' || listing.condition === condition;
+        const matchesLocation = !location || location === 'todos' || listing.location === location;
         const matchesPrice = !Number.isFinite(maxPrice) ? true : Number(listing.price) <= maxPrice;
         return (
           matchesSearch &&
@@ -2505,6 +2505,12 @@ if (page === 'pdv') {
         payment: selectedPayment,
         status: saleStatus,
         saleId,
+        items: items.map(item => ({
+          name: item.name,
+          qty: item.quantity,
+          price: item.price,
+          total: item.price * item.quantity
+        }))
       };
 
       if (successTotalElement) {
@@ -2966,3 +2972,630 @@ if (page && page.startsWith('admin')) {
     link.classList.toggle('is-active', isActive);
   });
 }
+
+// ========================================================
+// GLOBAL SYSTEMS — Toast, Demo Badge, Favicon, Confetti
+// ========================================================
+
+// --- Toast notification system ---
+const bipaToast = (() => {
+  let container = document.querySelector('.bipa-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'bipa-toast-container';
+    container.setAttribute('aria-live', 'polite');
+    document.body.appendChild(container);
+  }
+
+  const iconMap = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
+
+  const show = (title, message, variant = 'success', duration = 4200) => {
+    const toast = document.createElement('div');
+    toast.className = `bipa-toast bipa-toast--${variant}`;
+    toast.innerHTML = `
+      <span class="bipa-toast__icon">${iconMap[variant] || '●'}</span>
+      <div class="bipa-toast__content">
+        <div class="bipa-toast__title">${title}</div>
+        ${message ? `<div class="bipa-toast__message">${message}</div>` : ''}
+      </div>
+      <button class="bipa-toast__close" type="button" aria-label="Fechar">×</button>
+    `;
+
+    const dismiss = () => {
+      toast.classList.add('is-exiting');
+      window.setTimeout(() => toast.remove(), 300);
+    };
+
+    toast.querySelector('.bipa-toast__close').addEventListener('click', dismiss);
+    container.appendChild(toast);
+
+    if (duration > 0) {
+      window.setTimeout(dismiss, duration);
+    }
+    return toast;
+  };
+
+  return { show, success: (t, m) => show(t, m, 'success'), error: (t, m) => show(t, m, 'error'), warning: (t, m) => show(t, m, 'warning'), info: (t, m) => show(t, m, 'info') };
+})();
+
+// --- Demo badge injection ---
+(() => {
+  if (document.querySelector('.demo-badge-fixed')) return;
+  const badge = document.createElement('div');
+  badge.className = 'demo-badge-fixed';
+  badge.textContent = 'Modo Demo';
+  badge.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(badge);
+})();
+
+// --- Favicon injection ---
+(() => {
+  if (document.querySelector('link[rel="icon"]')) return;
+  const favicon = document.createElement('link');
+  favicon.rel = 'icon';
+  favicon.type = 'image/svg+xml';
+  favicon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0%25" y1="0%25" x2="100%25" y2="100%25"><stop offset="0%25" stop-color="%2332ffb4"/><stop offset="100%25" stop-color="%230fd68c"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="18" fill="url(%23g)"/><text x="32" y="44" font-family="system-ui" font-size="32" font-weight="bold" fill="%23052216" text-anchor="middle">B</text></svg>';
+  document.head.appendChild(favicon);
+})();
+
+// --- Confetti system ---
+const fireConfetti = () => {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  const colors = ['#32ffb4', '#0fd68c', '#1ef39b', '#facc15', '#fb7185', '#60a5fa', '#c084fc'];
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = `${Math.random() * 0.8}s`;
+    piece.style.animationDuration = `${1.8 + Math.random() * 1.5}s`;
+    piece.style.width = `${6 + Math.random() * 8}px`;
+    piece.style.height = `${6 + Math.random() * 8}px`;
+    container.appendChild(piece);
+  }
+  document.body.appendChild(container);
+  window.setTimeout(() => container.remove(), 3500);
+};
+
+// --- localStorage persistence layer ---
+const bipaStore = (() => {
+  const KEY_SALES = 'bipa:sales';
+  const KEY_PRODUCTS = 'bipa:extra-products';
+  const KEY_CUSTOMERS = 'bipa:extra-customers';
+
+  const get = (key, fallback = []) => {
+    try { return JSON.parse(window.localStorage.getItem(key)) || fallback; } catch { return fallback; }
+  };
+  const set = (key, data) => {
+    try { window.localStorage.setItem(key, JSON.stringify(data)); } catch { /* storage full */ }
+  };
+
+  return {
+    getSales: () => get(KEY_SALES),
+    addSale: (sale) => { const sales = get(KEY_SALES); sales.unshift(sale); set(KEY_SALES, sales); },
+    getExtraProducts: () => get(KEY_PRODUCTS),
+    addProduct: (p) => { const prods = get(KEY_PRODUCTS); prods.push(p); set(KEY_PRODUCTS, prods); },
+    getExtraCustomers: () => get(KEY_CUSTOMERS),
+    addCustomer: (c) => { const custs = get(KEY_CUSTOMERS); custs.push(c); set(KEY_CUSTOMERS, custs); },
+  };
+})();
+
+// Load persisted extras into demo arrays
+(() => {
+  bipaStore.getExtraProducts().forEach((p) => {
+    if (!demoProductsMap[normalizeProductCode(p.code)]) {
+      demoProducts.push(p);
+      demoProductsMap[normalizeProductCode(p.code)] = p;
+    }
+  });
+  bipaStore.getExtraCustomers().forEach((c) => {
+    if (!demoCustomersMap[c.id]) {
+      demoCustomers.push(c);
+      demoCustomersMap[c.id] = c;
+    }
+  });
+})();
+
+
+// ========================================================
+// FASE 1 — Admin > Product Create handler
+// ========================================================
+if (page === 'admin-product-create') {
+  const form = document.querySelector('.form-grid');
+  if (form) {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const inputs = Array.from(form.querySelectorAll('input, select, textarea'));
+      const getVal = (idx) => (inputs[idx]?.value || '').trim();
+
+      const code = getVal(0) || `BR-${String(demoProducts.length + 1).padStart(4, '0')}`;
+      const name = getVal(1) || 'Produto sem nome';
+      const category = getVal(2) || 'Geral';
+      const size = getVal(3) || 'M';
+      const price = Number(getVal(4)) || 0;
+
+      const newProduct = {
+        code: code.toUpperCase(),
+        name,
+        category,
+        size,
+        price,
+        image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=60',
+        status: 'available',
+      };
+
+      demoProducts.push(newProduct);
+      demoProductsMap[normalizeProductCode(newProduct.code)] = newProduct;
+      bipaStore.addProduct(newProduct);
+
+      // Replace form with success message
+      const formParent = form.parentElement;
+      form.remove();
+      const helpText = formParent.querySelector('.form-footer');
+      if (helpText) helpText.remove();
+
+      const successDiv = document.createElement('div');
+      successDiv.className = 'form-success-overlay';
+      successDiv.innerHTML = `
+        <div class="form-success-overlay__icon">✓</div>
+        <p class="form-success-overlay__title">Produto cadastrado com sucesso!</p>
+        <p class="form-success-overlay__text">${newProduct.name} (${newProduct.code}) foi adicionado ao catálogo da demo.</p>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center">
+          <a class="btn btn--primary" href="/app/admin/produtos/">Ver estoque</a>
+          <a class="btn btn--surface" href="/app/admin/produtos/novo/">Cadastrar outro</a>
+        </div>
+      `;
+      formParent.appendChild(successDiv);
+      bipaToast.success('Produto salvo', `${newProduct.name} adicionado ao catálogo.`);
+    });
+  }
+}
+
+
+// ========================================================
+// FASE 1 — Admin > Customer Create handler
+// ========================================================
+if (page === 'admin-customer-create') {
+  const form = document.querySelector('.form-grid');
+  if (form) {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const inputs = Array.from(form.querySelectorAll('input, select, textarea'));
+      const getVal = (idx) => (inputs[idx]?.value || '').trim();
+
+      const name = getVal(0) || 'Cliente sem nome';
+      const whatsapp = getVal(1).replace(/\D/g, '') || '00000000000';
+      const email = getVal(2) || '';
+      const tag = getVal(3) || '';
+
+      const newCustomer = {
+        id: `cli-${String(demoCustomers.length + 1).padStart(4, '0')}`,
+        name,
+        whatsapp,
+        phoneLabel: formatPhone(whatsapp),
+        email,
+        tag,
+        tagClass: tag === 'VIP' ? 'chip--available' : tag === 'Fiado' ? 'chip--reserved' : '',
+        lastPurchase: new Date().toISOString().slice(0, 10),
+        totalSpent: 0,
+        subtitle: tag ? `Cliente ${tag}` : 'Novo cliente',
+        notes: '',
+        history: [],
+      };
+
+      demoCustomers.push(newCustomer);
+      demoCustomersMap[newCustomer.id] = newCustomer;
+      bipaStore.addCustomer(newCustomer);
+
+      const formParent = form.parentElement;
+      form.remove();
+      const helpText = formParent.querySelector('.form-footer');
+      if (helpText) helpText.remove();
+
+      const successDiv = document.createElement('div');
+      successDiv.className = 'form-success-overlay';
+      successDiv.innerHTML = `
+        <div class="form-success-overlay__icon">✓</div>
+        <p class="form-success-overlay__title">Cliente cadastrado!</p>
+        <p class="form-success-overlay__text">${newCustomer.name} (${newCustomer.phoneLabel}) foi adicionado à sua base.</p>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center">
+          <a class="btn btn--primary" href="/app/admin/clientes/">Ver clientes</a>
+          <a class="btn btn--surface" href="/app/admin/clientes/novo/">Cadastrar outro</a>
+        </div>
+      `;
+      formParent.appendChild(successDiv);
+      bipaToast.success('Cliente salvo', `${newCustomer.name} adicionado à base.`);
+    });
+  }
+}
+
+
+// ========================================================
+// FASE 1 — Admin > Settings handler
+// ========================================================
+if (page === 'admin-settings') {
+  const form = document.querySelector('.form-grid');
+  if (form) {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      bipaToast.success('Configurações salvas', 'As alterações foram aplicadas nesta sessão demo.');
+    });
+  }
+}
+
+
+// ========================================================
+// FASE 1 — Admin > Products — Functional Filters
+// ========================================================
+if (page === 'admin-products') {
+  const filtersForm = document.querySelector('.filters-bar--inventory');
+  const tableBody = document.querySelector('.table--inventory tbody');
+  if (filtersForm && tableBody) {
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const selects = Array.from(filtersForm.querySelectorAll('select'));
+    const searchInput = filtersForm.querySelector('input[type="search"]');
+
+    const filterRows = () => {
+      const statusFilter = (selects[0]?.value || 'Todos').toLowerCase();
+      const categoryFilter = (selects[1]?.value || 'Todas').toLowerCase();
+      const channelFilter = (selects[2]?.value || 'Todos').toLowerCase();
+      const searchTerm = (searchInput?.value || '').trim().toLowerCase();
+
+      rows.forEach((row) => {
+        const text = row.textContent.toLowerCase();
+        const statusCell = row.querySelector('.inventory-status')?.textContent?.toLowerCase() || '';
+        const channelCell = row.querySelector('.channel-list')?.textContent?.toLowerCase() || '';
+
+        const matchesStatus = statusFilter === 'todos' || statusCell.includes(statusFilter.slice(0, 4));
+        const matchesCategory = categoryFilter === 'todas' || text.includes(categoryFilter);
+        const matchesChannel = channelFilter === 'todos' || channelCell.includes(channelFilter.slice(0, 3));
+        const matchesSearch = !searchTerm || text.includes(searchTerm);
+
+        row.style.display = matchesStatus && matchesCategory && matchesChannel && matchesSearch ? '' : 'none';
+      });
+    };
+
+    selects.forEach((s) => s.addEventListener('change', filterRows));
+    if (searchInput) searchInput.addEventListener('input', filterRows);
+  }
+
+  // Bulk action buttons
+  const bulkButtons = document.querySelectorAll('[data-bulk-actions] .btn');
+  bulkButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const selectedCount = document.querySelectorAll('[data-row-select]:checked').length;
+      if (selectedCount === 0) {
+        bipaToast.warning('Nenhum item selecionado', 'Selecione ao menos um produto para realizar esta ação.');
+        return;
+      }
+      const action = btn.textContent.trim();
+      bipaToast.success('Ação executada (demo)', `"${action}" aplicada a ${selectedCount} ${selectedCount === 1 ? 'produto' : 'produtos'}.`);
+    });
+  });
+}
+
+
+// ========================================================
+// FASE 1 — Admin > Sales — Period Filter & Dynamic Data
+// ========================================================
+if (page === 'admin-sales') {
+  const periodSelect = document.querySelector('.page-actions select');
+  const tableBody = document.querySelector('.table tbody');
+
+  // Inject persisted sales
+  if (tableBody) {
+    const persistedSales = bipaStore.getSales();
+    persistedSales.forEach((sale) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${sale.date}</td>
+        <td>${sale.id}</td>
+        <td>${sale.customer}</td>
+        <td>${sale.total}</td>
+        <td>${sale.payment}</td>
+      `;
+      tableBody.prepend(row);
+    });
+  }
+
+  if (periodSelect && tableBody) {
+    periodSelect.addEventListener('change', () => {
+      bipaToast.info('Filtro aplicado', `Exibindo vendas: ${periodSelect.value}`);
+    });
+  }
+}
+
+
+// ========================================================
+// ========================================================
+// FASE 1 & FASE 4 — Receipt Dynamic Rendering & Actions
+// ========================================================
+if (page === 'pdv-receipt') {
+  const renderReceipt = () => {
+    const elTitle = document.getElementById('receipt-title');
+    const elMeta = document.getElementById('receipt-meta');
+    const elTbody = document.getElementById('receipt-tbody');
+    const elCustomer = document.getElementById('receipt-customer');
+    const elMethod = document.getElementById('receipt-method');
+    const elDiscount = document.getElementById('receipt-discount');
+    const elTotal = document.getElementById('receipt-total');
+    
+    // Get last sale
+    const salesStr = localStorage.getItem('bipa_sales');
+    const sales = salesStr ? JSON.parse(salesStr) : [];
+    const sale = sales.length > 0 ? sales[sales.length - 1] : null;
+
+    if (!sale) {
+      if (elTitle) elTitle.textContent = 'Venda não encontrada';
+      if (elTbody) elTbody.innerHTML = '<tr><td colspan="4">Vá ao PDV e faça uma venda primeiro.</td></tr>';
+      return;
+    }
+
+    if (elTitle) elTitle.textContent = `Venda concluída #${sale.id}`;
+    if (elMeta) elMeta.textContent = `Emitido em ${sale.date}`;
+    if (elCustomer) elCustomer.textContent = sale.customer || 'Cliente Avulso';
+    if (elMethod) elMethod.textContent = sale.payment || 'Dinheiro';
+    if (elDiscount) elDiscount.textContent = 'R$ 0,00'; // mock
+    if (elTotal) elTotal.textContent = sale.total;
+    
+    if (elTbody && sale.items) {
+      elTbody.innerHTML = '';
+      sale.items.forEach(item => {
+        elTbody.innerHTML += `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.qty || 1}</td>
+            <td>${item.priceLabel || formatCurrency(item.price)}</td>
+            <td>${item.totalLabel || formatCurrency(item.price * (item.qty || 1))}</td>
+          </tr>
+        `;
+      });
+    } else if (elTbody) {
+      elTbody.innerHTML = `<tr><td colspan="4">Itens genéricos (Mock antigo sem detalhes de itens salvo)</td></tr>`;
+    }
+  };
+
+  renderReceipt();
+
+  const buttons = document.querySelectorAll('.receipt-card__footer .btn');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const text = btn.textContent.trim().toLowerCase();
+      if (text.includes('whatsapp')) {
+        const message = encodeURIComponent('Aqui está seu recibo da compra BIPA! Obrigado pela preferência 🛍️');
+        window.open(`https://wa.me/?text=${message}`, '_blank', 'noopener');
+        bipaToast.success('WhatsApp', 'Abrindo compartilhamento do recibo...');
+      } else if (text.includes('imprimir')) {
+        window.print();
+      }
+    });
+  });
+}
+
+
+// ========================================================
+// FASE 1 — Logout with state cleanup
+// ========================================================
+document.querySelectorAll('a[href="/"]').forEach((link) => {
+  if (link.textContent.trim().toLowerCase() === 'sair') {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      try { window.sessionStorage.clear(); } catch {}
+      bipaToast.info('Sessão encerrada', 'Você foi desconectado da demo.');
+      window.setTimeout(() => { window.location.href = '/'; }, 600);
+    });
+  }
+});
+
+
+// ========================================================
+// PDV — Persist finalized sales & fire confetti
+// ========================================================
+if (page === 'pdv') {
+  // Patch finishButton to also persist sale and fire confetti
+  const origFinishButton = document.getElementById('pdv-finish');
+  if (origFinishButton) {
+    origFinishButton.addEventListener('click', () => {
+      // Wait for the sale to finalize (after the existing 650ms timeout)
+      window.setTimeout(() => {
+        if (lastSaleSummary) {
+          bipaStore.addSale({
+            id: lastSaleSummary.saleId,
+            date: new Date().toLocaleString('pt-BR'),
+            customer: lastSaleSummary.customer,
+            total: formatCurrency(lastSaleSummary.total),
+            payment: lastSaleSummary.payment,
+            items: lastSaleSummary.items
+          });
+          fireConfetti();
+        }
+      }, 700);
+    }, { once: false });
+  }
+
+  // Enhance product list rendering to show thumbnails
+  const origSearchInput = document.getElementById('pdv-search');
+  const origProductList = document.getElementById('pdv-product-list');
+  if (origSearchInput && origProductList) {
+    const enhancedRender = () => {
+      const query = origSearchInput.value.trim().toLowerCase();
+      origProductList.innerHTML = '';
+
+      const filtered = demoProducts.filter((p) => {
+        if (p.status === 'sold') return false;
+        if (!query) return true;
+        return p.name.toLowerCase().includes(query) || p.code.toLowerCase().includes(query);
+      });
+
+      if (filtered.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'pdv-empty';
+        empty.textContent = 'Nenhum produto disponível.';
+        origProductList.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach((product) => {
+        const item = document.createElement('li');
+        item.className = 'pdv-product';
+        item.tabIndex = 0;
+        item.innerHTML = `
+          <img class="pdv-product__thumb" src="${product.image || ''}" alt="" loading="lazy" onerror="this.style.display='none'" />
+          <div class="pdv-product__info">
+            <span class="pdv-product__title">${product.name}</span>
+            <span class="pdv-product__meta">${product.code} • Tam. ${product.size} • ${formatCurrency(product.price)}</span>
+          </div>
+        `;
+        item.addEventListener('click', () => {
+          addToCart(product);
+          item.style.transition = 'background 200ms';
+          item.style.background = 'rgba(30,243,155,0.15)';
+          window.setTimeout(() => { item.style.background = ''; }, 400);
+        });
+        item.addEventListener('keypress', (e) => { if (e.key === 'Enter') addToCart(product); });
+        origProductList.appendChild(item);
+      });
+    };
+
+    // Override the search listener for enhanced rendering
+    origSearchInput.removeEventListener('input', () => {});
+    origSearchInput.addEventListener('input', enhancedRender);
+
+    // Initial enhanced render (delayed to not conflict with original)
+    window.setTimeout(enhancedRender, 50);
+  }
+}
+
+// ========================================================
+// FASE 2 — Mobile Hamburger Menu Toggle
+// ========================================================
+const mobileMenuToggles = document.querySelectorAll('.mobile-menu-toggle');
+mobileMenuToggles.forEach(toggle => {
+  toggle.addEventListener('click', () => {
+    const header = toggle.closest('.site-header');
+    if (header) {
+      header.classList.toggle('menu-open');
+      const isOpen = header.classList.contains('menu-open');
+      toggle.setAttribute('aria-expanded', isOpen.toString());
+    }
+  });
+});
+
+// ========================================================
+// FASE 3 — Dashboard Dinâmico & Gráfico CSS
+// ========================================================
+if (page === 'admin-dashboard') {
+  const renderDashboard = () => {
+    const salesStr = localStorage.getItem('bipa_sales');
+    const sales = salesStr ? JSON.parse(salesStr) : [];
+    
+    // Parse values
+    const parseCurrency = (str) => parseFloat(String(str).replace(/[^\d,-]/g, '').replace(',', '.'));
+    
+    // Metrics
+    const today = new Date().toLocaleDateString('pt-BR');
+    const todaySales = sales.filter(s => s.date.includes(today));
+    
+    const todayTotal = todaySales.reduce((acc, curr) => acc + parseCurrency(curr.total), 0);
+    const overallTotal = sales.reduce((acc, curr) => acc + parseCurrency(curr.total), 0);
+    const avgTicket = sales.length ? overallTotal / sales.length : 0;
+    
+    const elSalesTotal = document.getElementById('dash-sales-total');
+    const elSalesCount = document.getElementById('dash-sales-count');
+    const elItemsSold = document.getElementById('dash-items-sold');
+    const elTicketAvg = document.getElementById('dash-ticket-avg');
+    
+    if (elSalesTotal) elSalesTotal.textContent = formatCurrency(todayTotal);
+    if (elSalesCount) elSalesCount.textContent = `${todaySales.length} venda(s) registrada(s) hoje`;
+    if (elItemsSold) elItemsSold.textContent = sales.length;
+    if (elTicketAvg) elTicketAvg.textContent = formatCurrency(avgTicket);
+
+    // CSS Chart
+    const elChart = document.getElementById('dash-css-chart');
+    if (elChart) {
+      // Group by last 7 days
+      const days = {};
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        days[d.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'})] = 0;
+      }
+      
+      sales.forEach(s => {
+        const dStr = s.date.split(',')[0];
+        const shortDate = dStr.substring(0, 5); // DD/MM
+        if (days[shortDate] !== undefined) {
+          days[shortDate] += parseCurrency(s.total);
+        }
+      });
+
+      const maxVal = Math.max(...Object.values(days), 1); // fallback avoid /0
+      
+      elChart.innerHTML = '';
+      Object.entries(days).forEach(([dateStr, total]) => {
+        const percentage = Math.max(10, (total / maxVal) * 100);
+        const bar = document.createElement('div');
+        bar.className = 'css-chart-bar';
+        bar.style.height = `${percentage}%`;
+        
+        bar.innerHTML = `
+          <div class="css-chart-tooltip">${formatCurrency(total)}</div>
+          <span class="css-chart-label">${dateStr}</span>
+        `;
+        elChart.appendChild(bar);
+      });
+    }
+
+    // Transactions Table
+    const elTbody = document.getElementById('dash-transactions-body');
+    if (elTbody) {
+      if (sales.length === 0) {
+        elTbody.innerHTML = `<tr><td colspan="4" class="table-empty">Nenhum dado na demo... Realize uma venda no PDV!</td></tr>`;
+      } else {
+        elTbody.innerHTML = '';
+        // Last 5 sales
+        const latest = [...sales].reverse().slice(0, 5);
+        latest.forEach(s => {
+          elTbody.innerHTML += `
+            <tr>
+              <td>${s.date}</td>
+              <td>${s.customer || 'Cliente Avulso'}</td>
+              <td><span class="chip">${s.payment}</span></td>
+              <td><strong>${s.total}</strong></td>
+            </tr>
+          `;
+        });
+      }
+    }
+  };
+  
+  // Render on load
+  renderDashboard();
+}
+
+// ========================================================
+// FASE 6 — Service Worker & Page Transitions
+// ========================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // SW registration failed (ignore silently in demo)
+    });
+  });
+}
+
+// Page transition effect on links
+document.querySelectorAll('a').forEach(link => {
+  if (link.hostname === window.location.hostname && !link.hash && link.target !== '_blank') {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      document.body.classList.add('page-transitioning-out');
+      setTimeout(() => {
+        window.location.href = link.href;
+      }, 150);
+    });
+  }
+});
+
+
